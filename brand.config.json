@@ -1,0 +1,25 @@
+{
+  "name": "Fuzuê",
+  "subtitle": "PETSTORE",
+  "slogan": "Acessórios cheios de fuzuê para o seu melhor amigo",
+  "email": "oi@fuzue.com.br",
+  "instagram": "@fuzuepetstore",
+  "whatsapp": "5511999999999",
+  "shipping": {
+    "fee": 15,
+    "freeFrom": 150
+  },
+  "assets": {
+    "logo": "",
+    "logoLight": "",
+    "favicon": "/assets/brand/favicon.svg",
+    "ogImage": "",
+    "hero": "",
+    "categories": {
+      "coleiras": "",
+      "bandanas": "",
+      "presilhas": ""
+    },
+    "petPlaceholder": "/assets/placeholders/pet.svg"
+  }
+}

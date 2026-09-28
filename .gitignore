@@ -1,0 +1,23 @@
+# dependências e builds
+node_modules/
+dist/
+
+# dados locais (banco SQLite, uploads, pedidos antigos)
+backend/data/
+backend/uploads/
+backend/src/data/orders.json
+
+# segredos
+.env
+.env.*
+!.env.example
+
+# sistema / editores
+.DS_Store
+*.log
+npm-debug.log*
+.vscode/
+.idea/
+
+# config local do Claude Code
+.claude/settings.local.json

@@ -1,0 +1,203 @@
+[
+  {
+    "id": 1,
+    "slug": "coleira-bolinhas-rosa",
+    "name": "Coleira Bolinhas",
+    "category": "coleiras",
+    "price": 59.9,
+    "description": "Coleira de nylon macio com estampa de bolinhas, fivela de encaixe rápido e argola de metal para a guia. Confortável para passeios diários.",
+    "colors": [
+      { "name": "Rosa", "hex": "#F4A7D3" },
+      { "name": "Azul", "hex": "#377DF8" },
+      { "name": "Vermelho", "hex": "#E8432A" }
+    ],
+    "sizes": ["P", "M", "G"],
+    "pattern": "dots",
+    "badge": "Mais vendida",
+    "featured": true,
+    "stock": 40
+  },
+  {
+    "id": 2,
+    "slug": "coleira-listrinha",
+    "name": "Coleira Listrinha",
+    "category": "coleiras",
+    "price": 54.9,
+    "description": "Listras divertidas para quem ama um visual clássico. Ajustável, leve e resistente à água.",
+    "colors": [
+      { "name": "Azul", "hex": "#377DF8" },
+      { "name": "Rosa", "hex": "#F4A7D3" }
+    ],
+    "sizes": ["P", "M", "G"],
+    "pattern": "stripes",
+    "featured": false,
+    "stock": 25
+  },
+  {
+    "id": 3,
+    "slug": "coleira-coracoes",
+    "name": "Coleira Coraçõezinhos",
+    "category": "coleiras",
+    "price": 64.9,
+    "description": "Coraçõezinhos bordados para o pet mais apaixonante da casa. Acompanha plaquinha para gravar o nome.",
+    "colors": [
+      { "name": "Vermelho", "hex": "#E8432A" },
+      { "name": "Rosa", "hex": "#F4A7D3" }
+    ],
+    "sizes": ["P", "M", "G"],
+    "pattern": "hearts",
+    "badge": "Novo",
+    "featured": true,
+    "stock": 18
+  },
+  {
+    "id": 4,
+    "slug": "coleira-lisa-candy",
+    "name": "Coleira Lisa Candy",
+    "category": "coleiras",
+    "price": 44.9,
+    "description": "O básico que combina com tudo. Cores doces, acabamento macio e fivela colorida.",
+    "colors": [
+      { "name": "Azul", "hex": "#377DF8" },
+      { "name": "Vermelho", "hex": "#E8432A" },
+      { "name": "Rosa", "hex": "#F4A7D3" }
+    ],
+    "sizes": ["P", "M", "G"],
+    "pattern": "plain",
+    "featured": false,
+    "stock": 50
+  },
+  {
+    "id": 5,
+    "slug": "bandana-bolinhas",
+    "name": "Bandana Bolinhas",
+    "category": "bandanas",
+    "price": 34.9,
+    "description": "Bandana de algodão com estampa de bolinhas. Passa pela coleira ou amarra no pescoço — fica uma graça de qualquer jeito.",
+    "colors": [
+      { "name": "Vermelho", "hex": "#E8432A" },
+      { "name": "Azul", "hex": "#377DF8" }
+    ],
+    "sizes": ["P", "M", "G"],
+    "pattern": "dots",
+    "badge": "Mais vendida",
+    "featured": true,
+    "stock": 35
+  },
+  {
+    "id": 6,
+    "slug": "bandana-xadrez",
+    "name": "Bandana Xadrez",
+    "category": "bandanas",
+    "price": 39.9,
+    "description": "Xadrezinho charmoso para dias de festa (ou para qualquer dia, porque todo dia é dia de fuzuê).",
+    "colors": [
+      { "name": "Rosa", "hex": "#F4A7D3" },
+      { "name": "Azul", "hex": "#377DF8" }
+    ],
+    "sizes": ["P", "M", "G"],
+    "pattern": "stripes",
+    "featured": false,
+    "stock": 20
+  },
+  {
+    "id": 7,
+    "slug": "bandana-coracoes",
+    "name": "Bandana Amorzinho",
+    "category": "bandanas",
+    "price": 36.9,
+    "description": "Estampa de coraçõezinhos, dupla face e tecido que não desbota na lavagem.",
+    "colors": [
+      { "name": "Rosa", "hex": "#F4A7D3" },
+      { "name": "Vermelho", "hex": "#E8432A" }
+    ],
+    "sizes": ["P", "M", "G"],
+    "pattern": "hearts",
+    "badge": "Novo",
+    "featured": true,
+    "stock": 22
+  },
+  {
+    "id": 8,
+    "slug": "bandana-lisa",
+    "name": "Bandana Lisa",
+    "category": "bandanas",
+    "price": 29.9,
+    "description": "Simples, colorida e fofa. Perfeita para combinar com qualquer coleira da loja.",
+    "colors": [
+      { "name": "Azul", "hex": "#377DF8" },
+      { "name": "Vermelho", "hex": "#E8432A" },
+      { "name": "Rosa", "hex": "#F4A7D3" }
+    ],
+    "sizes": ["P", "M", "G"],
+    "pattern": "plain",
+    "featured": false,
+    "stock": 45
+  },
+  {
+    "id": 9,
+    "slug": "presilha-lacinho",
+    "name": "Presilha Lacinho",
+    "category": "presilhas",
+    "price": 19.9,
+    "description": "Lacinho de tecido com presilha que não puxa o pelo. Kit com 2 unidades.",
+    "colors": [
+      { "name": "Rosa", "hex": "#F4A7D3" },
+      { "name": "Vermelho", "hex": "#E8432A" },
+      { "name": "Azul", "hex": "#377DF8" }
+    ],
+    "sizes": [],
+    "pattern": "plain",
+    "badge": "Mais vendida",
+    "featured": true,
+    "stock": 60
+  },
+  {
+    "id": 10,
+    "slug": "presilha-lacinho-bolinhas",
+    "name": "Presilha Lacinho Bolinhas",
+    "category": "presilhas",
+    "price": 22.9,
+    "description": "O lacinho favorito agora com bolinhas. Kit com 2 unidades, fecho macio.",
+    "colors": [
+      { "name": "Vermelho", "hex": "#E8432A" },
+      { "name": "Azul", "hex": "#377DF8" }
+    ],
+    "sizes": [],
+    "pattern": "dots",
+    "featured": false,
+    "stock": 30
+  },
+  {
+    "id": 11,
+    "slug": "presilha-coracao",
+    "name": "Presilha Coração",
+    "category": "presilhas",
+    "price": 24.9,
+    "description": "Lacinho com estampa de coração para deixar o topete ainda mais charmoso. Kit com 2.",
+    "colors": [
+      { "name": "Rosa", "hex": "#F4A7D3" }
+    ],
+    "sizes": [],
+    "pattern": "hearts",
+    "badge": "Novo",
+    "featured": true,
+    "stock": 15
+  },
+  {
+    "id": 12,
+    "slug": "presilha-listrinha",
+    "name": "Presilha Listrinha",
+    "category": "presilhas",
+    "price": 21.9,
+    "description": "Listrinhas coloridas, fecho que não machuca e muito, muito fuzuê. Kit com 2.",
+    "colors": [
+      { "name": "Azul", "hex": "#377DF8" },
+      { "name": "Rosa", "hex": "#F4A7D3" }
+    ],
+    "sizes": [],
+    "pattern": "stripes",
+    "featured": false,
+    "stock": 28
+  }
+]
