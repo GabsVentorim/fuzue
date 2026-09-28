@@ -8,7 +8,7 @@ export default function Logo({ variant = 'default' }) {
   const [failed, setFailed] = useState([]);
   const src = [variant === 'light' && asset('logoLight'), asset('logo')].find((s) => s && !failed.includes(s));
   if (src) {
-    return <img src={src} alt={brand.name} className="logo-img" onError={() => setFailed((f) => [...f, src])} />;
+    return <img src={src} alt={brand.name} className={`logo-img logo-img--${variant}`} onError={() => setFailed((f) => [...f, src])} />;
   }
   return (
     <span className={`logo logo--${variant}`}>

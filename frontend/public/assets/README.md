@@ -6,7 +6,8 @@ diretamente — eles leem daquele arquivo via `frontend/src/assets.js`.
 
 ```
 assets/
-  brand/          logo.png, logo-branco.png (versão para fundo escuro), favicon.svg, og-image.png
+  logo/           logo.png (original) e logo-transparente.png (sem fundo, usada no header)
+  brand/          favicon.svg, og-image.png
   site/           hero.jpg, banners
   site/categorias coleiras.jpg, bandanas.jpg, presilhas.jpg
   placeholders/   pet.svg (foto padrão de pet)
