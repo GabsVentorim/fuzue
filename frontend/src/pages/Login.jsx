@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import GoogleButton, { googleEnabled } from '../components/GoogleButton';
-import brand from '../brand';
 
 export default function Login() {
   const { user, login, register, loginWithGoogle } = useAuth();
@@ -37,34 +36,32 @@ export default function Login() {
     run(() => (mode === 'login' ? login(form) : register(form)));
   };
 
+  const switchMode = () => {
+    setMode(mode === 'login' ? 'register' : 'login');
+    setError('');
+  };
+
   return (
     <section className="section container auth">
       <div className="auth__card">
-        <h1 className="page-title center">{mode === 'login' ? 'Que bom te ver!' : 'Crie sua conta'}</h1>
+        <h1 className="page-title center">Entrar ou criar conta</h1>
         <p className="muted center">
-          {mode === 'login'
-            ? `Entre para acompanhar pedidos e cuidar dos seus pets na ${brand.name}.`
-            : 'Cadastre seus pets e compre mais rápido da próxima vez.'}
+          Acompanhe pedidos, cadastre seus pets e compre mais rápido.
+          {googleEnabled && ' Com o Google é um clique — na primeira vez, sua conta é criada na hora.'}
         </p>
 
-        <div className="tabs tabs--center" role="tablist">
-          <button type="button" role="tab" aria-selected={mode === 'login'} className={`tab ${mode === 'login' ? 'tab--on' : ''}`} onClick={() => setMode('login')}>
-            Entrar
-          </button>
-          <button type="button" role="tab" aria-selected={mode === 'register'} className={`tab ${mode === 'register' ? 'tab--on' : ''}`} onClick={() => setMode('register')}>
-            Criar conta
-          </button>
-        </div>
-
-        {googleEnabled && (
-          <>
-            <GoogleButton
-              text={mode === 'login' ? 'signin_with' : 'signup_with'}
-              onCredential={(credential) => run(() => loginWithGoogle(credential))}
-            />
-            <div className="divider"><span>ou com e-mail</span></div>
-          </>
+        {googleEnabled ? (
+          <GoogleButton onCredential={(credential) => run(() => loginWithGoogle(credential))} />
+        ) : (
+          import.meta.env.DEV && (
+            <div className="google-placeholder">
+              <button type="button" className="btn btn--ghost btn--block" disabled>Continuar com Google</button>
+              <small className="muted">Falta configurar VITE_GOOGLE_CLIENT_ID (veja o README). Só você vê este aviso.</small>
+            </div>
+          )
         )}
+
+        {(googleEnabled || import.meta.env.DEV) && <div className="divider"><span>ou use seu e-mail</span></div>}
 
         <form className="stack" onSubmit={submit}>
           {mode === 'register' && (
@@ -89,6 +86,13 @@ export default function Login() {
             {sending ? 'Aguarde…' : mode === 'login' ? 'Entrar' : 'Criar conta'}
           </button>
         </form>
+
+        <p className="center small auth__switch">
+          {mode === 'login' ? 'Ainda não tem conta? ' : 'Já tem conta? '}
+          <button type="button" className="link" onClick={switchMode}>
+            {mode === 'login' ? 'Criar com e-mail' : 'Entrar'}
+          </button>
+        </p>
       </div>
     </section>
   );

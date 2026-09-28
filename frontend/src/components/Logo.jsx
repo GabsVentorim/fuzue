@@ -1,12 +1,14 @@
+import { useState } from 'react';
 import brand from '../brand';
 import { asset } from '../assets';
 
 // Logo images come from brand.config.json → assets.logo / assets.logoLight (light = for dark backgrounds).
-// When not set, a text logo is built from the store name.
+// When not set — or the file is missing — a text logo is built from the store name.
 export default function Logo({ variant = 'default' }) {
-  const src = (variant === 'light' && asset('logoLight')) || asset('logo');
+  const [failed, setFailed] = useState([]);
+  const src = [variant === 'light' && asset('logoLight'), asset('logo')].find((s) => s && !failed.includes(s));
   if (src) {
-    return <img src={src} alt={brand.name} className="logo-img" />;
+    return <img src={src} alt={brand.name} className="logo-img" onError={() => setFailed((f) => [...f, src])} />;
   }
   return (
     <span className={`logo logo--${variant}`}>

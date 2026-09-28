@@ -10,7 +10,7 @@
     "freeFrom": 150
   },
   "assets": {
-    "logo": "",
+    "logo": "/assets/brand/logo.png",
     "logoLight": "",
     "favicon": "/assets/brand/favicon.svg",
     "ogImage": "",

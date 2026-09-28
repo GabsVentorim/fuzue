@@ -74,6 +74,7 @@ The **Admin** link then shows up in the header (`/admin`):
   - The paths go in the `assets` section of `brand.config.json`, e.g. `"logo": "/assets/brand/logo.png"`.
   - An empty value falls back to the built-in drawing, such as the text logo or illustrations.
   - See `frontend/public/assets/README.md`.
+- **Company logo:** save it as `frontend/public/assets/brand/logo.png`. A PNG with a transparent background works best, at least 200px tall. Until the file exists, the site shows the text logo. For a light version on the blue footer, add `logo-branco.png` and set `assets.logoLight`.
 - **Product and pet photos** are uploaded through the site and saved in `backend/uploads/`.
 - In the code, every image URL comes from `frontend/src/assets.js` (`asset('logo')`, `imageUrl(path)`). Components never have image paths written into them.
 

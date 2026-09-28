@@ -17,7 +17,7 @@ const loadScript = () =>
 // "Sign in with Google" button (Google Identity Services).
 // Hidden when VITE_GOOGLE_CLIENT_ID isn't set. Calls onCredential with the ID token,
 // which the backend verifies.
-export default function GoogleButton({ onCredential, text = 'continue_with' }) {
+export default function GoogleButton({ onCredential }) {
   const ref = useRef(null);
   const cb = useRef(onCredential);
   cb.current = onCredential;
@@ -37,7 +37,7 @@ export default function GoogleButton({ onCredential, text = 'continue_with' }) {
           theme: 'outline',
           size: 'large',
           shape: 'pill',
-          text,
+          text: 'continue_with',
           width: Math.min(ref.current.offsetWidth || 320, 400),
           locale: 'pt-BR',
         });
@@ -46,7 +46,7 @@ export default function GoogleButton({ onCredential, text = 'continue_with' }) {
     return () => {
       cancelled = true;
     };
-  }, [text]);
+  }, []);
 
   if (!CLIENT_ID) return null;
   if (failed) return <p className="muted small center">Não foi possível carregar o login com Google.</p>;
