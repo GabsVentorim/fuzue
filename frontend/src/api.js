@@ -2,21 +2,30 @@
 // In production, set VITE_API_URL (e.g. https://api.minhaloja.com.br/api).
 const BASE = import.meta.env.VITE_API_URL || '/api';
 
+const OFFLINE = 'Não foi possível falar com o servidor. Verifique se o backend está rodando (npm run dev em backend/).';
+
 async function request(path, { body, ...options } = {}) {
   const isForm = body instanceof FormData;
-  const res = await fetch(BASE + path, {
-    credentials: 'include',
-    headers: isForm ? {} : { 'Content-Type': 'application/json' },
-    body: body === undefined || isForm ? body : JSON.stringify(body),
-    ...options,
-  });
-  const data = await res.json().catch(() => ({}));
+  let res;
+  try {
+    res = await fetch(BASE + path, {
+      credentials: 'include',
+      headers: isForm ? {} : { 'Content-Type': 'application/json' },
+      body: body === undefined || isForm ? body : JSON.stringify(body),
+      ...options,
+    });
+  } catch {
+    throw new Error(OFFLINE);
+  }
+  const data = await res.json().catch(() => null);
   if (!res.ok) {
-    const err = new Error(data.error || 'Algo deu errado. Tente de novo.');
+    // A 5xx without a JSON body comes from the dev proxy / host, not from our API.
+    const fallback = !data && res.status >= 500 ? OFFLINE : 'Algo deu errado. Tente de novo.';
+    const err = new Error(data?.error || fallback);
     err.status = res.status;
     throw err;
   }
-  return data;
+  return data ?? {};
 }
 
 const qs = (params = {}) => {

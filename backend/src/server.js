@@ -36,4 +36,15 @@ app.use((err, _req, res, _next) => {
   res.status(500).json({ error: 'Erro no servidor.' });
 });
 
-app.listen(PORT, () => console.log(`🐾 API rodando em http://localhost:${PORT}`));
+app
+  .listen(PORT, () => console.log(`🐾 API rodando em http://localhost:${PORT}`))
+  .on('error', (err) => {
+    if (err.code === 'EADDRINUSE') {
+      console.error(
+        `❌ A porta ${PORT} já está em uso — provavelmente outro backend já está rodando em outro terminal.\n` +
+          `   Feche-o (Ctrl+C) ou rode: lsof -ti:${PORT} | xargs kill`
+      );
+      process.exit(1);
+    }
+    throw err;
+  });

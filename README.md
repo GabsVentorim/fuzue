@@ -27,6 +27,8 @@ npm run dev
 
 Then open http://localhost:5173.
 
+Run the backend in **one terminal only**. If you see "A porta 4000 já está em uso" (port 4000 is already in use), another backend is already running. Close it with Ctrl+C, or run `lsof -ti:4000 | xargs kill`.
+
 ## Data
 
 Everything lives in a SQLite file, `backend/data/fuzue.db`, which is created on the first run. The first run also imports `backend/src/data/products.json` and `orders.json`. After that, manage products in the admin panel. The JSON files are only the seed.
