@@ -456,7 +456,14 @@ p.tag { margin: 6px 0 0; }
 .divider { display: flex; align-items: center; gap: 12px; margin: 18px 0; color: var(--muted); font-size: 0.85rem; font-weight: 700; }
 .divider::before, .divider::after { content: ''; flex: 1; border-top: 2px dashed var(--line); }
 
+/* ===== Avatar ===== */
+.avatar { display: inline-grid; place-items: center; flex-shrink: 0; border-radius: 50%; object-fit: cover; background: var(--pink-soft); }
+.avatar--initials { background: var(--red); color: var(--pink-soft); font-family: var(--font-display); font-weight: 700; line-height: 1; }
+.account-btn .avatar { width: 100% !important; height: 100% !important; }
+
 /* ===== Account ===== */
+.profile-photo { grid-column: 1 / -1; display: flex; align-items: center; gap: 20px; }
+.stack--tight { gap: 8px; justify-items: start; }
 .account__head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; }
 .account__head .page-title { margin-bottom: 0; }
 .account-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 20px; align-items: start; }

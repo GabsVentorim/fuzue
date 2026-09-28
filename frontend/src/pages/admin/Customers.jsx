@@ -6,6 +6,7 @@ import { useAuth } from '../../context/AuthContext';
 import { formatDate } from '../../labels';
 import { PetCard } from '../account/Pets';
 import { OrdersTable } from './Dashboard';
+import Avatar from '../../components/Avatar';
 
 function CustomerDetail({ id }) {
   const { user: me } = useAuth();
@@ -37,11 +38,14 @@ function CustomerDetail({ id }) {
     <div className="stack">
       <p className="crumbs"><Link to="/admin/clientes">Clientes</Link> / {c.name}</p>
       <div className="toolbar">
-        <div>
-          <h1 className="admin__h1">{c.name} {c.role === 'admin' && <span className="tag tag--blue">admin</span>}</h1>
-          <p className="muted small">
-            {c.email}{c.phone && ` · ${c.phone}`} · cliente desde {formatDate(c.createdAt)}{c.hasGoogle && ' · Google'}
-          </p>
+        <div className="row">
+          <Avatar user={c} size={64} />
+          <div>
+            <h1 className="admin__h1">{c.name} {c.role === 'admin' && <span className="tag tag--blue">admin</span>}</h1>
+            <p className="muted small">
+              {c.email}{c.phone && ` · ${c.phone}`} · cliente desde {formatDate(c.createdAt)}{c.hasGoogle && ' · Google'}
+            </p>
+          </div>
         </div>
         <div className="toolbar__right">
           {c.phone && <a className="btn btn--ghost btn--sm" target="_blank" rel="noreferrer" href={whatsappLinkTo(c.phone, `Oi, ${c.name.split(' ')[0]}!`)}>WhatsApp</a>}
@@ -109,7 +113,7 @@ function CustomerList() {
             <tbody>
               {list.map((c) => (
                 <tr key={c.id}>
-                  <td><Link to={`/admin/clientes/${c.id}`} className="link">{c.name}</Link>{c.role === 'admin' && <span className="tag tag--blue">admin</span>}</td>
+                  <td><span className="row row--tight"><Avatar user={c} size={32} /><Link to={`/admin/clientes/${c.id}`} className="link">{c.name}</Link>{c.role === 'admin' && <span className="tag tag--blue">admin</span>}</span></td>
                   <td>{c.email}</td>
                   <td>{formatDate(c.createdAt)}</td>
                   <td className="num">{c.petCount}</td>

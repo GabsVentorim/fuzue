@@ -1,5 +1,6 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import Avatar from '../../components/Avatar';
 
 const tabs = [
   { to: '/minha-conta', label: 'Meus dados', end: true },
@@ -15,9 +16,12 @@ export default function AccountLayout() {
   return (
     <section className="section container">
       <div className="account__head">
-        <div>
-          <h1 className="page-title">Oi, {user.name.split(' ')[0]}!</h1>
-          <p className="muted">{user.email}</p>
+        <div className="row">
+          <Avatar user={user} size={72} />
+          <div>
+            <h1 className="page-title">Oi, {user.name.split(' ')[0]}!</h1>
+            <p className="muted">{user.email}</p>
+          </div>
         </div>
         <div className="row">
           {isAdmin && <NavLink to="/admin" className="btn btn--ghost btn--sm">Painel admin</NavLink>}

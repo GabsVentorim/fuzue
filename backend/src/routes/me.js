@@ -2,6 +2,7 @@ import { Router } from 'express';
 import bcrypt from 'bcryptjs';
 import db, { toUser, toAddress, toOrder } from '../db.js';
 import { requireAuth } from '../auth.js';
+import { imageUpload, publicPath, removeUpload } from '../uploads.js';
 
 const router = Router();
 router.use(requireAuth);
@@ -17,6 +18,26 @@ router.put('/', (req, res) => {
   if (!name) return res.status(400).json({ error: 'Informe seu nome.' });
   db.prepare('UPDATE users SET name = ?, phone = ? WHERE id = ?').run(name, phone || null, req.user.id);
   res.json(toUser(db.prepare('SELECT * FROM users WHERE id = ?').get(req.user.id)));
+});
+
+// ---------- profile photo ----------
+const avatarUpload = imageUpload('avatars');
+const reloadUser = (id) => toUser(db.prepare('SELECT * FROM users WHERE id = ?').get(id));
+
+router.post('/avatar', (req, res) => {
+  avatarUpload(req, res, (err) => {
+    if (err) return res.status(400).json({ error: err.message });
+    if (!req.file) return res.status(400).json({ error: 'Nenhuma imagem enviada.' });
+    db.prepare('UPDATE users SET avatar_url = ? WHERE id = ?').run(publicPath('avatars', req.file), req.user.id);
+    removeUpload(req.user.avatar_url); // only deletes our own uploads, never a Google photo URL
+    res.json(reloadUser(req.user.id));
+  });
+});
+
+router.delete('/avatar', (req, res) => {
+  db.prepare('UPDATE users SET avatar_url = NULL WHERE id = ?').run(req.user.id);
+  removeUpload(req.user.avatar_url);
+  res.json(reloadUser(req.user.id));
 });
 
 router.put('/password', (req, res) => {

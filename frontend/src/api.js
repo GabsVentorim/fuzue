@@ -57,6 +57,8 @@ export const api = {
   // account
   updateProfile: (body) => request('/me', { method: 'PUT', body }),
   changePassword: (body) => request('/me/password', { method: 'PUT', body }),
+  uploadAvatar: (file) => request('/me/avatar', { method: 'POST', body: imageForm(file) }),
+  removeAvatar: () => request('/me/avatar', { method: 'DELETE' }),
   addresses: () => request('/me/addresses'),
   addAddress: (body) => request('/me/addresses', { method: 'POST', body }),
   updateAddress: (id, body) => request(`/me/addresses/${id}`, { method: 'PUT', body }),

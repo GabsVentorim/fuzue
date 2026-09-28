@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { api } from '../../api';
 import { useAuth } from '../../context/AuthContext';
 import { formatDate } from '../../labels';
+import Avatar from '../../components/Avatar';
 
 export default function Profile() {
   const { user, setUser } = useAuth();
@@ -31,8 +32,43 @@ export default function Profile() {
     }
   };
 
+  const changePhoto = async (file) => {
+    if (!file) return;
+    setMsg({ photoBusy: true });
+    try {
+      setUser(await api.uploadAvatar(file));
+      setMsg({ photo: 'Foto atualizada!' });
+    } catch (err) {
+      setMsg({ photoError: err.message });
+    }
+  };
+
+  const removePhoto = async () => {
+    if (!confirm('Remover sua foto de perfil?')) return;
+    try {
+      setUser(await api.removeAvatar());
+      setMsg({});
+    } catch (err) {
+      setMsg({ photoError: err.message });
+    }
+  };
+
   return (
     <div className="account-grid">
+      <div className="box profile-photo">
+        <Avatar user={user} size={112} />
+        <div className="stack stack--tight">
+          <label className="btn btn--ghost btn--sm">
+            {msg.photoBusy ? 'Enviando…' : user.avatarUrl ? 'Trocar foto' : 'Adicionar foto'}
+            <input type="file" accept="image/jpeg,image/png,image/webp" hidden disabled={msg.photoBusy}
+              onChange={(e) => { changePhoto(e.target.files[0]); e.target.value = ''; }} />
+          </label>
+          {user.avatarUrl && <button type="button" className="link link--danger" onClick={removePhoto}>Remover foto</button>}
+          <small className="muted">JPG, PNG ou WEBP até 5 MB.</small>
+          {msg.photo && <p className="good">{msg.photo}</p>}
+          {msg.photoError && <p className="alert">{msg.photoError}</p>}
+        </div>
+      </div>
       <form onSubmit={save}>
         <fieldset className="box">
           <legend>Seus dados</legend>

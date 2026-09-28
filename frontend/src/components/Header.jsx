@@ -4,6 +4,7 @@ import Logo from './Logo';
 import { Bag, Menu, Close, User } from './Icons';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
+import Avatar from './Avatar';
 import brand, { formatPrice } from '../brand';
 
 const links = [
@@ -50,7 +51,7 @@ export default function Header() {
           aria-label={user ? `Minha conta (${user.name})` : 'Entrar ou criar conta'}
           title={user ? user.name : 'Entrar'}
         >
-          {user?.avatarUrl ? <img src={user.avatarUrl} alt="" referrerPolicy="no-referrer" /> : <User />}
+          {user ? <Avatar user={user} size={46} /> : <User />}
         </Link>
         <Link to="/carrinho" className="cart-btn" aria-label={`Carrinho, ${count} itens`}>
           <Bag />
