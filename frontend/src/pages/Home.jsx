@@ -6,6 +6,7 @@ import { asset } from '../assets';
 import ProductCard from '../components/ProductCard';
 import ProductArt from '../components/ProductArt';
 import SizeGuide from '../components/SizeGuide';
+import Mascot from '../components/Mascot';
 import { Paw, Truck, Heart, Shield, Sparkle } from '../components/Icons';
 
 const categories = [
@@ -52,6 +53,7 @@ export default function Home() {
               <div className="blob blob--red"><ProductArt category="coleiras" color="#377DF8" pattern="dots" alt="Coleira" /></div>
               <div className="blob blob--blue"><ProductArt category="bandanas" color="#E8432A" pattern="hearts" alt="Bandana" /></div>
               <div className="blob blob--cream"><ProductArt category="presilhas" color="#F4A7D3" pattern="dots" alt="Presilha" /></div>
+              <Mascot className="hero__mascot" />
             </div>
           )}
         </div>
