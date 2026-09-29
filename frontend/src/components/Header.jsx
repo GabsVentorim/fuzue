@@ -69,6 +69,26 @@ function AccountMenu({ user, isAdmin, logout }) {
   );
 }
 
+// Scrolling promo bar. The list is repeated so the loop is seamless (the track moves by exactly half).
+function Announce({ messages }) {
+  const group = (hidden) => (
+    <div className="announce__group" aria-hidden={hidden || undefined}>
+      {[...messages, ...messages, ...messages].map((m, i) => (
+        <span key={i} className="announce__item">{m}</span>
+      ))}
+    </div>
+  );
+  return (
+    <div className="announce" role="region" aria-label="Promoções">
+      <span className="sr-only">{messages.join('. ')}</span>
+      <div className="announce__track" aria-hidden>
+        {group(false)}
+        {group(true)}
+      </div>
+    </div>
+  );
+}
+
 export default function Header() {
   const { count, missingForFree } = useCart();
   const { user, isAdmin, logout } = useAuth();
@@ -78,11 +98,14 @@ export default function Header() {
 
   return (
     <header className="header">
-      <div className="announce">
-        {missingForFree > 0 && count > 0
-          ? `Faltam só ${formatPrice(missingForFree)} para o frete grátis!`
-          : `Frete grátis acima de ${formatPrice(brand.shipping.freeFrom)} · 5% off no Pix`}
-      </div>
+      <Announce
+        messages={[
+          missingForFree > 0 && count > 0 && `Faltam só ${formatPrice(missingForFree)} para o frete grátis!`,
+          `Frete grátis acima de ${formatPrice(brand.shipping.freeFrom)}`,
+          '5% off no Pix',
+          'Troca fácil de tamanho em até 30 dias',
+        ].filter(Boolean)}
+      />
       <div className="header__bar container">
         <button className="icon-btn header__menu" onClick={() => setOpen(!open)} aria-label="Menu">
           {open ? <Close /> : <Menu />}

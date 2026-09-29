@@ -81,9 +81,16 @@ img { max-width: 100%; display: block; }
 /* ===== Header ===== */
 .header { position: sticky; top: 0; z-index: 20; background: var(--pink); box-shadow: 0 3px 0 rgba(232, 67, 42, 0.12); }
 .announce {
-  background: var(--blue); color: #fff; text-align: center;
-  font-weight: 800; font-size: 0.85rem; padding: 7px 12px; letter-spacing: 0.02em;
+  background: var(--blue); color: #fff; overflow: hidden; white-space: nowrap;
+  font-weight: 800; font-size: 0.85rem; padding: 7px 0; letter-spacing: 0.02em;
 }
+.announce__track { display: flex; width: max-content; animation: marquee 45s linear infinite; }
+.announce:hover .announce__track { animation-play-state: paused; }
+.announce__group { display: flex; }
+.announce__item { display: inline-flex; align-items: center; }
+.announce__item::after { content: '✦'; margin: 0 26px; color: var(--pink); font-size: 0.9rem; }
+@keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .header__bar { display: flex; align-items: center; gap: 24px; min-height: 78px; }
 .header__menu { display: none; }
 .header__logo { flex-shrink: 0; }
