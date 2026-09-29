@@ -4,132 +4,149 @@ import { SIZES, BREED_NECKS, PORTE_NECKS, sizeForNeck, sizesForRange, sizeRange 
 
 const MODES = [
   { id: 'raca', label: 'Pela raça' },
-  { id: 'porte', label: 'Vira-lata / sem raça' },
+  { id: 'porte', label: 'Vira-lata' },
   { id: 'medida', label: 'Já medi' },
 ];
 
 const STEPS = [
-  ['Pegue uma fita métrica', <>De costureira serve. Não tem? <Link to="/fita-metrica" className="link">Imprima a nossa</Link> ou use um barbante e meça numa régua depois.</>],
-  ['Encontre o lugar certo', 'Meça na parte do meio do pescoço, onde a coleira fica naturalmente — nem colado na cabeça, nem nos ombros.'],
-  ['Deixe dois dedinhos de folga', 'Passe a fita em volta e coloque dois dedos entre a fita e o pescoço. A coleira não pode apertar nem sair pela cabeça.'],
-  ['Anote e compare', 'Veja o número em centímetros e compare com a tabela. Ficou entre dois tamanhos? Escolha o maior.'],
+  ['Pegue uma fita', 'De costureira, a nossa impressa ou um barbante + régua.'],
+  ['Meça no meio do pescoço', 'Onde a coleira fica: nem colado na cabeça, nem nos ombros.'],
+  ['Deixe 2 dedinhos de folga', 'A coleira não pode apertar nem sair pela cabeça.'],
+  ['Compare com a tabela', 'Ficou entre dois tamanhos? Escolha o maior.'],
 ];
 
-function Result({ min, max, exact }) {
-  const sizes = exact != null ? [sizeForNeck(exact)?.id].filter(Boolean) : sizesForRange(min, max);
-  if (!sizes.length) {
-    return (
-      <div className="finder__result">
-        <p><b>Essa medida está fora da nossa tabela.</b> Fale com a gente no WhatsApp que ajudamos a achar a melhor opção.</p>
-      </div>
-    );
-  }
-  const range = exact != null ? `${String(exact).replace('.', ',')} cm` : `${min}–${max} cm`;
-  return (
-    <div className="finder__result">
-      <span className="finder__label">Tamanho indicado</span>
-      <strong className="finder__size">{sizes.join(' ou ')}</strong>
-      <p className="small">
-        {exact != null ? `Pescoço de ${range}.` : `Pescoço típico de um adulto: ${range}.`}
-        {sizes.length > 1 && ' Fica entre dois tamanhos — meça para ter certeza (na dúvida, escolha o maior).'}
-        {exact == null && sizes.length === 1 && ' Cada pet é único: vale medir para confirmar.'}
-      </p>
-      <Link to="/loja?categoria=coleiras" className="btn btn--primary btn--sm">Ver coleiras</Link>
-    </div>
-  );
-}
+const fmt = (n) => String(n).replace('.', ',');
 
-export default function SizeGuide() {
+// Works out the recommended sizes (and the explanation) for the current finder input.
+function useFinder() {
   const [mode, setMode] = useState('raca');
   const [breed, setBreed] = useState('');
   const [porte, setPorte] = useState('');
   const [neck, setNeck] = useState('');
 
-  const breedInfo = BREED_NECKS.find((b) => b.name === breed);
-  const porteInfo = PORTE_NECKS[porte];
-  const neckNum = Number(String(neck).replace(',', '.'));
+  let result = null;
+  if (mode === 'raca' && breed) {
+    const b = BREED_NECKS.find((x) => x.name === breed);
+    result = { sizes: sizesForRange(b.min, b.max), note: `Um ${b.name} adulto costuma ter ${b.min}–${b.max} cm de pescoço.` };
+  } else if (mode === 'porte' && porte) {
+    const p = PORTE_NECKS[porte];
+    result = { sizes: sizesForRange(p.min, p.max), note: `Porte ${p.label.split(' (')[0].toLowerCase()}: pescoço costuma ter ${p.min}–${p.max} cm.` };
+  } else if (mode === 'medida') {
+    const cm = Number(String(neck).replace(',', '.'));
+    if (cm > 0) {
+      const s = sizeForNeck(cm);
+      result = { sizes: s ? [s.id] : [], note: `Pescoço de ${fmt(cm)} cm.`, exact: true };
+    }
+  }
+  return { mode, setMode, breed, setBreed, porte, setPorte, neck, setNeck, result };
+}
+
+export default function SizeGuide() {
+  const f = useFinder();
+  const picked = f.result?.sizes || [];
 
   return (
-    <div className="size-guide">
-      <div className="sizes-box">
-        <div>
+    <div className="sg">
+      {/* 1 — how to measure */}
+      <div className="sg__top">
+        <div className="sg__intro">
           <h2>Qual tamanho escolher?</h2>
-          <p>Meça o pescoço do seu pet e deixe espaço para dois dedinhos. Não tem fita métrica? Imprima a nossa!</p>
-          <Link to="/fita-metrica" className="btn btn--light btn--sm">Imprimir fita métrica</Link>
+          <p>Meça o pescoço do seu pet em 4 passos — ou descubra pela raça logo abaixo.</p>
+          <Link to="/fita-metrica" className="btn btn--light btn--sm">📏 Imprimir fita métrica</Link>
         </div>
-        <ul className="sizes-list">
-          {SIZES.map((s) => (
-            <li key={s.id}><b>{s.id}</b> <span className="nowrap">{sizeRange(s)}</span> <small>{s.hint}</small></li>
+        <ol className="sg__steps">
+          {STEPS.map(([title, text], i) => (
+            <li key={i}>
+              <span className="sg__n">{i + 1}</span>
+              <b>{title}</b>
+              <small>{text}</small>
+            </li>
           ))}
-        </ul>
+        </ol>
       </div>
 
-      <div className="size-guide__grid">
-        <div className="panel finder">
+      <div className="sg__body">
+        {/* 2 — finder */}
+        <div className="sg__finder">
           <h3>Descubra o tamanho do seu pet</h3>
-          <div className="chips" role="tablist">
+          <div className="seg sg__modes" role="tablist">
             {MODES.map((m) => (
-              <button key={m.id} type="button" role="tab" aria-selected={mode === m.id}
-                className={`chip ${mode === m.id ? 'chip--on' : ''}`} onClick={() => setMode(m.id)}>
+              <button key={m.id} type="button" role="tab" aria-selected={f.mode === m.id}
+                className={`seg__opt ${f.mode === m.id ? 'seg__opt--on' : ''}`} onClick={() => f.setMode(m.id)}>
                 {m.label}
               </button>
             ))}
           </div>
 
-          {mode === 'raca' && (
-            <>
-              <label className="field">
-                Raça do cachorro
-                <select className="input" value={breed} onChange={(e) => setBreed(e.target.value)}>
-                  <option value="">Escolha a raça</option>
-                  {BREED_NECKS.map((b) => <option key={b.name} value={b.name}>{b.name}</option>)}
-                </select>
-              </label>
-              <p className="small muted">
-                Não achou a raça? <button type="button" className="link" onClick={() => setMode('porte')}>Escolha pelo porte</button>.
-              </p>
-              {breedInfo && <Result min={breedInfo.min} max={breedInfo.max} />}
-            </>
+          {f.mode === 'raca' && (
+            <label className="field">
+              Raça do cachorro
+              <select className="input" value={f.breed} onChange={(e) => f.setBreed(e.target.value)}>
+                <option value="">Escolha a raça</option>
+                {BREED_NECKS.map((b) => <option key={b.name} value={b.name}>{b.name}</option>)}
+              </select>
+              <small className="muted">
+                Não achou? <button type="button" className="link" onClick={() => f.setMode('porte')}>Escolha pelo porte</button>
+              </small>
+            </label>
           )}
 
-          {mode === 'porte' && (
-            <>
-              <div className="field">
-                <span>Porte do cachorro (adulto)</span>
-                <div className="porte-opts">
-                  {Object.entries(PORTE_NECKS).map(([k, p]) => (
-                    <button key={k} type="button" className={`chip ${porte === k ? 'chip--on' : ''}`} onClick={() => setPorte(k)}>
-                      {p.label}
-                    </button>
-                  ))}
-                </div>
+          {f.mode === 'porte' && (
+            <div className="field">
+              <span>Porte do cachorro adulto</span>
+              <div className="sg__portes">
+                {Object.entries(PORTE_NECKS).map(([k, p]) => (
+                  <button key={k} type="button" className={`sg__porte ${f.porte === k ? 'sg__porte--on' : ''}`} onClick={() => f.setPorte(k)}>
+                    <b>{p.label.split(' (')[0]}</b>
+                    <small>{p.label.match(/\((.*)\)/)?.[1]}</small>
+                  </button>
+                ))}
               </div>
-              {porteInfo && <Result min={porteInfo.min} max={porteInfo.max} />}
-            </>
+            </div>
           )}
 
-          {mode === 'medida' && (
-            <>
-              <label className="field">
-                Medida do pescoço (cm), já com os dois dedinhos de folga
-                <input className="input" inputMode="decimal" placeholder="ex.: 34" value={neck} onChange={(e) => setNeck(e.target.value)} />
-              </label>
-              {neckNum > 0 && <Result exact={neckNum} />}
-            </>
+          {f.mode === 'medida' && (
+            <label className="field">
+              Medida do pescoço, com os 2 dedinhos de folga
+              <span className="sg__cm">
+                <input className="input" inputMode="decimal" placeholder="ex.: 34" value={f.neck} onChange={(e) => f.setNeck(e.target.value)} />
+                <span>cm</span>
+              </span>
+            </label>
           )}
+
+          <div className={`sg__result ${f.result ? 'sg__result--on' : ''}`} aria-live="polite">
+            {!f.result && <p className="muted small">Escolha uma opção acima e o tamanho indicado acende na tabela. 👉</p>}
+            {f.result && picked.length > 0 && (
+              <>
+                <span className="sg__label">Tamanho indicado</span>
+                <strong className="sg__size">{picked.join(' ou ')}</strong>
+                <p className="small">
+                  {f.result.note}
+                  {picked.length > 1 ? ' Fica entre dois tamanhos — na dúvida, escolha o maior.' : !f.result.exact && ' Vale medir para confirmar.'}
+                </p>
+                <Link to="/loja?categoria=coleiras" className="btn btn--primary btn--sm">Ver coleiras</Link>
+              </>
+            )}
+            {f.result && picked.length === 0 && (
+              <p className="small"><b>Essa medida está fora da nossa tabela.</b> Fale com a gente no WhatsApp que ajudamos a achar a melhor opção.</p>
+            )}
+          </div>
         </div>
 
-        <div className="panel how-to">
-          <h3>Como medir, passo a passo</h3>
-          <ol className="steps">
-            {STEPS.map(([title, text], i) => (
-              <li key={i}>
-                <span className="steps__n">{i + 1}</span>
-                <div><b>{title}</b><p className="small">{text}</p></div>
+        {/* 3 — size table, highlights the recommendation */}
+        <div className="sg__table">
+          <h3>Tabela de tamanhos</h3>
+          <ul>
+            {SIZES.map((s) => (
+              <li key={s.id} className={picked.includes(s.id) ? 'is-on' : picked.length ? 'is-dim' : ''}>
+                <b>{s.id}</b>
+                <span className="nowrap">{sizeRange(s)}</span>
+                <small>{s.hint}</small>
               </li>
             ))}
-          </ol>
-          <Link to="/fita-metrica" className="btn btn--ghost btn--sm">Baixar / imprimir fita métrica</Link>
+          </ul>
+          <p className="muted small">Medida do pescoço com 2 dedinhos de folga.</p>
         </div>
       </div>
     </div>
