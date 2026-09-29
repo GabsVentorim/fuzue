@@ -4,6 +4,7 @@ import db, { toProduct, toOrder } from '../db.js';
 import { CATEGORIES, readBrand, round2, normalize } from '../util.js';
 import rateLimit from 'express-rate-limit';
 import { quoteShipping, shippingEnabled, ShippingError } from '../shipping.js';
+import { evaluateCoupon, countUse } from '../coupons.js';
 
 const router = Router();
 
@@ -16,6 +17,23 @@ router.get('/shipping/status', (_req, res) => res.json({ enabled: shippingEnable
 
 const quoteLimiter = rateLimit({ windowMs: 60 * 1000, limit: 30, standardHeaders: 'draft-7', legacyHeaders: false,
   message: { error: 'Muitas consultas de frete. Espere um minutinho.' } });
+
+// ---------- coupons ----------
+const couponLimiter = rateLimit({ windowMs: 60 * 1000, limit: 20, standardHeaders: 'draft-7', legacyHeaders: false,
+  message: { error: 'Muitas tentativas de cupom. Espere um minutinho.' } });
+
+router.post('/coupons/validate', couponLimiter, (req, res) => {
+  const getPrice = db.prepare('SELECT price FROM products WHERE id = ? AND active = 1');
+  const subtotal = round2(
+    (Array.isArray(req.body?.items) ? req.body.items : []).reduce((s, i) => {
+      const p = getPrice.get(i.productId);
+      return s + (p ? p.price * Math.max(1, Math.floor(Number(i.qty) || 1)) : 0);
+    }, 0)
+  );
+  const r = evaluateCoupon(req.body?.code, subtotal, { email: req.body?.email || req.user?.email });
+  if (r.error) return res.status(400).json({ error: r.error });
+  res.json({ code: r.coupon.code, label: r.label, discount: r.discount, freeShipping: r.freeShipping });
+});
 
 router.post('/shipping/quote', quoteLimiter, async (req, res) => {
   try {
@@ -94,8 +112,18 @@ const placeOrder = db.transaction((body, user, shippingChoice) => {
   const subtotal = round2(lines.reduce((sum, l) => sum + l.total, 0));
   const { fee = 15, freeFrom = 150 } = brand.shipping || {};
   // Real quote (SuperFrete) when configured; otherwise the flat fee from brand.config.json.
-  const shipping = shippingChoice ? shippingChoice.price : subtotal >= freeFrom ? 0 : fee;
-  const discount = payment === 'pix' ? round2(subtotal * 0.05) : 0;
+  let shipping = shippingChoice ? shippingChoice.price : subtotal >= freeFrom ? 0 : fee;
+
+  // Coupon (re-validated here, inside the transaction)
+  let coupon = null;
+  if (body.couponCode) {
+    coupon = evaluateCoupon(body.couponCode, subtotal, { email: customer.email });
+    if (coupon.error) return { status: 400, error: coupon.error };
+    if (coupon.freeShipping) shipping = 0;
+  }
+  const couponDiscount = coupon?.discount || 0;
+  // Pix 5% applies to the products after the coupon
+  const discount = payment === 'pix' ? round2((subtotal - couponDiscount) * 0.05) : 0;
 
   const cleanCustomer = Object.fromEntries(
     ['name', 'email', 'phone', 'cep', 'address', 'number', 'complement', 'city', 'state'].map((k) => [
@@ -117,12 +145,17 @@ const placeOrder = db.transaction((body, user, shippingChoice) => {
     shipping_info: shippingChoice
       ? JSON.stringify({ id: shippingChoice.id, name: shippingChoice.name, company: shippingChoice.company, days: shippingChoice.days, free: shippingChoice.free })
       : null,
+    coupon_code: coupon?.coupon.code || null,
+    coupon_discount: couponDiscount,
     discount,
-    total: round2(subtotal + shipping - discount),
+    total: round2(subtotal - couponDiscount + shipping - discount),
   };
 
-  db.prepare(`INSERT INTO orders (id, user_id, created_at, status, customer, payment, items, subtotal, shipping, shipping_info, discount, total)
-    VALUES (@id, @user_id, @created_at, @status, @customer, @payment, @items, @subtotal, @shipping, @shipping_info, @discount, @total)`).run(order);
+  db.prepare(`INSERT INTO orders (id, user_id, created_at, status, customer, payment, items, subtotal, shipping, shipping_info,
+      coupon_code, coupon_discount, discount, total)
+    VALUES (@id, @user_id, @created_at, @status, @customer, @payment, @items, @subtotal, @shipping, @shipping_info,
+      @coupon_code, @coupon_discount, @discount, @total)`).run(order);
+  if (order.coupon_code) countUse(order.coupon_code, 1);
 
   const decrement = db.prepare('UPDATE products SET stock = stock - ? WHERE id = ?');
   const move = db.prepare(

@@ -45,6 +45,7 @@ export const api = {
   product: (slug) => request(`/products/${slug}`),
   categories: () => request('/categories'),
   shippingStatus: () => request('/shipping/status'),
+  validateCoupon: (code, items, email) => request('/coupons/validate', { method: 'POST', body: { code, items, email } }),
   shippingQuote: (cep, items) => request('/shipping/quote', { method: 'POST', body: { cep, items } }),
   createOrder: (body) => request('/orders', { method: 'POST', body }),
   order: (id) => request(`/orders/${id}`),
@@ -87,6 +88,10 @@ export const api = {
     updateOrder: (id, body) => request(`/admin/orders/${id}`, { method: 'PATCH', body }),
     customers: (params) => request('/admin/customers' + qs(params)),
     customer: (id) => request(`/admin/customers/${id}`),
+    coupons: () => request('/admin/coupons'),
+    createCoupon: (body) => request('/admin/coupons', { method: 'POST', body }),
+    updateCoupon: (id, body) => request(`/admin/coupons/${id}`, { method: 'PUT', body }),
+    deleteCoupon: (id) => request(`/admin/coupons/${id}`, { method: 'DELETE' }),
     setRole: (id, role) => request(`/admin/customers/${id}/role`, { method: 'PATCH', body: { role } }),
   },
 };

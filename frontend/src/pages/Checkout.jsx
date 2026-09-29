@@ -22,6 +22,11 @@ export default function Checkout() {
   const [payment, setPayment] = useState('pix');
   const [sending, setSending] = useState(false);
   const [error, setError] = useState('');
+  // coupon: `coupon` is the server's answer ({ code, label, discount, freeShipping })
+  const [couponInput, setCouponInput] = useState('');
+  const [coupon, setCoupon] = useState(null);
+  const [couponError, setCouponError] = useState('');
+  const [applying, setApplying] = useState(false);
   const { user } = useAuth();
   const [saved, setSaved] = useState([]);
   const [saveAddress, setSaveAddress] = useState(true);
@@ -64,7 +69,26 @@ export default function Checkout() {
 
   // same rounding as the server, so the total shown is exactly the total charged
   const round2 = (n) => Math.round(n * 100) / 100;
-  const discount = payment === 'pix' ? round2(round2(subtotal) * 0.05) : 0;
+  const couponDiscount = coupon?.discount || 0;
+  const shippingCost = coupon?.freeShipping ? 0 : shipping;
+  // same rules as the server: Pix 5% on the products after the coupon
+  const discount = payment === 'pix' ? round2((round2(subtotal) - couponDiscount) * 0.05) : 0;
+  const total = round2(subtotal - couponDiscount + (shippingCost || 0) - discount);
+
+  const cartItems = () => items.map(({ productId, qty }) => ({ productId, qty }));
+  const applyCoupon = async () => {
+    if (!couponInput.trim()) return setCouponError('Digite o código do cupom.');
+    setApplying(true);
+    setCouponError('');
+    try {
+      setCoupon(await api.validateCoupon(couponInput, cartItems(), form.email));
+      setCouponInput('');
+    } catch (err) {
+      setCouponError(err.message);
+    } finally {
+      setApplying(false);
+    }
+  };
   const set = (k) => (e) => setForm({ ...form, [k]: e.target.value });
 
   // Auto-fill address from the CEP.
@@ -83,6 +107,7 @@ export default function Checkout() {
         customer: form,
         payment,
         shippingService: ship.option?.id,
+        couponCode: coupon?.code,
         items: items.map(({ productId, qty, size, color }) => ({ productId, qty, size, color })),
       });
       if (isNewAddress && saveAddress) {
@@ -178,6 +203,34 @@ export default function Checkout() {
                 </label>
               ))}
             </div>
+
+            <div className="coupon field--full">
+              <span className="coupon__title">🎟️ Cupom de desconto</span>
+              {coupon ? (
+                <div className="coupon__applied">
+                  <span>
+                    <b>{coupon.code}</b>
+                    <small>{coupon.label}{couponDiscount > 0 && ` · −${formatPrice(couponDiscount)}`}</small>
+                  </span>
+                  <button type="button" className="link link--danger" onClick={() => setCoupon(null)}>remover</button>
+                </div>
+              ) : (
+                <div className="coupon__row">
+                  <input
+                    className="input"
+                    placeholder="Digite o código"
+                    value={couponInput}
+                    onChange={(e) => { setCouponInput(e.target.value.toUpperCase()); setCouponError(''); }}
+                    onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); applyCoupon(); } }}
+                    aria-label="Código do cupom"
+                  />
+                  <button type="button" className="btn btn--ghost btn--sm" disabled={applying} onClick={applyCoupon}>
+                    {applying ? '…' : 'Aplicar'}
+                  </button>
+                </div>
+              )}
+              {couponError && <p className="alert small">{couponError}</p>}
+            </div>
           </fieldset>
         </div>
 
@@ -193,10 +246,17 @@ export default function Checkout() {
           <div className="summary__row"><span>Subtotal</span><span>{formatPrice(subtotal)}</span></div>
           <div className="summary__row">
             <span>Frete{shippingEnabled && ship.option ? ` (${ship.option.name})` : ''}</span>
-            <span>{shipping == null ? <span className="muted">informe o CEP</span> : shipping ? formatPrice(shipping) : 'Grátis'}</span>
+            <span>
+              {coupon?.freeShipping ? (
+                <span className="good">Grátis (cupom)</span>
+              ) : shipping == null ? (
+                <span className="muted">informe o CEP</span>
+              ) : shipping ? formatPrice(shipping) : 'Grátis'}
+            </span>
           </div>
+          {couponDiscount > 0 && <div className="summary__row good"><span>Cupom {coupon.code}</span><span>−{formatPrice(couponDiscount)}</span></div>}
           {discount > 0 && <div className="summary__row good"><span>Desconto Pix</span><span>−{formatPrice(discount)}</span></div>}
-          <div className="summary__row summary__total"><span>Total</span><span>{formatPrice(subtotal + (shipping || 0) - discount)}</span></div>
+          <div className="summary__row summary__total"><span>Total</span><span>{formatPrice(total)}</span></div>
           {error && <p className="alert">{error}</p>}
           <button className="btn btn--primary btn--block" disabled={sending}>
             {sending ? 'Enviando…' : 'Confirmar pedido'}

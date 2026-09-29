@@ -3,6 +3,7 @@ import db, { toProduct, toOrder, toUser, toPet, toAddress } from '../db.js';
 import { requireAdmin } from '../auth.js';
 import { imageUpload, publicPath } from '../uploads.js';
 import { CATEGORIES, ORDER_STATUSES, round2, slugify, normalize } from '../util.js';
+import { TYPES as COUPON_TYPES, toCoupon, normalizeCode, countUse } from '../coupons.js';
 
 const router = Router();
 router.use(requireAdmin);
@@ -243,6 +244,7 @@ router.patch('/orders/:id', (req, res) => {
   db.transaction(() => {
     db.prepare('UPDATE orders SET status = ? WHERE id = ?').run(status, order.id);
     if (status === 'cancelado' && order.status !== 'cancelado') {
+      if (order.couponCode) countUse(order.couponCode, -1); // give the coupon use back
       // give the items back to stock
       const restock = db.prepare('UPDATE products SET stock = stock + ? WHERE id = ?');
       const move = db.prepare(
@@ -254,6 +256,58 @@ router.patch('/orders/:id', (req, res) => {
     }
   })();
   res.json(toOrder(db.prepare('SELECT * FROM orders WHERE id = ?').get(order.id)));
+});
+
+// ---------- coupons ----------
+function readCoupon(body) {
+  const c = {
+    code: normalizeCode(body?.code),
+    type: body?.type,
+    value: round2(Number(String(body?.value ?? 0).replace(',', '.')) || 0),
+    min_subtotal: round2(Number(String(body?.minSubtotal ?? 0).replace(',', '.')) || 0),
+    max_uses: body?.maxUses === '' || body?.maxUses == null ? null : Math.max(0, Math.floor(Number(body.maxUses))),
+    once_per_customer: body?.oncePerCustomer ? 1 : 0,
+    expires_at: body?.expiresAt || null,
+    active: body?.active === false ? 0 : 1,
+  };
+  const errors = [];
+  if (!/^[A-Z0-9_-]{3,30}$/.test(c.code)) errors.push('Código: 3 a 30 letras/números, sem espaço.');
+  if (!COUPON_TYPES.includes(c.type)) errors.push('Tipo inválido.');
+  if (c.type === 'percent' && !(c.value > 0 && c.value <= 100)) errors.push('Porcentagem entre 1 e 100.');
+  if (c.type === 'fixed' && !(c.value > 0)) errors.push('Informe o valor do desconto.');
+  if (c.type === 'frete') c.value = 0;
+  if (c.expires_at && !/^\d{4}-\d{2}-\d{2}$/.test(c.expires_at)) errors.push('Data de validade inválida.');
+  return { c, error: errors.join(' ') || null };
+}
+
+router.get('/coupons', (_req, res) => {
+  res.json(db.prepare('SELECT * FROM coupons ORDER BY active DESC, created_at DESC').all().map(toCoupon));
+});
+
+router.post('/coupons', (req, res) => {
+  const { c, error } = readCoupon(req.body);
+  if (error) return res.status(400).json({ error });
+  if (db.prepare('SELECT 1 FROM coupons WHERE code = ?').get(c.code)) return res.status(409).json({ error: 'Já existe um cupom com esse código.' });
+  const { lastInsertRowid } = db.prepare(`INSERT INTO coupons (code, type, value, min_subtotal, max_uses, once_per_customer, expires_at, active)
+    VALUES (@code, @type, @value, @min_subtotal, @max_uses, @once_per_customer, @expires_at, @active)`).run(c);
+  res.status(201).json(toCoupon(db.prepare('SELECT * FROM coupons WHERE id = ?').get(lastInsertRowid)));
+});
+
+router.put('/coupons/:id', (req, res) => {
+  const current = db.prepare('SELECT * FROM coupons WHERE id = ?').get(req.params.id);
+  if (!current) return res.status(404).json({ error: 'Cupom não encontrado.' });
+  const { c, error } = readCoupon(req.body);
+  if (error) return res.status(400).json({ error });
+  if (db.prepare('SELECT 1 FROM coupons WHERE code = ? AND id != ?').get(c.code, current.id))
+    return res.status(409).json({ error: 'Já existe um cupom com esse código.' });
+  db.prepare(`UPDATE coupons SET code=@code, type=@type, value=@value, min_subtotal=@min_subtotal, max_uses=@max_uses,
+    once_per_customer=@once_per_customer, expires_at=@expires_at, active=@active WHERE id=@id`).run({ ...c, id: current.id });
+  res.json(toCoupon(db.prepare('SELECT * FROM coupons WHERE id = ?').get(current.id)));
+});
+
+router.delete('/coupons/:id', (req, res) => {
+  db.prepare('DELETE FROM coupons WHERE id = ?').run(req.params.id);
+  res.json({ ok: true });
 });
 
 // ---------- customers ----------

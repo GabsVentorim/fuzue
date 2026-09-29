@@ -38,6 +38,10 @@ export default function OrderSuccess() {
           <span>Frete{order.shippingInfo ? ` · ${order.shippingInfo.name} (até ${order.shippingInfo.days?.max} ${order.shippingInfo.days?.max > 1 ? 'dias úteis' : 'dia útil'})` : ''}</span>
           <span>{order.shipping ? formatPrice(order.shipping) : 'Grátis'}</span>
         </div>
+        {order.couponDiscount > 0 && (
+          <div className="summary__row good"><span>Cupom {order.couponCode}</span><span>−{formatPrice(order.couponDiscount)}</span></div>
+        )}
+        {order.discount > 0 && <div className="summary__row good"><span>Desconto Pix</span><span>−{formatPrice(order.discount)}</span></div>}
         <div className="summary__row"><span>Pagamento</span><span>{payLabel[order.payment]}</span></div>
         <div className="summary__row summary__total"><span>Total</span><span>{formatPrice(order.total)}</span></div>
       </div>

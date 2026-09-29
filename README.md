@@ -63,6 +63,19 @@ Shipping prices are real quotes from [SuperFrete](https://superfrete.readme.io):
 - Package size per item is `DEFAULT_PACKAGE` in `backend/src/shipping.js`: 16×11×2 cm, 100 g.
 - Without a token, the site falls back to the flat fee (`shipping.fee`).
 
+## Coupons
+
+Create coupons under **Admin → Cupons**. Customers enter them in the **Pagamento** section of the checkout.
+
+- **Types:**
+  - percentage off the products;
+  - fixed amount in R$;
+  - free shipping.
+- **Optional rules:** minimum order value, usage limit, expiry date, and one use per customer (checked by e-mail).
+- **Checked on the server:** the coupon is validated again when the order is placed, so nobody can forge a discount in the browser.
+- **With Pix:** the 5% Pix discount applies to the products after the coupon.
+- **Cancelling:** cancelling an order gives its coupon use back.
+
 ## Admin
 
 Make yourself an admin in either of two ways:

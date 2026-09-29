@@ -26,6 +26,7 @@ import AdminProducts from './pages/admin/Products';
 import ProductForm from './pages/admin/ProductForm';
 import Stock from './pages/admin/Stock';
 import Customers from './pages/admin/Customers';
+import Coupons from './pages/admin/Coupons';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -64,6 +65,7 @@ export default function App() {
             <Route path="produtos/novo" element={<ProductForm />} />
             <Route path="produtos/:id" element={<ProductForm />} />
             <Route path="estoque" element={<Stock />} />
+            <Route path="cupons" element={<Coupons />} />
             <Route path="clientes" element={<Customers />} />
             <Route path="clientes/:id" element={<Customers />} />
           </Route>
