@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import Logo from './Logo';
 import { Paw } from './Icons';
-import brand, { whatsappLink } from '../brand';
+import brand, { instagramLink, whatsappLink } from '../brand';
 
 export default function Footer() {
   return (
@@ -23,7 +23,7 @@ export default function Footer() {
           <h4>Fale com a gente</h4>
           <a href={whatsappLink(`Oi, ${brand.name}!`)} target="_blank" rel="noreferrer">WhatsApp</a>
           <a href={`mailto:${brand.email}`}>{brand.email}</a>
-          <span>{brand.instagram}</span>
+          <a href={instagramLink()} target="_blank" rel="noreferrer">Instagram {brand.instagram}</a>
         </div>
       </div>
       <p className="footer__copy container">

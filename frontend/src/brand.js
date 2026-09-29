@@ -7,6 +7,8 @@ export default brand;
 export const formatPrice = (value) =>
   value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
+export const instagramLink = () => `https://www.instagram.com/${brand.instagram.replace(/^@/, '')}/`;
+
 export const whatsappLink = (text = '') =>
   `https://wa.me/${brand.whatsapp}?text=${encodeURIComponent(text)}`;
 
