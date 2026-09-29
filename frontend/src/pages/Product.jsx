@@ -132,7 +132,7 @@ export default function Product() {
           )}
 
           {shippingEnabled && !soldOut && (
-            <ShippingCalculator auto items={[{ productId: product.id, qty }]} cep={ship.cep} onCepChange={setShipCep} />
+            <ShippingCalculator auto limit={3} items={[{ productId: product.id, qty }]} cep={ship.cep} onCepChange={setShipCep} />
           )}
 
           <ul className="pdp__perks">

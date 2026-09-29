@@ -8,7 +8,8 @@ const days = ({ min, max }) => (min === max ? `${max}` : `${min} a ${max}`) + (m
 
 // CEP box + list of shipping options from SuperFrete.
 // `items`: [{ productId, qty }]. With `onSelect`, options become selectable (cart / checkout).
-export default function ShippingCalculator({ items, cep: cepProp, onCepChange, selectedId, onSelect, onQuote, auto = false, compact = false, hideInput = false }) {
+export default function ShippingCalculator({ items, cep: cepProp, onCepChange, selectedId, onSelect, onQuote, auto = false, compact = false, hideInput = false, limit = 0 }) {
+  const [showAll, setShowAll] = useState(false);
   const [cep, setCep] = useState(maskCep(cepProp));
   const [quote, setQuote] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -27,6 +28,7 @@ export default function ShippingCalculator({ items, cep: cepProp, onCepChange, s
     try {
       const q = await api.shippingQuote(digits, items);
       setQuote(q);
+      setShowAll(false);
       onQuote?.(q);
     } catch (err) {
       setQuote(null);
@@ -71,7 +73,10 @@ export default function ShippingCalculator({ items, cep: cepProp, onCepChange, s
 
       {quote && !loading && (
         <ul className="ship__list" role={onSelect ? 'radiogroup' : undefined}>
-          {quote.options.map((o) => {
+          {(limit && !showAll
+            ? quote.options.filter((o, i) => i < limit || o.id === selectedId) // keep the chosen one visible
+            : quote.options
+          ).map((o) => {
             const on = selectedId === o.id;
             const body = (
               <>
@@ -96,6 +101,11 @@ export default function ShippingCalculator({ items, cep: cepProp, onCepChange, s
             );
           })}
         </ul>
+      )}
+      {quote && !loading && limit > 0 && quote.options.length > limit && (
+        <button type="button" className="link ship__more" onClick={() => setShowAll(!showAll)}>
+          {showAll ? 'Ver menos opções' : `Ver mais ${quote.options.length - limit} ${quote.options.length - limit > 1 ? 'opções' : 'opção'}`}
+        </button>
       )}
       {quote && !loading && !quote.freeShipping && (
         <p className="muted small">Frete grátis na opção mais barata em compras acima de {formatPrice(quote.freeFrom)}.</p>
