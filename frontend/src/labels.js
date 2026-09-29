@@ -60,12 +60,5 @@ export function petAge(birthDate) {
   return parts.join(' e ');
 }
 
-// Matches the size guide on the home page (P 20–30, M 30–42, G 42–55 cm).
-export function collarSize(neckCm) {
-  if (!neckCm) return null;
-  if (neckCm < 20) return 'menor que P — fale com a gente';
-  if (neckCm <= 30) return 'P';
-  if (neckCm <= 42) return 'M';
-  if (neckCm <= 55) return 'G';
-  return 'maior que G — fale com a gente';
-}
+// Collar size from the neck measurement — the size table lives in sizes.js.
+export { collarSize } from './sizes';

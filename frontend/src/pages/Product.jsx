@@ -3,11 +3,12 @@ import { Link, useParams } from 'react-router-dom';
 import { api } from '../api';
 import { formatPrice } from '../brand';
 import { useCart } from '../context/CartContext';
+import { SIZES } from '../sizes';
 import ProductArt from '../components/ProductArt';
 import ProductCard from '../components/ProductCard';
 import { Truck, Shield } from '../components/Icons';
 
-const sizeHelp = { P: '20–30 cm', M: '30–42 cm', G: '42–55 cm' };
+const sizeHelp = Object.fromEntries(SIZES.map((s) => [s.id, `${s.min}–${s.max} cm`]));
 const catName = { coleiras: 'Coleiras', bandanas: 'Bandanas', presilhas: 'Presilhas' };
 
 export default function Product() {
@@ -93,7 +94,10 @@ export default function Product() {
 
           {needsSize && (
             <div className="opt">
-              <span className="opt__label">Tamanho {size && <small className="muted">({sizeHelp[size]})</small>}</span>
+              <span className="opt__label">
+                Tamanho {size && sizeHelp[size] && <small className="muted">({sizeHelp[size]} de pescoço)</small>}
+                <Link to="/guia-de-tamanhos" className="link small opt__help">Qual é o meu tamanho?</Link>
+              </span>
               <div className="sizes">
                 {product.sizes.map((s) => (
                   <button

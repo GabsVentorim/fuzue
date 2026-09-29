@@ -17,6 +17,7 @@ export default function Footer() {
           <Link to="/loja?categoria=coleiras">Coleiras</Link>
           <Link to="/loja?categoria=bandanas">Bandanas</Link>
           <Link to="/loja?categoria=presilhas">Presilhas</Link>
+          <Link to="/guia-de-tamanhos">Guia de tamanhos</Link>
         </div>
         <div>
           <h4>Fale com a gente</h4>

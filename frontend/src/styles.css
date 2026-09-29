@@ -510,6 +510,65 @@ p.tag { margin: 6px 0 0; }
 .color-input { width: 46px; height: 46px; padding: 0; border: 2px solid var(--line); border-radius: 12px; background: #fff; cursor: pointer; }
 .product-form .row .input { flex: 1; min-width: 140px; }
 
+/* ===== Account menu (header) ===== */
+.account-menu { position: relative; flex-shrink: 0; }
+.account-menu .account-btn { border: 0; padding: 0; cursor: pointer; }
+.account-menu__pop {
+  position: absolute; right: 0; top: calc(100% + 10px); z-index: 30; min-width: 230px;
+  display: grid; background: #fff; border: 2px solid var(--line); border-radius: var(--radius-sm);
+  box-shadow: 0 14px 30px rgba(43, 33, 64, 0.16); padding: 6px; animation: fade-up 0.15s ease;
+}
+.account-menu__who { display: grid; font-size: 0.98rem; padding: 8px 12px 10px; border-bottom: 2px dashed var(--line); margin-bottom: 4px; }
+.account-menu__who small { overflow: hidden; text-overflow: ellipsis; }
+.account-menu__pop a, .account-menu__out {
+  display: block; width: 100%; text-align: left; padding: 10px 12px; border-radius: 10px;
+  font: inherit; font-size: 0.98rem; font-weight: 800; color: var(--ink); background: none; border: 0; cursor: pointer;
+}
+.account-menu__pop a:hover, .account-menu__out:hover { background: var(--pink-soft); color: var(--red); }
+.account-menu__out { color: var(--red-dark); border-top: 2px dashed var(--line); margin-top: 4px; border-radius: 0 0 10px 10px; }
+
+/* ===== Size guide ===== */
+.size-guide { display: grid; gap: 20px; }
+.btn--light { background: var(--pink-soft); color: var(--red); margin-top: 8px; }
+.btn--light:hover { background: #fff; }
+.size-guide__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
+.size-guide h3 { font-size: 1.35rem; color: var(--red); margin-bottom: 14px; }
+.finder { display: grid; gap: 14px; }
+.porte-opts { display: flex; flex-wrap: wrap; gap: 8px; }
+.porte-opts .chip { font-size: 0.9rem; padding: 8px 14px; }
+.finder__result {
+  display: grid; gap: 4px; justify-items: start; padding: 16px 18px; border-radius: var(--radius-sm);
+  background: var(--blue-soft); animation: fade-up 0.25s ease;
+}
+@keyframes fade-up { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.finder__result p { margin: 0 0 6px; }
+.finder__label { font-size: 0.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: var(--blue); }
+.finder__size { font-family: var(--font-display); font-size: 2.4rem; line-height: 1; color: var(--ink); }
+.steps { list-style: none; margin: 0 0 16px; padding: 0; display: grid; gap: 14px; }
+.steps li { display: flex; gap: 12px; align-items: flex-start; }
+.steps p { margin: 2px 0 0; }
+.steps__n {
+  display: grid; place-items: center; flex-shrink: 0; width: 32px; height: 32px; border-radius: 50%;
+  background: var(--red); color: var(--pink-soft); font-family: var(--font-display); font-weight: 700;
+}
+.opt__help { margin-left: 10px; font-weight: 800; }
+.nowrap { white-space: nowrap; }
+.sizes-list small { text-align: right; }
+
+/* ===== Printable tape measure ===== */
+.tape-help { background: #fff; border: 2px solid var(--line); border-radius: var(--radius); padding: 22px; margin-bottom: 24px; max-width: 760px; }
+.tape { display: grid; gap: 10mm; overflow-x: auto; padding-bottom: 8px; }
+.tape__strip { display: grid; gap: 2mm; }
+.tape__tag { font-size: 0.8rem; font-weight: 800; color: var(--muted); }
+.tape__strip svg { display: block; max-width: none; }
+@media print {
+  .header, .footer, .no-print, .toast { display: none !important; }
+  body, #root { background: #fff !important; min-height: 0; }
+  .tape-page { padding: 0; width: auto; }
+  .tape { overflow: visible; }
+  .tape__tag { color: #000; }
+}
+
 /* ===== Animations ===== */
 @keyframes bob { 0%, 100% { translate: 0 0; } 50% { translate: 0 -12px; } }
 @keyframes pop { 0% { transform: scale(0.4); } 70% { transform: scale(1.15); } 100% { transform: scale(1); } }
@@ -525,7 +584,7 @@ p.tag { margin: 6px 0 0; }
   .blob--cream { width: 130px; height: 130px; }
   .perks { grid-template-columns: 1fr 1fr; }
   .summary { position: static; }
-  .admin, .split, .account-grid, .admin-grid { grid-template-columns: 1fr; }
+  .admin, .split, .account-grid, .admin-grid, .size-guide__grid { grid-template-columns: 1fr; }
   .admin__nav { position: static; display: flex; flex-wrap: wrap; }
   .admin__title { width: 100%; }
   .order-detail { position: static; }

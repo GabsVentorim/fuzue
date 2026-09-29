@@ -11,6 +11,8 @@ import Checkout from './pages/Checkout';
 import OrderSuccess from './pages/OrderSuccess';
 import NotFound from './pages/NotFound';
 import Login from './pages/Login';
+import SizeGuidePage from './pages/SizeGuidePage';
+import TapeMeasure from './pages/TapeMeasure';
 import RequireAuth from './components/RequireAuth';
 import AccountLayout from './pages/account/AccountLayout';
 import Profile from './pages/account/Profile';
@@ -47,6 +49,8 @@ export default function App() {
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/pedido/:id" element={<OrderSuccess />} />
           <Route path="/entrar" element={<Login />} />
+          <Route path="/guia-de-tamanhos" element={<SizeGuidePage />} />
+          <Route path="/fita-metrica" element={<TapeMeasure />} />
           <Route path="/minha-conta" element={<RequireAuth><AccountLayout /></RequireAuth>}>
             <Route index element={<Profile />} />
             <Route path="pets" element={<Pets />} />

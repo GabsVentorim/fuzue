@@ -5,6 +5,7 @@ import brand from '../brand';
 import { asset } from '../assets';
 import ProductCard from '../components/ProductCard';
 import ProductArt from '../components/ProductArt';
+import SizeGuide from '../components/SizeGuide';
 import { Paw, Truck, Heart, Shield, Sparkle } from '../components/Icons';
 
 const categories = [
@@ -127,17 +128,7 @@ export default function Home() {
 
       {/* SIZE HELP */}
       <section className="section container">
-        <div className="sizes-box">
-          <div>
-            <h2>Qual tamanho escolher?</h2>
-            <p>Meça o pescoço do seu pet com uma fita métrica e deixe espaço para dois dedinhos.</p>
-          </div>
-          <ul className="sizes-list">
-            <li><b>P</b> 20–30 cm <small>gatos e cães pequenos</small></li>
-            <li><b>M</b> 30–42 cm <small>cães médios</small></li>
-            <li><b>G</b> 42–55 cm <small>cães grandes</small></li>
-          </ul>
-        </div>
+        <SizeGuide />
       </section>
     </>
   );
