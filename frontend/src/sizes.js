@@ -1,13 +1,20 @@
 // Single source for collar sizes: the size table, the breed → neck guide and the size finder.
 // Used by the home size guide, the printable tape measure page and the pet cards.
 
+// Each size fits a neck UP TO `max` cm (measured with two fingers of slack).
 export const SIZES = [
-  { id: 'PP', min: 15, max: 20, hint: 'filhotes, gatos e cães bem pequenos' },
-  { id: 'P', min: 20, max: 30, hint: 'gatos e cães pequenos' },
-  { id: 'M', min: 30, max: 42, hint: 'cães médios' },
-  { id: 'G', min: 42, max: 55, hint: 'cães grandes' },
-  { id: 'GG', min: 55, max: 70, hint: 'cães gigantes' },
+  { id: 'XPP', min: 0, max: 25, hint: 'filhotes e cães bem pequenos' },
+  { id: 'PP', min: 25, max: 30, hint: 'gatos e cães mini' },
+  { id: 'P', min: 30, max: 35, hint: 'cães pequenos' },
+  { id: 'M', min: 35, max: 40, hint: 'cães pequenos a médios' },
+  { id: 'G', min: 40, max: 45, hint: 'cães médios' },
+  { id: 'GG', min: 45, max: 50, hint: 'cães médios a grandes' },
+  { id: 'XG', min: 50, max: 55, hint: 'cães grandes' },
+  { id: 'XXG', min: 55, max: 60, hint: 'cães grandes e gigantes' },
 ];
+
+// "até 25 cm", "26–30 cm", …
+export const sizeRange = (s, i = SIZES.indexOf(s)) => (i === 0 ? `até ${s.max} cm` : `${s.min + 1}–${s.max} cm`);
 
 // Typical ADULT neck circumference (cm). Individuals vary — measuring is always best.
 export const BREED_NECKS = [
@@ -25,11 +32,11 @@ export const BREED_NECKS = [
 
 // For mixed-breed dogs (SRD) — keys match the pet "size" field.
 export const PORTE_NECKS = {
-  mini: { label: 'Mini (até 5 kg)', min: 18, max: 28 },
-  pequeno: { label: 'Pequeno (5–10 kg)', min: 25, max: 35 },
-  medio: { label: 'Médio (10–25 kg)', min: 32, max: 45 },
-  grande: { label: 'Grande (25–45 kg)', min: 42, max: 58 },
-  gigante: { label: 'Gigante (45 kg+)', min: 55, max: 70 },
+  mini: { label: 'Mini (até 5 kg)', min: 18, max: 26 },
+  pequeno: { label: 'Pequeno (5–10 kg)', min: 26, max: 34 },
+  medio: { label: 'Médio (10–25 kg)', min: 35, max: 44 },
+  grande: { label: 'Grande (25–45 kg)', min: 45, max: 55 },
+  gigante: { label: 'Gigante (45 kg+)', min: 55, max: 65 },
 };
 
 // Size for an exact neck measurement (cm), or null when out of range.

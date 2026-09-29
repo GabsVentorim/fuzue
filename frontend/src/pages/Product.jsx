@@ -3,12 +3,12 @@ import { Link, useParams } from 'react-router-dom';
 import { api } from '../api';
 import { formatPrice } from '../brand';
 import { useCart } from '../context/CartContext';
-import { SIZES } from '../sizes';
+import { SIZES, sizeRange } from '../sizes';
 import ProductArt from '../components/ProductArt';
 import ProductCard from '../components/ProductCard';
 import { Truck, Shield } from '../components/Icons';
 
-const sizeHelp = Object.fromEntries(SIZES.map((s) => [s.id, `${s.min}–${s.max} cm`]));
+const sizeHelp = Object.fromEntries(SIZES.map((s) => [s.id, sizeRange(s)]));
 const catName = { coleiras: 'Coleiras', bandanas: 'Bandanas', presilhas: 'Presilhas' };
 
 export default function Product() {

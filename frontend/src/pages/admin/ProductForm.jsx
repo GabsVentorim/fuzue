@@ -2,9 +2,10 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { api } from '../../api';
 import ProductArt from '../../components/ProductArt';
+import { SIZES } from '../../sizes';
 
 const PATTERNS = { plain: 'Lisa', dots: 'Bolinhas', stripes: 'Listras', hearts: 'Corações' };
-const DEFAULT_SIZES = ['PP', 'P', 'M', 'G', 'GG', 'Único'];
+const DEFAULT_SIZES = [...SIZES.map((s) => s.id), 'Único'];
 
 const empty = {
   name: '', category: 'coleiras', price: '', description: '', colors: [{ name: '', hex: '#E8432A' }],

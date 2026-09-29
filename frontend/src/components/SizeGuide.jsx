@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { SIZES, BREED_NECKS, PORTE_NECKS, sizeForNeck, sizesForRange } from '../sizes';
+import { SIZES, BREED_NECKS, PORTE_NECKS, sizeForNeck, sizesForRange, sizeRange } from '../sizes';
 
 const MODES = [
   { id: 'raca', label: 'Pela raça' },
@@ -59,7 +59,7 @@ export default function SizeGuide() {
         </div>
         <ul className="sizes-list">
           {SIZES.map((s) => (
-            <li key={s.id}><b>{s.id}</b> <span className="nowrap">{s.min}–{s.max} cm</span> <small>{s.hint}</small></li>
+            <li key={s.id}><b>{s.id}</b> <span className="nowrap">{sizeRange(s)}</span> <small>{s.hint}</small></li>
           ))}
         </ul>
       </div>
