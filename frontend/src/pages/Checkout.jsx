@@ -5,6 +5,7 @@ import { useCart } from '../context/CartContext';
 import { formatPrice } from '../brand';
 import { useAuth } from '../context/AuthContext';
 import { lookupCep } from '../cep';
+import ShippingCalculator, { maskCep } from '../components/ShippingCalculator';
 
 const empty = { name: '', email: '', phone: '', cep: '', address: '', number: '', complement: '', city: '', state: '' };
 
@@ -15,9 +16,9 @@ const payments = [
 ];
 
 export default function Checkout() {
-  const { items, subtotal, shipping, clear } = useCart();
+  const { items, subtotal, shipping, clear, shippingEnabled, ship, setShipCep, chooseShipping } = useCart();
   const navigate = useNavigate();
-  const [form, setForm] = useState(empty);
+  const [form, setForm] = useState(() => ({ ...empty, cep: maskCep(ship.cep) }));
   const [payment, setPayment] = useState('pix');
   const [sending, setSending] = useState(false);
   const [error, setError] = useState('');
@@ -45,6 +46,13 @@ export default function Checkout() {
   );
   const isNewAddress = user && !saved.some(sameAs);
 
+  // The address CEP drives the shipping quote.
+  const cepDigits = form.cep.replace(/\D/g, '');
+  useEffect(() => {
+    if (cepDigits.length === 8) setShipCep(maskCep(cepDigits));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cepDigits]);
+
   if (items.length === 0) {
     return (
       <section className="section container empty">
@@ -54,7 +62,9 @@ export default function Checkout() {
     );
   }
 
-  const discount = payment === 'pix' ? subtotal * 0.05 : 0;
+  // same rounding as the server, so the total shown is exactly the total charged
+  const round2 = (n) => Math.round(n * 100) / 100;
+  const discount = payment === 'pix' ? round2(round2(subtotal) * 0.05) : 0;
   const set = (k) => (e) => setForm({ ...form, [k]: e.target.value });
 
   // Auto-fill address from the CEP.
@@ -65,12 +75,14 @@ export default function Checkout() {
 
   const submit = async (e) => {
     e.preventDefault();
+    if (shippingEnabled && !ship.option) return setError('Escolha uma opção de entrega.');
     setSending(true);
     setError('');
     try {
       const order = await api.createOrder({
         customer: form,
         payment,
+        shippingService: ship.option?.id,
         items: items.map(({ productId, qty, size, color }) => ({ productId, qty, size, color })),
       });
       if (isNewAddress && saveAddress) {
@@ -130,6 +142,31 @@ export default function Checkout() {
             )}
           </fieldset>
 
+          {shippingEnabled && (
+            <fieldset className="box">
+              <legend>Entrega</legend>
+              <div className="field--full">
+                {cepDigits.length === 8 ? (
+                  <ShippingCalculator
+                    hideInput
+                    auto
+                    items={items.map(({ productId, qty }) => ({ productId, qty }))}
+                    cep={form.cep}
+                    selectedId={ship.option?.id}
+                    onSelect={(o, q) => { chooseShipping(o, q.cep); setError(''); }}
+                    onQuote={(q) => {
+                      if (!q) return;
+                      const same = q.options.find((o) => o.id === ship.option?.id);
+                      chooseShipping(same || q.options[0], q.cep);
+                    }}
+                  />
+                ) : (
+                  <p className="muted small">Preencha o CEP no endereço para ver as opções de entrega.</p>
+                )}
+              </div>
+            </fieldset>
+          )}
+
           <fieldset className="box">
             <legend>Pagamento</legend>
             <div className="pay">
@@ -154,9 +191,12 @@ export default function Checkout() {
           ))}
           <hr />
           <div className="summary__row"><span>Subtotal</span><span>{formatPrice(subtotal)}</span></div>
-          <div className="summary__row"><span>Frete</span><span>{shipping ? formatPrice(shipping) : 'Grátis'}</span></div>
+          <div className="summary__row">
+            <span>Frete{shippingEnabled && ship.option ? ` (${ship.option.name})` : ''}</span>
+            <span>{shipping == null ? <span className="muted">informe o CEP</span> : shipping ? formatPrice(shipping) : 'Grátis'}</span>
+          </div>
           {discount > 0 && <div className="summary__row good"><span>Desconto Pix</span><span>−{formatPrice(discount)}</span></div>}
-          <div className="summary__row summary__total"><span>Total</span><span>{formatPrice(subtotal + shipping - discount)}</span></div>
+          <div className="summary__row summary__total"><span>Total</span><span>{formatPrice(subtotal + (shipping || 0) - discount)}</span></div>
           {error && <p className="alert">{error}</p>}
           <button className="btn btn--primary btn--block" disabled={sending}>
             {sending ? 'Enviando…' : 'Confirmar pedido'}

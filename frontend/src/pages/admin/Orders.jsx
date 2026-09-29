@@ -59,7 +59,10 @@ function OrderDetail({ order, onChange, onClose }) {
           <span>{formatPrice(i.total)}</span>
         </div>
       ))}
-      <div className="summary__row small"><span>Frete</span><span>{order.shipping ? formatPrice(order.shipping) : 'Grátis'}</span></div>
+      <div className="summary__row small">
+        <span>Frete{order.shippingInfo ? ` · ${order.shippingInfo.name}${order.shippingInfo.company && order.shippingInfo.company.toLowerCase() !== order.shippingInfo.name.toLowerCase() ? ` (${order.shippingInfo.company})` : ''}` : ''}</span>
+        <span>{order.shipping ? formatPrice(order.shipping) : 'Grátis'}</span>
+      </div>
       {order.discount > 0 && <div className="summary__row small good"><span>Desconto</span><span>−{formatPrice(order.discount)}</span></div>}
       <div className="summary__row summary__total"><span>Total</span><span>{formatPrice(order.total)}</span></div>
     </div>

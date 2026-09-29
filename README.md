@@ -50,6 +50,19 @@ Everything lives in a SQLite file, `backend/data/fuzue.db`, which is created on 
 
 If the Client ID isn't set, the Google button stays hidden and e-mail login still works.
 
+## Shipping (SuperFrete)
+
+Shipping prices are real quotes from [SuperFrete](https://superfrete.readme.io): PAC, SEDEX, Mini Envios, Jadlog, Loggi and J&T.
+
+- Put these in `backend/.env`:
+  - `SUPERFRETE_TOKEN` — **secret**. It stays on the server; the site only calls `/api/shipping/quote`.
+  - `STORE_CEP` — the CEP orders ship from.
+- Customers can calculate shipping on the product page and in the cart, and choose the carrier at checkout.
+- When the order is placed, the server fetches the quote again, so the price can't be changed in the browser.
+- **Free shipping:** above `shipping.freeFrom` in `brand.config.json`, the cheapest option is free.
+- Package size per item is `DEFAULT_PACKAGE` in `backend/src/shipping.js`: 16×11×2 cm, 100 g.
+- Without a token, the site falls back to the flat fee (`shipping.fee`).
+
 ## Admin
 
 Make yourself an admin in either of two ways:

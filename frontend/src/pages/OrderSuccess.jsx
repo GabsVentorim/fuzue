@@ -34,6 +34,10 @@ export default function OrderSuccess() {
           </div>
         ))}
         <hr />
+        <div className="summary__row">
+          <span>Frete{order.shippingInfo ? ` · ${order.shippingInfo.name} (até ${order.shippingInfo.days?.max} ${order.shippingInfo.days?.max > 1 ? 'dias úteis' : 'dia útil'})` : ''}</span>
+          <span>{order.shipping ? formatPrice(order.shipping) : 'Grátis'}</span>
+        </div>
         <div className="summary__row"><span>Pagamento</span><span>{payLabel[order.payment]}</span></div>
         <div className="summary__row summary__total"><span>Total</span><span>{formatPrice(order.total)}</span></div>
       </div>

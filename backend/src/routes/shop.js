@@ -2,12 +2,30 @@ import { Router } from 'express';
 import { randomBytes } from 'node:crypto';
 import db, { toProduct, toOrder } from '../db.js';
 import { CATEGORIES, readBrand, round2, normalize } from '../util.js';
+import rateLimit from 'express-rate-limit';
+import { quoteShipping, shippingEnabled, ShippingError } from '../shipping.js';
 
 const router = Router();
 
 router.get('/store', (_req, res) => res.json(readBrand()));
 
 router.get('/categories', (_req, res) => res.json(CATEGORIES));
+
+// ---------- shipping ----------
+router.get('/shipping/status', (_req, res) => res.json({ enabled: shippingEnabled() }));
+
+const quoteLimiter = rateLimit({ windowMs: 60 * 1000, limit: 30, standardHeaders: 'draft-7', legacyHeaders: false,
+  message: { error: 'Muitas consultas de frete. Espere um minutinho.' } });
+
+router.post('/shipping/quote', quoteLimiter, async (req, res) => {
+  try {
+    res.json(await quoteShipping(req.body?.cep, req.body?.items));
+  } catch (err) {
+    if (err instanceof ShippingError) return res.status(err.status).json({ error: err.message });
+    console.error(err);
+    res.status(500).json({ error: 'Erro ao calcular o frete.' });
+  }
+});
 
 router.get('/products', (req, res) => {
   const { category, search, featured, sort } = req.query;
@@ -36,7 +54,7 @@ router.get('/products/:slug', (req, res) => {
 
 // Validates and prices the order on the server (never trust client prices),
 // then saves it and decrements stock in a single transaction.
-const placeOrder = db.transaction((body, user) => {
+const placeOrder = db.transaction((body, user, shippingChoice) => {
   const { items, customer, payment } = body || {};
 
   const errors = [];
@@ -75,7 +93,8 @@ const placeOrder = db.transaction((body, user) => {
   const brand = readBrand();
   const subtotal = round2(lines.reduce((sum, l) => sum + l.total, 0));
   const { fee = 15, freeFrom = 150 } = brand.shipping || {};
-  const shipping = subtotal >= freeFrom ? 0 : fee;
+  // Real quote (SuperFrete) when configured; otherwise the flat fee from brand.config.json.
+  const shipping = shippingChoice ? shippingChoice.price : subtotal >= freeFrom ? 0 : fee;
   const discount = payment === 'pix' ? round2(subtotal * 0.05) : 0;
 
   const cleanCustomer = Object.fromEntries(
@@ -95,12 +114,15 @@ const placeOrder = db.transaction((body, user) => {
     items: JSON.stringify(lines),
     subtotal,
     shipping,
+    shipping_info: shippingChoice
+      ? JSON.stringify({ id: shippingChoice.id, name: shippingChoice.name, company: shippingChoice.company, days: shippingChoice.days, free: shippingChoice.free })
+      : null,
     discount,
     total: round2(subtotal + shipping - discount),
   };
 
-  db.prepare(`INSERT INTO orders (id, user_id, created_at, status, customer, payment, items, subtotal, shipping, discount, total)
-    VALUES (@id, @user_id, @created_at, @status, @customer, @payment, @items, @subtotal, @shipping, @discount, @total)`).run(order);
+  db.prepare(`INSERT INTO orders (id, user_id, created_at, status, customer, payment, items, subtotal, shipping, shipping_info, discount, total)
+    VALUES (@id, @user_id, @created_at, @status, @customer, @payment, @items, @subtotal, @shipping, @shipping_info, @discount, @total)`).run(order);
 
   const decrement = db.prepare('UPDATE products SET stock = stock - ? WHERE id = ?');
   const move = db.prepare(
@@ -114,12 +136,22 @@ const placeOrder = db.transaction((body, user) => {
   return { status: 201, order: toOrder(db.prepare('SELECT * FROM orders WHERE id = ?').get(order.id)) };
 });
 
-router.post('/orders', (req, res) => {
+router.post('/orders', async (req, res) => {
   try {
-    const result = placeOrder(req.body, req.user);
+    // Re-quote on the server so the shipping price can't be tampered with.
+    let shippingChoice = null;
+    if (shippingEnabled()) {
+      const serviceId = Number(req.body?.shippingService);
+      if (!serviceId) return res.status(400).json({ error: 'Escolha uma opção de frete.' });
+      const quote = await quoteShipping(req.body?.customer?.cep, req.body?.items);
+      shippingChoice = quote.options.find((o) => o.id === serviceId);
+      if (!shippingChoice) return res.status(400).json({ error: 'Essa opção de frete não está mais disponível. Escolha outra.' });
+    }
+    const result = placeOrder(req.body, req.user, shippingChoice);
     if (result.error) return res.status(result.status).json({ error: result.error });
     res.status(201).json(result.order);
   } catch (err) {
+    if (err instanceof ShippingError) return res.status(err.status).json({ error: err.message });
     console.error(err);
     res.status(500).json({ error: 'Erro ao criar pedido.' });
   }

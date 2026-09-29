@@ -5,6 +5,7 @@ import { formatPrice } from '../brand';
 import { useCart } from '../context/CartContext';
 import { SIZES, sizeRange } from '../sizes';
 import ProductArt from '../components/ProductArt';
+import ShippingCalculator from '../components/ShippingCalculator';
 import ProductCard from '../components/ProductCard';
 import { Truck, Shield } from '../components/Icons';
 
@@ -13,7 +14,7 @@ const catName = { coleiras: 'Coleiras', bandanas: 'Bandanas', presilhas: 'Presil
 
 export default function Product() {
   const { slug } = useParams();
-  const { add } = useCart();
+  const { add, shippingEnabled, ship, setShipCep } = useCart();
   const [product, setProduct] = useState(null);
   const [related, setRelated] = useState([]);
   const [error, setError] = useState('');
@@ -128,6 +129,10 @@ export default function Product() {
           </div>
           {product.stock > 0 && product.stock <= 10 && (
             <p className="warn">Corre! Só restam {product.stock} unidades.</p>
+          )}
+
+          {shippingEnabled && !soldOut && (
+            <ShippingCalculator auto items={[{ productId: product.id, qty }]} cep={ship.cep} onCepChange={setShipCep} />
           )}
 
           <ul className="pdp__perks">

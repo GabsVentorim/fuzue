@@ -44,6 +44,8 @@ export const api = {
   products: (params) => request('/products' + qs(params)),
   product: (slug) => request(`/products/${slug}`),
   categories: () => request('/categories'),
+  shippingStatus: () => request('/shipping/status'),
+  shippingQuote: (cep, items) => request('/shipping/quote', { method: 'POST', body: { cep, items } }),
   createOrder: (body) => request('/orders', { method: 'POST', body }),
   order: (id) => request(`/orders/${id}`),
 

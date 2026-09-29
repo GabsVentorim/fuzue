@@ -3,9 +3,10 @@ import { useCart } from '../context/CartContext';
 import brand, { formatPrice } from '../brand';
 import ProductArt from '../components/ProductArt';
 import { Paw, Trash } from '../components/Icons';
+import ShippingCalculator from '../components/ShippingCalculator';
 
 export default function Cart() {
-  const { items, setQty, remove, subtotal, shipping, missingForFree } = useCart();
+  const { items, setQty, remove, subtotal, shipping, missingForFree, shippingEnabled, ship, setShipCep, chooseShipping } = useCart();
 
   if (items.length === 0) {
     return (
@@ -66,8 +67,28 @@ export default function Cart() {
         <aside className="summary">
           <h2>Resumo</h2>
           <div className="summary__row"><span>Subtotal</span><span>{formatPrice(subtotal)}</span></div>
-          <div className="summary__row"><span>Frete</span><span>{shipping ? formatPrice(shipping) : 'Grátis'}</span></div>
-          <div className="summary__row summary__total"><span>Total</span><span>{formatPrice(subtotal + shipping)}</span></div>
+          {shippingEnabled && (
+            <ShippingCalculator
+              compact
+              auto
+              items={items.map(({ productId, qty }) => ({ productId, qty }))}
+              cep={ship.cep}
+              onCepChange={setShipCep}
+              selectedId={ship.option?.id}
+              onSelect={(o, q) => chooseShipping(o, q.cep)}
+              onQuote={(q) => {
+                // keep the chosen service in sync with the fresh price (or pick the cheapest)
+                if (!q) return;
+                const same = q.options.find((o) => o.id === ship.option?.id);
+                chooseShipping(same || q.options[0], q.cep);
+              }}
+            />
+          )}
+          <div className="summary__row">
+            <span>Frete{ship.option && shippingEnabled ? ` (${ship.option.name})` : ''}</span>
+            <span>{shipping == null ? <span className="muted">calcule acima</span> : shipping ? formatPrice(shipping) : 'Grátis'}</span>
+          </div>
+          <div className="summary__row summary__total"><span>Total</span><span>{formatPrice(subtotal + (shipping || 0))}</span></div>
           <p className="muted small">5% de desconto pagando com Pix no próximo passo.</p>
           <Link to="/checkout" className="btn btn--primary btn--block">Finalizar compra</Link>
           <Link to="/loja" className="link center-block">Continuar comprando</Link>
