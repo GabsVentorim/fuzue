@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { api } from '../../api';
 import { formatPrice } from '../../brand';
 import ProductArt from '../../components/ProductArt';
+import { productImage } from '../../assets';
 
 export default function Products() {
   const [products, setProducts] = useState(null);
@@ -36,7 +37,7 @@ export default function Products() {
               {products.map((p) => (
                 <tr key={p.id} className={p.active ? '' : 'row--muted'}>
                   <td className="thumb">
-                    <ProductArt category={p.category} color={p.colors[0]?.hex} pattern={p.pattern} image={p.image} alt="" />
+                    <ProductArt category={p.category} color={p.colors[0]?.hex} pattern={p.pattern} image={productImage(p)} alt="" />
                   </td>
                   <td>
                     <Link to={`/admin/produtos/${p.id}`} className="link">{p.name}</Link>

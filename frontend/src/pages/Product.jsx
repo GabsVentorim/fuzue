@@ -5,6 +5,7 @@ import { formatPrice } from '../brand';
 import { useCart } from '../context/CartContext';
 import { SIZES, sizeRange } from '../sizes';
 import ProductArt from '../components/ProductArt';
+import { productImage } from '../assets';
 import ShippingCalculator from '../components/ShippingCalculator';
 import ProductCard from '../components/ProductCard';
 import { Truck, Shield } from '../components/Icons';
@@ -65,8 +66,8 @@ export default function Product() {
             category={product.category}
             color={color?.hex}
             pattern={product.pattern}
-            image={product.image}
-            alt={product.name}
+            image={productImage(product, color)}
+            alt={`${product.name}${color ? ` — ${color.name}` : ''}`}
           />
         </div>
 

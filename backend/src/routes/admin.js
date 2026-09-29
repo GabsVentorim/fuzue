@@ -73,7 +73,11 @@ function readProduct(body) {
     description: String(body?.description || '').trim(),
     colors: Array.isArray(body?.colors)
       ? body.colors
-          .map((c) => ({ name: String(c?.name || '').trim(), hex: String(c?.hex || '').trim() }))
+          .map((c) => ({
+            name: String(c?.name || '').trim(),
+            hex: String(c?.hex || '').trim(),
+            ...(String(c?.image || '').trim() && { image: String(c.image).trim() }), // optional photo for this colour
+          }))
           .filter((c) => c.name && c.hex)
       : [],
     sizes: Array.isArray(body?.sizes) ? [...new Set(body.sizes.map((s) => String(s).trim()).filter(Boolean))] : [],

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { api } from '../../api';
 import ProductArt from '../../components/ProductArt';
+import { imageUrl, productImage } from '../../assets';
 import { SIZES } from '../../sizes';
 
 const PATTERNS = { plain: 'Lisa', dots: 'Bolinhas', stripes: 'Listras', hearts: 'Corações' };
@@ -34,6 +35,20 @@ export default function ProductForm() {
   const setColor = (i, k, v) => setForm({ ...form, colors: form.colors.map((c, idx) => (idx === i ? { ...c, [k]: v } : c)) });
   const toggleSize = (s) =>
     setForm({ ...form, sizes: form.sizes.includes(s) ? form.sizes.filter((x) => x !== s) : [...form.sizes, s] });
+
+  const uploadColor = async (i, file) => {
+    if (!file) return;
+    setUploading(true);
+    setError('');
+    try {
+      const { url } = await api.admin.uploadImage(file);
+      setForm((f) => ({ ...f, colors: f.colors.map((c, idx) => (idx === i ? { ...c, image: url } : c)) }));
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const upload = async (file) => {
     if (!file) return;
@@ -108,6 +123,11 @@ export default function ProductForm() {
               <div key={i} className="row">
                 <input type="color" className="color-input" value={c.hex} onChange={(e) => setColor(i, 'hex', e.target.value)} aria-label="Cor" />
                 <input className="input" placeholder="Nome da cor" value={c.name} onChange={(e) => setColor(i, 'name', e.target.value)} />
+                <label className="color-photo" title={c.image ? 'Trocar foto desta cor' : 'Foto desta cor (opcional)'}>
+                  {c.image ? <img src={imageUrl(c.image)} alt="" /> : <span>+ foto</span>}
+                  <input type="file" accept="image/jpeg,image/png,image/webp" hidden onChange={(e) => uploadColor(i, e.target.files[0])} />
+                </label>
+                {c.image && <button type="button" className="link link--danger small" onClick={() => setColor(i, 'image', '')}>tirar foto</button>}
                 {form.colors.length > 1 && (
                   <button type="button" className="link link--danger" onClick={() => setForm({ ...form, colors: form.colors.filter((_, idx) => idx !== i) })}>remover</button>
                 )}
@@ -128,7 +148,7 @@ export default function ProductForm() {
         <fieldset className="box">
           <legend>Imagem</legend>
           <div className="product-form__preview tint-pink">
-            <ProductArt category={form.category} color={form.colors[0]?.hex} pattern={form.pattern} image={form.image} alt={form.name} />
+            <ProductArt category={form.category} color={form.colors[0]?.hex} pattern={form.pattern} image={productImage(form)} alt={form.name} />
           </div>
           <div className="field">
             <label className="btn btn--ghost btn--sm">

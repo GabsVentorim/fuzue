@@ -41,7 +41,7 @@ export default function Cart() {
           {items.map((item) => (
             <li key={`${item.productId}-${item.size}-${item.color}`} className="line">
               <Link to={`/produto/${item.slug}`} className="line__media tint-pink">
-                <ProductArt category={item.category} color={item.colorHex} pattern={item.pattern} alt={item.name} />
+                <ProductArt category={item.category} color={item.colorHex} pattern={item.pattern} image={item.image} alt={item.name} />
               </Link>
               <div className="line__info">
                 <Link to={`/produto/${item.slug}`} className="line__name">{item.name}</Link>

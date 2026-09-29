@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import ProductArt from './ProductArt';
+import { productImage } from '../assets';
 import { formatPrice } from '../brand';
 
 const tints = ['tint-pink', 'tint-blue', 'tint-cream'];
@@ -14,7 +15,7 @@ export default function ProductCard({ product, index = 0 }) {
           category={product.category}
           color={color?.hex}
           pattern={product.pattern}
-          image={product.image}
+          image={productImage(product)}
           alt={product.name}
         />
       </div>

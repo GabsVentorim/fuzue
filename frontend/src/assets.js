@@ -17,6 +17,9 @@ export function imageUrl(path) {
   return path;
 }
 
+// Photo to show for a product in a given colour: the colour's own photo, else the product photo.
+export const productImage = (product, color = product?.colors?.[0]) => color?.image || product?.image || '';
+
 // Looks up a configured site image by key, e.g. asset('logo') or asset('categories.coleiras').
 // Returns '' when not configured, so callers can fall back to the illustrated version.
 export function asset(key) {

@@ -66,6 +66,7 @@ export function CartProvider({ children }) {
       size,
       color: color?.name,
       colorHex: color?.hex,
+      image: color?.image || product.image || null,
       qty,
     };
     setItems((prev) => {
