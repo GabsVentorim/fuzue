@@ -747,6 +747,47 @@ p.tag { margin: 6px 0 0; }
 .banner-row__info .small { overflow: hidden; text-overflow: ellipsis; }
 .banner-row__actions { display: grid; gap: 4px; justify-items: end; }
 
+/* ===== Animated header logo: bouncing ball + barking dog ===== */
+.logo-anim { position: relative; display: inline-block; line-height: 0; }
+.logo-anim .logo-img { display: block; }
+.logo-anim__ball { position: absolute; display: block; pointer-events: none; }
+.logo-anim__ball img { width: 100%; height: 100%; display: block; transform-origin: 50% 100%; animation: ball-bounce 0.9s infinite; }
+@keyframes ball-bounce {
+  0%   { transform: translateY(0) scale(1.14, 0.86); animation-timing-function: cubic-bezier(.2, .7, .4, 1); }
+  12%  { transform: translateY(-20%) scale(0.94, 1.06); animation-timing-function: cubic-bezier(.2, .7, .4, 1); }
+  50%  { transform: translateY(-115%) scale(1); animation-timing-function: cubic-bezier(.6, 0, .8, .3); }
+  92%  { transform: translateY(-6%) scale(0.96, 1.04); }
+  100% { transform: translateY(0) scale(1.14, 0.86); }
+}
+.logo-anim__bark { position: absolute; display: block; pointer-events: none; }
+.logo-anim__bark svg { width: 100%; height: 100%; overflow: visible; display: block; }
+.logo-anim__bark path {
+  fill: none; stroke: #fe2a0a; stroke-width: 7; stroke-linecap: round;
+  stroke-dasharray: 26; stroke-dashoffset: 26; opacity: 0;
+}
+.logo-anim--bark .logo-anim__bark path { animation: bark-line 1s ease-out both; }
+.logo-anim--bark .logo-anim__bark path:nth-child(2) { animation-delay: 0.06s; }
+.logo-anim--bark .logo-anim__bark path:nth-child(3) { animation-delay: 0.12s; }
+@keyframes bark-line {
+  0%   { stroke-dashoffset: 26; opacity: 1; }
+  30%  { stroke-dashoffset: 0; opacity: 1; }
+  75%  { stroke-dashoffset: 0; opacity: 1; }
+  100% { stroke-dashoffset: -26; opacity: 0; }
+}
+.logo-anim__au {
+  position: absolute; right: 30%; bottom: 100%; white-space: nowrap; line-height: 1;
+  font-family: var(--font-display); font-weight: 700; font-size: clamp(0.62rem, 1.1vw, 0.8rem); color: #fe2a0a;
+  animation: bark-au 1s ease-out both;
+}
+@keyframes bark-au {
+  0%   { opacity: 0; transform: translateY(4px) scale(0.6) rotate(-8deg); }
+  25%  { opacity: 1; transform: translateY(0) scale(1.08) rotate(-8deg); }
+  75%  { opacity: 1; transform: translateY(-2px) scale(1) rotate(-8deg); }
+  100% { opacity: 0; transform: translateY(-6px) scale(1) rotate(-8deg); }
+}
+/* the logo link shouldn't clip the ball when it jumps */
+.header__logo { overflow: visible; }
+
 /* ===== Animations ===== */
 @keyframes bob { 0%, 100% { translate: 0 0; } 50% { translate: 0 -12px; } }
 @keyframes pop { 0% { transform: scale(0.4); } 70% { transform: scale(1.15); } 100% { transform: scale(1); } }

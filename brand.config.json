@@ -21,6 +21,22 @@
       "presilhas": ""
     },
     "petPlaceholder": "/assets/placeholders/pet.svg",
-    "appleTouchIcon": "/assets/brand/apple-touch-icon.png"
+    "appleTouchIcon": "/assets/brand/apple-touch-icon.png",
+    "logoAnimated": {
+      "base": "/assets/logo/logo-sem-bola.png",
+      "ball": "/assets/logo/logo-bola.png",
+      "ballBox": [
+        95.4,
+        76.54,
+        4.6,
+        20.16
+      ],
+      "barkBox": [
+        92.8,
+        44,
+        5,
+        28
+      ]
+    }
   }
 }
