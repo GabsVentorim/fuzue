@@ -8,6 +8,7 @@ import ProductArt from '../components/ProductArt';
 import { productImage } from '../assets';
 import ShippingCalculator from '../components/ShippingCalculator';
 import ProductCard from '../components/ProductCard';
+import QuickBuy from '../components/QuickBuy';
 import { Truck, Shield } from '../components/Icons';
 
 const sizeHelp = Object.fromEntries(SIZES.map((s) => [s.id, sizeRange(s)]));
@@ -23,6 +24,7 @@ export default function Product() {
   const [size, setSize] = useState('');
   const [qty, setQty] = useState(1);
   const [warn, setWarn] = useState('');
+  const [quickBuy, setQuickBuy] = useState(false);
 
   useEffect(() => {
     setProduct(null);
@@ -124,10 +126,13 @@ export default function Product() {
               <span>{qty}</span>
               <button onClick={() => setQty(Math.min(product.stock, qty + 1))} aria-label="Mais">+</button>
             </div>
-            <button className="btn btn--primary btn--grow" onClick={handleAdd} disabled={soldOut}>
-              {soldOut ? 'Esgotado' : 'Adicionar ao carrinho'}
+            <button className="btn btn--primary btn--grow" onClick={() => setQuickBuy(true)} disabled={soldOut}>
+              {soldOut ? 'Esgotado' : 'Comprar agora'}
             </button>
           </div>
+          {!soldOut && (
+            <button className="btn btn--ghost btn--block buy__cart" onClick={handleAdd}>Adicionar ao carrinho</button>
+          )}
           {product.stock > 0 && product.stock <= 10 && (
             <p className="warn">Corre! Só restam {product.stock} unidades.</p>
           )}
@@ -142,6 +147,10 @@ export default function Product() {
           </ul>
         </div>
       </div>
+
+      {quickBuy && (
+        <QuickBuy product={product} initial={{ color, size, qty }} onClose={() => setQuickBuy(false)} />
+      )}
 
       {related.length > 0 && (
         <>
