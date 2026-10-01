@@ -27,14 +27,12 @@ export default function Home() {
 
   return (
     <>
-      {/* HERO — the carousel from Admin → Carrossel; the original hero shows while there are no banners */}
+      {/* HERO — the carousel from Admin → Carrossel (full width, edge to edge); the original hero shows while there are no banners */}
       {banners === null ? (
-        <section className="hero-carousel"><div className="container"><div className="carousel carousel--loading" aria-hidden /></div></section>
+        <section className="hero-carousel"><div className="carousel carousel--loading" aria-hidden /></section>
       ) : banners.length > 0 ? (
         <section className="hero-carousel">
-          <div className="container">
-            <HeroCarousel banners={banners} />
-          </div>
+          <HeroCarousel banners={banners} />
         </section>
       ) : (
         <section className="hero">

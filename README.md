@@ -78,7 +78,7 @@ Shipping prices are real quotes from [SuperFrete](https://superfrete.readme.io):
 
 The top of the home page is a carousel managed in **Admin → Carrossel**. Use it for new arrivals, brand collections and campaigns.
 
-- **Images:** a desktop image (recommended 1600×600) and an optional phone image (900×1100). They are uploaded to `backend/uploads/banners/`.
+- **Images:** a desktop image (recommended 1920×720; the carousel runs the full width of the screen) and an optional phone image (900×1100). They are uploaded to `backend/uploads/banners/`.
 - **Text, all optional:** title, subtitle, button and link (`/loja?categoria=coleiras`, a product page, or an `https://` address).
 - **Scheduling:** set start and end dates to plan collections ahead. You can also reorder banners and switch them on or off.
 - **Behaviour:** slides change every 5 s and pause on hover. There are arrows and dots, swipe on phones and keyboard arrows.

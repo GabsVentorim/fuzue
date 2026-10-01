@@ -77,7 +77,7 @@ function BannerForm({ banner, onSaved, onCancel }) {
     <form className="stack" onSubmit={submit}>
       <fieldset className="box">
         <legend>Imagens</legend>
-        <ImageField label="Imagem (computador) *" hint="Recomendado 1600 × 600 px (formato largo). JPG, PNG ou WEBP até 5 MB." value={form.image} onChange={(image) => setForm((f) => ({ ...f, image }))} />
+        <ImageField label="Imagem (computador) *" hint="Recomendado 1920 × 720 px (formato largo, ocupa a tela de lado a lado). JPG, PNG ou WEBP até 5 MB." value={form.image} onChange={(image) => setForm((f) => ({ ...f, image }))} />
         <ImageField label="Imagem para celular (opcional)" hint="Recomendado 900 × 1100 px (em pé). Sem ela, o celular usa a imagem do computador." value={form.imageMobile} onChange={(imageMobile) => setForm((f) => ({ ...f, imageMobile }))} />
       </fieldset>
 

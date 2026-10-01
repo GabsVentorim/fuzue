@@ -705,7 +705,11 @@ p.tag { margin: 6px 0 0; }
 }
 
 /* ===== Home carousel ===== */
-.hero-carousel { background: var(--pink); padding: 28px 0 40px; }
+.hero-carousel { background: var(--pink); padding: 0 0 32px; }
+/* on the home it runs edge to edge: no rounded corners, capped height, text lined up with the page content */
+.hero-carousel .carousel__viewport, .hero-carousel .carousel--loading { border-radius: 0; box-shadow: none; }
+.hero-carousel .carousel__link, .hero-carousel .carousel--loading { max-height: 72vh; width: 100%; }
+.hero-carousel .carousel__text { left: max(16px, calc((100% - 1180px) / 2)); }
 .carousel { position: relative; }
 .carousel--loading { aspect-ratio: 1180 / 440; border-radius: var(--radius); background: rgba(255, 255, 255, 0.35); }
 .carousel__viewport { position: relative; overflow: hidden; border-radius: var(--radius); box-shadow: var(--shadow-lg); touch-action: pan-y; }
@@ -844,10 +848,10 @@ p.tag { margin: 6px 0 0; }
   .toolbar__right, .toolbar .input { width: 100%; }
   .grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
   .modal { padding: 0; place-items: end stretch; }
-  .hero-carousel { padding: 16px 0 28px; }
+  .hero-carousel { padding: 0 0 24px; }
   .carousel__link:has(source) { aspect-ratio: 900 / 1100; }
   .carousel__link { aspect-ratio: 16 / 9; }
-  .carousel__text { left: 12px; right: 12px; bottom: 12px; max-width: none; padding: 12px 14px; }
+  .carousel__text, .hero-carousel .carousel__text { left: 12px; right: 12px; bottom: 12px; max-width: none; padding: 12px 14px; }
   .banner-row { grid-template-columns: auto 1fr; }
   .banner-row__img { width: 100%; grid-column: 2; }
   .banner-row__info, .banner-row__actions { grid-column: 2; justify-items: start; }
