@@ -731,6 +731,10 @@ p.tag { margin: 6px 0 0; }
 .carousel__dots { display: flex; justify-content: center; gap: 8px; margin-top: 14px; }
 .carousel__dot { width: 10px; height: 10px; border-radius: 999px; border: 0; padding: 0; background: rgba(232, 67, 42, 0.35); transition: width 0.25s, background 0.25s; }
 .carousel__dot--on { width: 28px; background: var(--red); }
+/* with autoplay the active dot becomes a bar that fills up until the next banner */
+.carousel__dot:has(.carousel__progress) { width: 44px; background: rgba(232, 67, 42, 0.3); overflow: hidden; position: relative; }
+.carousel__progress { position: absolute; inset: 0; background: var(--red); border-radius: inherit; transform-origin: left center; animation: carousel-progress linear both; }
+@keyframes carousel-progress { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 @media (hover: none) { .carousel__arrow { opacity: 1; width: 36px; height: 36px; font-size: 1.6rem; } }
 
 /* ===== Admin: carousel banners ===== */

@@ -21,12 +21,16 @@ export default function HeroCarousel({ banners }) {
 
   const go = useCallback((i) => setIndex(((i % n) + n) % n), [n]);
 
-  // autoplay (stops while hovered/focused, when the tab is hidden, or with reduced motion)
+  // autoplay: the active dot is a little bar that fills up; when it's full, the next banner comes in.
+  // The bar's CSS animation *is* the timer, so the bar and the slide change never drift apart.
+  // It pauses while hovered/focused and when the tab is hidden; no autoplay with reduced motion.
+  const [hidden, setHidden] = useState(() => document.hidden);
   useEffect(() => {
-    if (n < 2 || paused || reducedMotion()) return;
-    const t = setInterval(() => !document.hidden && setIndex((i) => (i + 1) % n), AUTOPLAY_MS);
-    return () => clearInterval(t);
-  }, [n, paused]);
+    const onVis = () => setHidden(document.hidden);
+    document.addEventListener('visibilitychange', onVis);
+    return () => document.removeEventListener('visibilitychange', onVis);
+  }, []);
+  const autoplay = n > 1 && !reducedMotion();
 
   useEffect(() => {
     if (index >= n) setIndex(0);
@@ -109,7 +113,16 @@ export default function HeroCarousel({ banners }) {
               aria-label={`Banner ${i + 1}${b.title ? `: ${b.title}` : ''}`}
               className={`carousel__dot ${i === index ? 'carousel__dot--on' : ''}`}
               onClick={() => go(i)}
-            />
+            >
+              {autoplay && i === index && (
+                <span
+                  key={index}
+                  className="carousel__progress"
+                  style={{ animationDuration: `${AUTOPLAY_MS}ms`, animationPlayState: paused || hidden ? 'paused' : 'running' }}
+                  onAnimationEnd={() => go(index + 1)}
+                />
+              )}
+            </button>
           ))}
         </div>
       )}
