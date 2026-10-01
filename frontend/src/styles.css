@@ -753,7 +753,8 @@ p.tag { margin: 6px 0 0; }
 
 /* ===== Animated header logo: bouncing ball + barking dog ===== */
 .logo-anim { position: relative; display: inline-block; line-height: 0; }
-.logo-anim .logo-img { display: block; }
+/* the box must keep the image's exact proportions, or the ball/eyes/bark (placed in %) drift off on phones */
+.logo-anim .logo-img { display: block; height: auto; width: min(263px, 45vw); max-width: none; }
 .logo-anim__ball { position: absolute; display: block; pointer-events: none; }
 .logo-anim__ball img { width: 100%; height: 100%; display: block; transform-origin: 50% 100%; animation: ball-bounce 0.9s infinite; }
 @keyframes ball-bounce {
