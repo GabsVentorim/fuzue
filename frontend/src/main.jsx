@@ -8,15 +8,15 @@ import brand from './brand';
 import { asset } from './assets';
 import './styles.css';
 
-// Tab title: the pet emoji alternates 🐶 / 🐱 every 2 seconds.
+// Tab title: the emoji cycles through the pets below, one per second (🐶 between each of the others).
 const baseTitle = `${brand.name} · ${brand.subtitle.toLowerCase()}`;
-const pets = ['🐶', '🐱'];
+const pets = ['🐕', '🐶', '🐩', '🐶', '🦮', '🐶', '🐕‍🦺', '🐶', '🐾', '🐶'];
 let pet = 0;
 document.title = `${pets[pet]} ${baseTitle}`;
 setInterval(() => {
   pet = (pet + 1) % pets.length;
   document.title = `${pets[pet]} ${baseTitle}`;
-}, 2000);
+}, 1000);
 
 // Favicon, home-screen icon and social-share image come from brand.config.json → assets.
 if (asset('favicon')) document.getElementById('favicon').href = asset('favicon');
