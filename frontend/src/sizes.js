@@ -58,3 +58,7 @@ export function collarSize(neckCm) {
   if (neckCm > last.max) return `maior que ${last.id} — fale com a gente`;
   return sizeForNeck(neckCm).id;
 }
+
+// A size is always pre-selected: "M" when the product has it, otherwise the middle one (or the only one).
+export const defaultSize = (sizes = []) =>
+  !sizes.length ? '' : sizes.includes('M') ? 'M' : sizes[Math.floor((sizes.length - 1) / 2)];

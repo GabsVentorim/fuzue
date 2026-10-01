@@ -3,7 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { api } from '../api';
 import { formatPrice } from '../brand';
 import { useCart } from '../context/CartContext';
-import { SIZES, sizeRange } from '../sizes';
+import { SIZES, sizeRange, defaultSize } from '../sizes';
 import ProductArt from '../components/ProductArt';
 import { productImage } from '../assets';
 import ShippingCalculator from '../components/ShippingCalculator';
@@ -34,7 +34,7 @@ export default function Product() {
       .then((p) => {
         setProduct(p);
         setColor(p.colors[0]);
-        setSize('');
+        setSize(defaultSize(p.sizes));
         setQty(1);
         return api.products({ category: p.category });
       })

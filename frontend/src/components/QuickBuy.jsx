@@ -7,6 +7,7 @@ import { useCart } from '../context/CartContext';
 import { lookupCep } from '../cep';
 import { isValidCpf } from '../cpf';
 import { productImage } from '../assets';
+import { defaultSize } from '../sizes';
 import ProductArt from './ProductArt';
 import CpfInput from './CpfInput';
 import ShippingCalculator, { maskCep } from './ShippingCalculator';
@@ -30,7 +31,7 @@ export default function QuickBuy({ product, initial, onClose }) {
 
   // the item (editable here)
   const [color, setColor] = useState(initial.color || product.colors[0]);
-  const [size, setSize] = useState(initial.size || '');
+  const [size, setSize] = useState(initial.size || defaultSize(product.sizes));
   const [qty, setQty] = useState(initial.qty || 1);
 
   // customer, delivery, payment
