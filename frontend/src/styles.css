@@ -128,8 +128,8 @@ img { max-width: 100%; display: block; }
 .logo--light .logo__name { color: var(--pink-soft); }
 .logo--light .logo__sub { color: var(--red); }
 .logo--light .logo__dot { background: var(--red); }
-.logo-img { height: 56px; width: auto; max-width: min(220px, 45vw); object-fit: contain; }
-.logo-img--light { height: 72px; border-radius: var(--radius-sm); box-shadow: var(--shadow); }
+.logo-img { height: 64px; width: auto; max-width: min(290px, 45vw); object-fit: contain; }
+.logo-img--light { height: auto; width: min(275px, 72vw); max-width: none; border-radius: var(--radius-sm); box-shadow: var(--shadow); }
 
 /* ===== Hero ===== */
 .hero { position: relative; overflow: hidden; background: var(--pink); padding: 56px 0 96px; }
