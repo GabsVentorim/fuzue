@@ -73,7 +73,7 @@ function CouponForm({ coupon, onSaved, onCancel }) {
           <small className="muted">Deixe vazio para não expirar.</small>
         </label>
         <div className="field field--full">
-          <label className="check"><input type="checkbox" checked={form.oncePerCustomer} onChange={set('oncePerCustomer')} /> Cada cliente pode usar só 1 vez (pelo e-mail)</label>
+          <label className="check"><input type="checkbox" checked={form.oncePerCustomer} onChange={set('oncePerCustomer')} /> Cada CPF pode usar só 1 vez</label>
           <label className="check"><input type="checkbox" checked={form.active} onChange={set('active')} /> Ativo</label>
         </div>
         {error && <p className="alert field--full">{error}</p>}
@@ -144,7 +144,7 @@ export default function Coupons() {
                     <td className="small muted">
                       {[
                         c.minSubtotal > 0 && `mín. ${formatPrice(c.minSubtotal)}`,
-                        c.oncePerCustomer && '1 por cliente',
+                        c.oncePerCustomer && '1 por CPF',
                         c.expiresAt && `até ${formatDate(c.expiresAt)}`,
                       ].filter(Boolean).join(' · ') || '—'}
                     </td>

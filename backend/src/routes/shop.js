@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { randomBytes } from 'node:crypto';
 import db, { toProduct, toOrder } from '../db.js';
-import { CATEGORIES, readBrand, round2, normalize } from '../util.js';
+import { CATEGORIES, readBrand, round2, normalize, cleanCpf, isValidCpf } from '../util.js';
 import rateLimit from 'express-rate-limit';
 import { quoteShipping, shippingEnabled, ShippingError } from '../shipping.js';
 import { evaluateCoupon, countUse } from '../coupons.js';
@@ -30,7 +30,7 @@ router.post('/coupons/validate', couponLimiter, (req, res) => {
       return s + (p ? p.price * Math.max(1, Math.floor(Number(i.qty) || 1)) : 0);
     }, 0)
   );
-  const r = evaluateCoupon(req.body?.code, subtotal, { email: req.body?.email || req.user?.email });
+  const r = evaluateCoupon(req.body?.code, subtotal, { cpf: req.user?.cpf || req.body?.cpf });
   if (r.error) return res.status(400).json({ error: r.error });
   res.json({ code: r.coupon.code, label: r.label, discount: r.discount, freeShipping: r.freeShipping });
 });
@@ -81,6 +81,9 @@ const placeOrder = db.transaction((body, user, shippingChoice) => {
   const missing = Object.keys(required).filter((f) => !customer?.[f] || !String(customer[f]).trim());
   if (missing.length) errors.push(`Preencha: ${missing.map((f) => required[f]).join(', ')}.`);
   if (customer?.email && !/^\S+@\S+\.\S+$/.test(customer.email)) errors.push('E-mail inválido.');
+  // Logged-in customers always buy with the CPF on their account (it can only change through a ticket).
+  const cpf = user?.cpf || cleanCpf(customer?.cpf);
+  if (!isValidCpf(cpf)) errors.push(cpf ? 'CPF inválido.' : 'Informe o CPF.');
   if (!['pix', 'cartao', 'boleto'].includes(payment)) errors.push('Forma de pagamento inválida.');
   if (errors.length) return { status: 400, error: errors.join(' ') };
 
@@ -117,7 +120,7 @@ const placeOrder = db.transaction((body, user, shippingChoice) => {
   // Coupon (re-validated here, inside the transaction)
   let coupon = null;
   if (body.couponCode) {
-    coupon = evaluateCoupon(body.couponCode, subtotal, { email: customer.email });
+    coupon = evaluateCoupon(body.couponCode, subtotal, { cpf });
     if (coupon.error) return { status: 400, error: coupon.error };
     if (coupon.freeShipping) shipping = 0;
   }
@@ -131,6 +134,12 @@ const placeOrder = db.transaction((body, user, shippingChoice) => {
       String(customer[k] ?? '').trim(),
     ])
   );
+  cleanCustomer.cpf = cpf;
+
+  // First purchase of an account without CPF: it will be stored on the account (and then locked).
+  const saveCpfOnAccount = user && !user.cpf;
+  if (saveCpfOnAccount && db.prepare('SELECT 1 FROM users WHERE cpf = ? AND id != ?').get(cpf, user.id))
+    return { status: 409, error: 'Esse CPF já está cadastrado em outra conta.' };
 
   const order = {
     id: 'PED-' + randomBytes(3).toString('hex').toUpperCase(),
@@ -151,6 +160,7 @@ const placeOrder = db.transaction((body, user, shippingChoice) => {
     total: round2(subtotal - couponDiscount + shipping - discount),
   };
 
+  if (saveCpfOnAccount) db.prepare('UPDATE users SET cpf = ? WHERE id = ?').run(cpf, user.id);
   db.prepare(`INSERT INTO orders (id, user_id, created_at, status, customer, payment, items, subtotal, shipping, shipping_info,
       coupon_code, coupon_discount, discount, total)
     VALUES (@id, @user_id, @created_at, @status, @customer, @payment, @items, @subtotal, @shipping, @shipping_info,

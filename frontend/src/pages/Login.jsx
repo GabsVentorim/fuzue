@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import GoogleButton, { googleEnabled } from '../components/GoogleButton';
+import CpfInput from '../components/CpfInput';
+import { isValidCpf } from '../cpf';
 
 export default function Login() {
   const { user, login, register, loginWithGoogle } = useAuth();
@@ -10,7 +12,7 @@ export default function Login() {
   const from = location.state?.from || '/minha-conta';
 
   const [mode, setMode] = useState('login');
-  const [form, setForm] = useState({ name: '', email: '', password: '' });
+  const [form, setForm] = useState({ name: '', email: '', password: '', cpf: '' });
   const [sending, setSending] = useState(false);
   const [error, setError] = useState('');
 
@@ -33,6 +35,7 @@ export default function Login() {
 
   const submit = (e) => {
     e.preventDefault();
+    if (mode === 'register' && !isValidCpf(form.cpf)) return setError('Confira o CPF — ele está inválido.');
     run(() => (mode === 'login' ? login(form) : register(form)));
   };
 
@@ -65,7 +68,10 @@ export default function Login() {
 
         <form className="stack" onSubmit={submit}>
           {mode === 'register' && (
-            <label className="field">Nome<input className="input" required autoComplete="name" value={form.name} onChange={set('name')} /></label>
+            <>
+              <label className="field">Nome<input className="input" required autoComplete="name" value={form.name} onChange={set('name')} /></label>
+              <CpfInput value={form.cpf} onChange={(cpf) => setForm({ ...form, cpf })} hint="Depois de cadastrado, o CPF só pode ser trocado por chamado." />
+            </>
           )}
           <label className="field">E-mail<input className="input" type="email" required autoComplete="email" value={form.email} onChange={set('email')} /></label>
           <label className="field">

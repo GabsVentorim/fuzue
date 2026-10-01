@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { api } from '../../api';
 import { formatPrice, whatsappLinkTo } from '../../brand';
+import { maskCpf } from '../../cpf';
 import { ORDER_STATUS, PAYMENT, formatDateTime } from '../../labels';
 import { OrdersTable } from './Dashboard';
 
@@ -45,6 +46,7 @@ function OrderDetail({ order, onChange, onClose }) {
         <b>{c.name}</b>
         {order.userId && <> · <Link to={`/admin/clientes/${order.userId}`} className="link">ver cadastro</Link></>}
         <br />{c.email} · {c.phone}
+        {c.cpf && <><br />CPF {maskCpf(c.cpf)}</>}
         <br />{c.address}, {c.number}{c.complement ? ` — ${c.complement}` : ''}
         <br />{c.city}/{c.state} · CEP {c.cep}
       </p>

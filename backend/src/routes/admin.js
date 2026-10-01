@@ -1,8 +1,8 @@
 import { Router } from 'express';
-import db, { toProduct, toOrder, toUser, toPet, toAddress } from '../db.js';
+import db, { toProduct, toOrder, toUser, toPet, toAddress, toTicket } from '../db.js';
 import { requireAdmin } from '../auth.js';
 import { imageUpload, publicPath } from '../uploads.js';
-import { CATEGORIES, ORDER_STATUSES, round2, slugify, normalize } from '../util.js';
+import { CATEGORIES, ORDER_STATUSES, round2, slugify, normalize, isValidCpf, cleanCpf } from '../util.js';
 import { TYPES as COUPON_TYPES, toCoupon, normalizeCode, countUse } from '../coupons.js';
 
 const router = Router();
@@ -62,6 +62,7 @@ router.get('/dashboard', (_req, res) => {
     customers: { total: customers.total, last30Days: customers.recent || 0 },
     petBirthdays: birthdays.map((b) => ({ ...b, estimated: !!b.estimated })),
     recentOrders,
+    openTickets: db.prepare("SELECT COUNT(*) AS n FROM tickets WHERE status = 'aberto'").get().n,
   });
 });
 
@@ -308,6 +309,43 @@ router.put('/coupons/:id', (req, res) => {
 router.delete('/coupons/:id', (req, res) => {
   db.prepare('DELETE FROM coupons WHERE id = ?').run(req.params.id);
   res.json({ ok: true });
+});
+
+// ---------- support tickets ("chamados") ----------
+const ticketWithUser = (r) => r && { ...toTicket(r), user: { id: r.user_id, name: r.user_name, email: r.user_email, cpf: r.user_cpf } };
+const TICKET_SQL = `SELECT t.*, u.name AS user_name, u.email AS user_email, u.cpf AS user_cpf
+  FROM tickets t JOIN users u ON u.id = t.user_id`;
+
+router.get('/tickets', (req, res) => {
+  const status = req.query.status || null;
+  const rows = db.prepare(`${TICKET_SQL} WHERE (? IS NULL OR t.status = ?)
+    ORDER BY (t.status = 'aberto') DESC, t.created_at DESC`).all(status, status);
+  res.json(rows.map(ticketWithUser));
+});
+
+router.patch('/tickets/:id', (req, res) => {
+  const t = db.prepare(`${TICKET_SQL} WHERE t.id = ?`).get(req.params.id);
+  if (!t) return res.status(404).json({ error: 'Chamado não encontrado.' });
+  if (t.status !== 'aberto') return res.status(409).json({ error: 'Esse chamado já foi resolvido.' });
+  const action = req.body?.action;
+  const note = String(req.body?.note || '').trim().slice(0, 500) || null;
+  if (!['approve', 'reject'].includes(action)) return res.status(400).json({ error: 'Ação inválida.' });
+
+  if (action === 'approve' && t.type === 'cpf_change') {
+    const newCpf = cleanCpf(JSON.parse(t.data).newCpf);
+    if (!isValidCpf(newCpf)) return res.status(400).json({ error: 'O CPF pedido é inválido.' });
+    if (db.prepare('SELECT 1 FROM users WHERE cpf = ? AND id != ?').get(newCpf, t.user_id))
+      return res.status(409).json({ error: 'Esse CPF já está cadastrado em outra conta — recuse o chamado.' });
+  }
+
+  db.transaction(() => {
+    if (action === 'approve' && t.type === 'cpf_change')
+      db.prepare('UPDATE users SET cpf = ? WHERE id = ?').run(cleanCpf(JSON.parse(t.data).newCpf), t.user_id);
+    db.prepare(`UPDATE tickets SET status = ?, admin_note = ?, resolved_by = ?,
+      resolved_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE id = ?`)
+      .run(action === 'approve' ? 'aprovado' : 'recusado', note, req.user.id, t.id);
+  })();
+  res.json(ticketWithUser(db.prepare(`${TICKET_SQL} WHERE t.id = ?`).get(t.id)));
 });
 
 // ---------- customers ----------

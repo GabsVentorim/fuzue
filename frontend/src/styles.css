@@ -681,6 +681,37 @@ p.tag { margin: 6px 0 0; }
   .card__row { flex-direction: column; align-items: flex-start; }
 }
 
+/* ===== CPF ===== */
+.cpf__wrap { position: relative; display: block; }
+.cpf__lock { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); font-size: 0.95rem; }
+.input--ok { border-color: #1f9d55; }
+.input--ok:focus { border-color: #1f9d55; box-shadow: 0 0 0 4px #dcf5e6; }
+.input--bad { border-color: var(--red); }
+.input--bad:focus { border-color: var(--red); box-shadow: 0 0 0 4px #ffe4df; }
+.cpf__msg { font-weight: 800; font-size: 0.82rem; }
+.cpf__msg--ok { color: #1f9d55; }
+.cpf__msg--bad { color: var(--red-dark); }
+.cpf-box { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr; gap: 10px; }
+.cpf-box__title { font-family: var(--font-display); font-size: 1.3rem; color: var(--red); margin: 0; }
+.cpf-box__row { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 12px; }
+.cpf-box__row .cpf { flex: 0 1 280px; }
+.cpf-box__row .btn { margin-top: 24px; }
+.cpf-box__ticket { display: grid; gap: 12px; max-width: 520px; padding: 14px; border-radius: var(--radius-sm); background: var(--cream); }
+.cpf-box__status { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.cpf-box p { margin: 0; }
+
+/* ===== Tickets (admin) ===== */
+.notice { display: block; padding: 12px 16px; border-radius: var(--radius-sm); background: #fff3cc; color: #7a5200; font-weight: 700; }
+.notice:hover { background: #ffecad; }
+.tickets { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 14px; }
+.ticket { display: grid; gap: 10px; align-content: start; }
+.ticket p { margin: 0; }
+.ticket__head { display: flex; justify-content: space-between; gap: 10px; align-items: center; }
+.ticket__cpf { display: flex; align-items: center; gap: 14px; padding: 10px 14px; border-radius: var(--radius-sm); background: var(--cream); }
+.ticket__cpf span { display: grid; }
+.ticket__cpf b { font-variant-numeric: tabular-nums; letter-spacing: 0.02em; }
+.ticket__arrow { font-size: 1.3rem; color: var(--muted); }
+
 /* ===== Coupon (checkout) ===== */
 .coupon { display: grid; gap: 8px; padding-top: 16px; margin-top: 4px; border-top: 2px dashed var(--line); }
 .coupon__title { font-weight: 800; }

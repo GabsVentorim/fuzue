@@ -113,6 +113,27 @@ CREATE INDEX IF NOT EXISTS idx_moves_product ON stock_movements(product_id);
 // ---------- migrations for databases created by older versions ----------
 const hasColumn = (table, col) => db.prepare(`PRAGMA table_info(${table})`).all().some((c) => c.name === col);
 if (!hasColumn('orders', 'shipping_info')) db.exec('ALTER TABLE orders ADD COLUMN shipping_info TEXT');
+// CPF: a unique attribute of the user — never the primary key (that stays the serial id).
+if (!hasColumn('users', 'cpf')) db.exec('ALTER TABLE users ADD COLUMN cpf TEXT');
+db.exec('CREATE UNIQUE INDEX IF NOT EXISTS idx_users_cpf ON users(cpf) WHERE cpf IS NOT NULL');
+
+// Support tickets ("chamados") — e.g. a request to change the CPF, which customers can't edit themselves.
+db.exec(`
+CREATE TABLE IF NOT EXISTS tickets (
+  id          INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id     INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  type        TEXT NOT NULL CHECK (type IN ('cpf_change')),
+  status      TEXT NOT NULL DEFAULT 'aberto' CHECK (status IN ('aberto', 'aprovado', 'recusado')),
+  data        TEXT NOT NULL DEFAULT '{}',
+  message     TEXT,
+  admin_note  TEXT,
+  resolved_by INTEGER REFERENCES users(id) ON DELETE SET NULL,
+  created_at  TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')),
+  resolved_at TEXT
+);
+CREATE INDEX IF NOT EXISTS idx_tickets_user ON tickets(user_id);
+`);
+
 if (!hasColumn('orders', 'coupon_code')) db.exec('ALTER TABLE orders ADD COLUMN coupon_code TEXT');
 if (!hasColumn('orders', 'coupon_discount')) db.exec('ALTER TABLE orders ADD COLUMN coupon_discount REAL NOT NULL DEFAULT 0');
 
@@ -210,6 +231,7 @@ export const toUser = (r) =>
     email: r.email,
     name: r.name,
     phone: r.phone || '',
+    cpf: r.cpf || null,
     avatarUrl: r.avatar_url || null,
     role: r.role,
     hasPassword: !!r.password_hash,
@@ -248,6 +270,19 @@ export const toPet = (r) =>
     notes: r.notes || '',
     photoUrl: r.photo_url || null,
     createdAt: r.created_at,
+  };
+
+export const toTicket = (r) =>
+  r && {
+    id: r.id,
+    userId: r.user_id,
+    type: r.type,
+    status: r.status,
+    data: JSON.parse(r.data || '{}'),
+    message: r.message || '',
+    adminNote: r.admin_note || '',
+    createdAt: r.created_at,
+    resolvedAt: r.resolved_at,
   };
 
 export default db;

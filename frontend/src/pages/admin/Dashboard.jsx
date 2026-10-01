@@ -31,6 +31,11 @@ export default function Dashboard() {
   return (
     <div className="stack">
       <h1 className="admin__h1">Visão geral</h1>
+      {d.openTickets > 0 && (
+        <Link to="/admin/chamados" className="notice">
+          📬 Você tem <b>{d.openTickets} chamado{d.openTickets > 1 ? 's' : ''}</b> esperando resposta (troca de CPF). <span className="link">Ver →</span>
+        </Link>
+      )}
 
       <div className="stats">
         <Stat label="Vendas hoje" value={formatPrice(d.today.revenue)} hint={`${d.today.orders} pedido${d.today.orders === 1 ? '' : 's'}`} />

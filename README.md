@@ -63,6 +63,17 @@ Shipping prices are real quotes from [SuperFrete](https://superfrete.readme.io):
 - Package size per item is `DEFAULT_PACKAGE` in `backend/src/shipping.js`: 16×11×2 cm, 100 g.
 - Without a token, the site falls back to the flat fee (`shipping.fee`).
 
+## CPF and support tickets
+
+- **When the CPF is asked for:**
+  - at e-mail sign-up;
+  - in **Minha conta → Meus dados**, for accounts created with Google;
+  - at checkout.
+- **Validation:** the check digits are checked as soon as the 11th digit is typed (✓ valid / ✗ invalid). The server checks them again.
+- **Storage:** the CPF is a **unique** field on the user. It is never the primary key; the primary key is the serial `id`.
+- **Locked after it's saved:** customers can't edit their CPF. To change it, they open a **chamado** (support ticket) in Meus dados. You approve or reject it in **Admin → Chamados**, and the dashboard shows a notice when tickets are waiting.
+- **At checkout:** logged-in customers always buy with the CPF on their account. If the account has no CPF yet, the CPF used in the first order is saved to it.
+
 ## Coupons
 
 Create coupons under **Admin → Cupons**. Customers enter them in the **Pagamento** section of the checkout.
@@ -71,7 +82,7 @@ Create coupons under **Admin → Cupons**. Customers enter them in the **Pagamen
   - percentage off the products;
   - fixed amount in R$;
   - free shipping.
-- **Optional rules:** minimum order value, usage limit, expiry date, and one use per customer (checked by e-mail).
+- **Optional rules:** minimum order value, usage limit, expiry date, and one use per customer (checked by CPF).
 - **Checked on the server:** the coupon is validated again when the order is placed, so nobody can forge a discount in the browser.
 - **With Pix:** the 5% Pix discount applies to the products after the coupon.
 - **Cancelling:** cancelling an order gives its coupon use back.

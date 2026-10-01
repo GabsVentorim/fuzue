@@ -3,6 +3,7 @@ import { api } from '../../api';
 import { useAuth } from '../../context/AuthContext';
 import { formatDate } from '../../labels';
 import Avatar from '../../components/Avatar';
+import CpfSection from './CpfSection';
 
 export default function Profile() {
   const { user, setUser } = useAuth();
@@ -69,6 +70,7 @@ export default function Profile() {
           {msg.photoError && <p className="alert">{msg.photoError}</p>}
         </div>
       </div>
+      <CpfSection />
       <form onSubmit={save}>
         <fieldset className="box">
           <legend>Seus dados</legend>

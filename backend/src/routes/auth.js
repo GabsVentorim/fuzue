@@ -4,6 +4,7 @@ import rateLimit from 'express-rate-limit';
 import { OAuth2Client } from 'google-auth-library';
 import db, { toUser } from '../db.js';
 import { startSession, endSession, promoteIfAdmin } from '../auth.js';
+import { cleanCpf, isValidCpf } from '../util.js';
 
 const router = Router();
 const EMAIL_RE = /^\S+@\S+\.\S+$/;
@@ -30,8 +31,10 @@ router.post('/register', limiter, (req, res) => {
   const name = String(req.body?.name || '').trim();
   const email = String(req.body?.email || '').trim().toLowerCase();
   const password = String(req.body?.password || '');
+  const cpf = cleanCpf(req.body?.cpf);
 
   if (!name) return res.status(400).json({ error: 'Informe seu nome.' });
+  if (!isValidCpf(cpf)) return res.status(400).json({ error: cpf ? 'CPF inválido.' : 'Informe o CPF.' });
   if (!EMAIL_RE.test(email)) return res.status(400).json({ error: 'E-mail inválido.' });
   if (password.length < 8) return res.status(400).json({ error: 'A senha precisa ter pelo menos 8 caracteres.' });
 
@@ -41,10 +44,13 @@ router.post('/register', limiter, (req, res) => {
     return res.status(409).json({ error: `Já existe uma conta com esse e-mail.${hint}` });
   }
 
+  if (db.prepare('SELECT 1 FROM users WHERE cpf = ?').get(cpf))
+    return res.status(409).json({ error: 'Esse CPF já está cadastrado em outra conta.' });
+
   const hash = bcrypt.hashSync(password, 10);
   const { lastInsertRowid } = db
-    .prepare('INSERT INTO users (email, name, password_hash) VALUES (?, ?, ?)')
-    .run(email, name, hash);
+    .prepare('INSERT INTO users (email, name, password_hash, cpf) VALUES (?, ?, ?, ?)')
+    .run(email, name, hash, cpf);
   res.status(201).json(signIn(res, byId.get(lastInsertRowid)));
 });
 

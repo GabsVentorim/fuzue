@@ -4,6 +4,7 @@ import { api } from '../../api';
 import { formatPrice, whatsappLinkTo } from '../../brand';
 import { useAuth } from '../../context/AuthContext';
 import { formatDate } from '../../labels';
+import { maskCpf } from '../../cpf';
 import { PetCard } from '../account/Pets';
 import { OrdersTable } from './Dashboard';
 import Avatar from '../../components/Avatar';
@@ -43,7 +44,7 @@ function CustomerDetail({ id }) {
           <div>
             <h1 className="admin__h1">{c.name} {c.role === 'admin' && <span className="tag tag--blue">admin</span>}</h1>
             <p className="muted small">
-              {c.email}{c.phone && ` · ${c.phone}`} · cliente desde {formatDate(c.createdAt)}{c.hasGoogle && ' · Google'}
+              {c.email}{c.phone && ` · ${c.phone}`} · {c.cpf ? `CPF ${maskCpf(c.cpf)}` : 'sem CPF'} · cliente desde {formatDate(c.createdAt)}{c.hasGoogle && ' · Google'}
             </p>
           </div>
         </div>

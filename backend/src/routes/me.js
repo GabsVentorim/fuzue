@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import bcrypt from 'bcryptjs';
-import db, { toUser, toAddress, toOrder } from '../db.js';
+import db, { toUser, toAddress, toOrder, toTicket } from '../db.js';
+import { cleanCpf, isValidCpf } from '../util.js';
 import { requireAuth } from '../auth.js';
 import { imageUpload, publicPath, removeUpload } from '../uploads.js';
 
@@ -38,6 +39,40 @@ router.delete('/avatar', (req, res) => {
   db.prepare('UPDATE users SET avatar_url = NULL WHERE id = ?').run(req.user.id);
   removeUpload(req.user.avatar_url);
   res.json(reloadUser(req.user.id));
+});
+
+// ---------- CPF (set once; afterwards only through a support ticket) ----------
+const cpfTaken = (cpf, exceptUserId = 0) => db.prepare('SELECT 1 FROM users WHERE cpf = ? AND id != ?').get(cpf, exceptUserId);
+
+router.post('/cpf', (req, res) => {
+  if (req.user.cpf) return res.status(409).json({ error: 'Seu CPF já está cadastrado. Para trocar, abra um chamado.' });
+  const cpf = cleanCpf(req.body?.cpf);
+  if (!isValidCpf(cpf)) return res.status(400).json({ error: 'CPF inválido.' });
+  if (cpfTaken(cpf, req.user.id)) return res.status(409).json({ error: 'Esse CPF já está cadastrado em outra conta.' });
+  db.prepare('UPDATE users SET cpf = ? WHERE id = ?').run(cpf, req.user.id);
+  res.json(toUser(db.prepare('SELECT * FROM users WHERE id = ?').get(req.user.id)));
+});
+
+// ---------- support tickets ("chamados") ----------
+router.get('/tickets', (req, res) => {
+  res.json(db.prepare('SELECT * FROM tickets WHERE user_id = ? ORDER BY created_at DESC').all(req.user.id).map(toTicket));
+});
+
+router.post('/tickets/cpf', (req, res) => {
+  if (!req.user.cpf) return res.status(400).json({ error: 'Você ainda não tem CPF cadastrado — pode salvar direto em Meus dados.' });
+  const newCpf = cleanCpf(req.body?.newCpf);
+  const message = String(req.body?.message || '').trim().slice(0, 500);
+  if (!isValidCpf(newCpf)) return res.status(400).json({ error: 'O novo CPF é inválido.' });
+  if (newCpf === req.user.cpf) return res.status(400).json({ error: 'O novo CPF é igual ao atual.' });
+  if (!message) return res.status(400).json({ error: 'Conte o motivo da troca.' });
+  if (cpfTaken(newCpf, req.user.id)) return res.status(409).json({ error: 'Esse CPF já está cadastrado em outra conta.' });
+  if (db.prepare("SELECT 1 FROM tickets WHERE user_id = ? AND type = 'cpf_change' AND status = 'aberto'").get(req.user.id))
+    return res.status(409).json({ error: 'Você já tem um pedido de troca de CPF em análise.' });
+
+  const { lastInsertRowid } = db
+    .prepare("INSERT INTO tickets (user_id, type, data, message) VALUES (?, 'cpf_change', ?, ?)")
+    .run(req.user.id, JSON.stringify({ oldCpf: req.user.cpf, newCpf }), message);
+  res.status(201).json(toTicket(db.prepare('SELECT * FROM tickets WHERE id = ?').get(lastInsertRowid)));
 });
 
 router.put('/password', (req, res) => {

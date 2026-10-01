@@ -1,6 +1,6 @@
 // Discount coupons. Always evaluated on the server — the browser only shows the result.
 import db from './db.js';
-import { round2 } from './util.js';
+import { round2, cleanCpf } from './util.js';
 
 db.exec(`
 CREATE TABLE IF NOT EXISTS coupons (
@@ -47,7 +47,7 @@ export function describe(r) {
 
 // Returns { coupon, discount, freeShipping, label } or { error }.
 // `discount` applies to the products; free shipping is handled by the caller.
-export function evaluateCoupon(codeInput, subtotal, { email } = {}) {
+export function evaluateCoupon(codeInput, subtotal, { cpf } = {}) {
   const code = normalizeCode(codeInput);
   if (!code) return { error: 'Digite o código do cupom.' };
   const r = db.prepare('SELECT * FROM coupons WHERE code = ?').get(code);
@@ -59,11 +59,12 @@ export function evaluateCoupon(codeInput, subtotal, { email } = {}) {
   }
   if (r.max_uses != null && r.uses >= r.max_uses) return { error: 'Esse cupom já atingiu o limite de usos.' };
   if (subtotal < r.min_subtotal) return { error: `Esse cupom vale para compras a partir de ${brl(r.min_subtotal)}.` };
-  if (r.once_per_customer && email) {
+  // "1 per customer" is checked by CPF. Without a CPF yet, the order itself re-checks it.
+  if (r.once_per_customer && cleanCpf(cpf).length === 11) {
     const used = db
-      .prepare("SELECT 1 FROM orders WHERE coupon_code = ? AND lower(json_extract(customer, '$.email')) = lower(?) AND status != 'cancelado'")
-      .get(r.code, String(email).trim());
-    if (used) return { error: 'Você já usou esse cupom.' };
+      .prepare("SELECT 1 FROM orders WHERE coupon_code = ? AND json_extract(customer, '$.cpf') = ? AND status != 'cancelado'")
+      .get(r.code, cleanCpf(cpf));
+    if (used) return { error: 'Esse CPF já usou esse cupom.' };
   }
 
   let discount = 0;

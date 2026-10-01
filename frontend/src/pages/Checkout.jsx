@@ -5,9 +5,11 @@ import { useCart } from '../context/CartContext';
 import { formatPrice } from '../brand';
 import { useAuth } from '../context/AuthContext';
 import { lookupCep } from '../cep';
+import CpfInput from '../components/CpfInput';
+import { isValidCpf } from '../cpf';
 import ShippingCalculator, { maskCep } from '../components/ShippingCalculator';
 
-const empty = { name: '', email: '', phone: '', cep: '', address: '', number: '', complement: '', city: '', state: '' };
+const empty = { name: '', email: '', phone: '', cpf: '', cep: '', address: '', number: '', complement: '', city: '', state: '' };
 
 const payments = [
   { id: 'pix', label: 'Pix', hint: '5% de desconto' },
@@ -27,14 +29,14 @@ export default function Checkout() {
   const [coupon, setCoupon] = useState(null);
   const [couponError, setCouponError] = useState('');
   const [applying, setApplying] = useState(false);
-  const { user } = useAuth();
+  const { user, setUser } = useAuth();
   const [saved, setSaved] = useState([]);
   const [saveAddress, setSaveAddress] = useState(true);
 
   // Logged in: pre-fill contact info and the default saved address.
   useEffect(() => {
     if (!user) return;
-    setForm((f) => ({ ...f, name: f.name || user.name, email: f.email || user.email, phone: f.phone || user.phone }));
+    setForm((f) => ({ ...f, name: f.name || user.name, email: f.email || user.email, phone: f.phone || user.phone, cpf: user.cpf || f.cpf }));
     api.addresses().then((list) => {
       setSaved(list);
       const def = list.find((a) => a.isDefault) || list[0];
@@ -81,7 +83,7 @@ export default function Checkout() {
     setApplying(true);
     setCouponError('');
     try {
-      setCoupon(await api.validateCoupon(couponInput, cartItems(), form.email));
+      setCoupon(await api.validateCoupon(couponInput, cartItems(), user?.cpf || form.cpf));
       setCouponInput('');
     } catch (err) {
       setCouponError(err.message);
@@ -99,6 +101,7 @@ export default function Checkout() {
 
   const submit = async (e) => {
     e.preventDefault();
+    if (!isValidCpf(user?.cpf || form.cpf)) return setError('Confira o CPF — ele está inválido.');
     if (shippingEnabled && !ship.option) return setError('Escolha uma opção de entrega.');
     setSending(true);
     setError('');
@@ -114,6 +117,7 @@ export default function Checkout() {
         const { cep, address, number, complement, city, state } = form;
         await api.addAddress({ cep, address, number, complement, city, state }).catch(() => {});
       }
+      if (user && !user.cpf) setUser({ ...user, cpf: form.cpf }); // the order saved it on the account
       clear();
       navigate(`/pedido/${order.id}`);
     } catch (err) {
@@ -138,6 +142,12 @@ export default function Checkout() {
             <label className="field field--full">Nome completo<input className="input" required value={form.name} onChange={set('name')} /></label>
             <label className="field">E-mail<input className="input" type="email" required value={form.email} onChange={set('email')} /></label>
             <label className="field">WhatsApp<input className="input" type="tel" required placeholder="(11) 99999-9999" value={form.phone} onChange={set('phone')} /></label>
+            <CpfInput
+              value={user?.cpf || form.cpf}
+              onChange={(cpf) => { setForm((f) => ({ ...f, cpf })); setCoupon(null); }}
+              locked={!!user?.cpf}
+              hint={user ? 'Ficará salvo na sua conta.' : undefined}
+            />
           </fieldset>
 
           <fieldset className="box">
