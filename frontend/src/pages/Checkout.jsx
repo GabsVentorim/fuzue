@@ -119,7 +119,7 @@ export default function Checkout() {
       }
       if (user && !user.cpf) setUser({ ...user, cpf: form.cpf }); // the order saved it on the account
       clear();
-      navigate(`/pedido/${order.id}`);
+      navigate(`/pedido/${order.id}`, { state: { celebrate: true } });
     } catch (err) {
       setError(err.message);
     } finally {

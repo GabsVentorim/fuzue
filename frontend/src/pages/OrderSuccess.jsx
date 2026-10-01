@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { api } from '../api';
 import brand, { formatPrice, whatsappLink } from '../brand';
 import { Heart } from '../components/Icons';
+import OrderCelebration from '../components/OrderCelebration';
 
 const payLabel = { pix: 'Pix', cartao: 'Cartão', boleto: 'Boleto' };
 
@@ -10,11 +11,20 @@ export default function OrderSuccess() {
   const { id } = useParams();
   const [order, setOrder] = useState(null);
   const [error, setError] = useState('');
+  const location = useLocation();
+  const navigate = useNavigate();
+  // play the "order placed" animation only right after checkout (not on refresh / later visits)
+  const [celebrate, setCelebrate] = useState(!!location.state?.celebrate);
+  const endCelebration = () => {
+    setCelebrate(false);
+    navigate(location.pathname, { replace: true, state: {} });
+  };
 
   useEffect(() => {
     api.order(id).then(setOrder).catch((e) => setError(e.message));
   }, [id]);
 
+  if (celebrate) return <OrderCelebration onDone={endCelebration} />;
   if (error) return <p className="alert container section">{error}</p>;
   if (!order) return <p className="muted center section">Carregando…</p>;
 

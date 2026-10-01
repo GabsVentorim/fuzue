@@ -128,7 +128,7 @@ export default function QuickBuy({ product, initial, onClose }) {
       });
       if (user && !user.cpf) setUser({ ...user, cpf: form.cpf });
       onClose();
-      navigate(`/pedido/${order.id}`);
+      navigate(`/pedido/${order.id}`, { state: { celebrate: true } });
     } catch (err) {
       setError(err.message);
     } finally {
