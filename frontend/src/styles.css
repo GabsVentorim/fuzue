@@ -763,6 +763,13 @@ p.tag { margin: 6px 0 0; }
   92%  { transform: translateY(-6%) scale(0.96, 1.04); }
   100% { transform: translateY(0) scale(1.14, 0.86); }
 }
+.logo-anim__eye { position: absolute; display: block; pointer-events: none; }
+.logo-anim__eye img { width: 100%; height: 100%; display: block; transform-origin: 50% 55%; }
+.logo-anim__eye img.is-blinking { animation: logo-blink 0.22s ease-in-out; }
+@keyframes logo-blink {
+  0%, 100% { transform: scaleY(1); }
+  45%, 55% { transform: scaleY(0.2); }
+}
 .logo-anim__bark { position: absolute; display: block; pointer-events: none; }
 .logo-anim__bark svg { width: 100%; height: 100%; overflow: visible; display: block; }
 .logo-anim__bark path {

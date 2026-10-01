@@ -122,7 +122,7 @@ The **Admin** link then shows up in the header (`/admin`):
   - An empty value falls back to the built-in drawing, such as the text logo or illustrations.
   - See `frontend/public/assets/README.md`.
 - **Company logo:** the files live in `frontend/public/assets/logo/`. `logo.png` is the original; the footer shows it as a rounded sticker. `logo-transparente.png` is a copy with the background removed, used in the header. To change the logo, replace the files and keep the paths in `assets.logo` / `assets.logoLight`.
-- **Animated header logo:** in the header, the blue ball bounces and the dog barks now and then. It uses `logo-sem-bola.png` (the logo without the ball) plus `logo-bola.png` (just the ball), set in `assets.logoAnimated` with positions as percentages of the image. Remove `logoAnimated` to go back to the static logo. People with reduced motion turned on see it still.
+- **Animated header logo:** in the header, the blue ball bounces, the dog blinks and now and then barks at it. It uses `logo-base.png` (the logo without the ball and the eyes) plus `logo-bola.png` and `logo-olho-1/2.png`, cut from the same image, set in `assets.logoAnimated` with positions as percentages of the image. Remove `logoAnimated` to go back to the static logo. People with reduced motion turned on see it still.
 - **Product and pet photos** are uploaded through the site and saved in `backend/uploads/`.
 - In the code, every image URL comes from `frontend/src/assets.js` (`asset('logo')`, `imageUrl(path)`). Components never have image paths written into them.
 
