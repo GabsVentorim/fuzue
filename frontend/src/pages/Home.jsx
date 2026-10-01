@@ -6,6 +6,7 @@ import { asset } from '../assets';
 import ProductCard from '../components/ProductCard';
 import ProductArt from '../components/ProductArt';
 import SizeGuide from '../components/SizeGuide';
+import HeroCarousel from '../components/HeroCarousel';
 import { Paw, Truck, Heart, Shield, Sparkle } from '../components/Icons';
 
 const categories = [
@@ -17,45 +18,57 @@ const categories = [
 export default function Home() {
   const [featured, setFeatured] = useState([]);
   const [error, setError] = useState('');
+  const [banners, setBanners] = useState(null); // null = loading
 
   useEffect(() => {
     api.products({ featured: 'true' }).then(setFeatured).catch((e) => setError(e.message));
+    api.banners().then(setBanners).catch(() => setBanners([]));
   }, []);
 
   return (
     <>
-      {/* HERO */}
-      <section className="hero">
-        <Paw className="float float--1" />
-        <Paw className="float float--2" />
-        <Sparkle className="float float--3" />
-        <div className="container hero__grid">
-          <div className="hero__text">
-            <span className="pill">
-              <Heart width={16} height={16} /> novidades fresquinhas
-            </span>
-            <h1>
-              Mimos <span className="hl">coloridos</span> para o seu melhor amigo
-            </h1>
-            <p>Coleiras, bandanas e presilhas coloridas, confortáveis e feitas para brilhar nos passeios.</p>
-            <div className="hero__cta">
-              <Link to="/loja" className="btn btn--primary">Ver a lojinha</Link>
-              <Link to="/loja?categoria=bandanas" className="btn btn--ghost">Bandanas novas</Link>
-            </div>
+      {/* HERO — the carousel from Admin → Carrossel; the original hero shows while there are no banners */}
+      {banners === null ? (
+        <section className="hero-carousel"><div className="container"><div className="carousel carousel--loading" aria-hidden /></div></section>
+      ) : banners.length > 0 ? (
+        <section className="hero-carousel">
+          <div className="container">
+            <HeroCarousel banners={banners} />
           </div>
-          {asset('hero') ? (
-            <div className="hero__photo">
-              <img src={asset('hero')} alt={brand.name} />
+        </section>
+      ) : (
+        <section className="hero">
+          <Paw className="float float--1" />
+          <Paw className="float float--2" />
+          <Sparkle className="float float--3" />
+          <div className="container hero__grid">
+            <div className="hero__text">
+              <span className="pill">
+                <Heart width={16} height={16} /> novidades fresquinhas
+              </span>
+              <h1>
+                Mimos <span className="hl">coloridos</span> para o seu melhor amigo
+              </h1>
+              <p>Coleiras, bandanas e presilhas coloridas, confortáveis e feitas para brilhar nos passeios.</p>
+              <div className="hero__cta">
+                <Link to="/loja" className="btn btn--primary">Ver a lojinha</Link>
+                <Link to="/loja?categoria=bandanas" className="btn btn--ghost">Bandanas novas</Link>
+              </div>
             </div>
-          ) : (
-            <div className="hero__art">
-              <div className="blob blob--red"><ProductArt category="coleiras" color="#377DF8" pattern="dots" alt="Coleira" /></div>
-              <div className="blob blob--blue"><ProductArt category="bandanas" color="#E8432A" pattern="hearts" alt="Bandana" /></div>
-              <div className="blob blob--cream"><ProductArt category="presilhas" color="#F4A7D3" pattern="dots" alt="Presilha" /></div>
-            </div>
-          )}
-        </div>
-      </section>
+            {asset('hero') ? (
+              <div className="hero__photo">
+                <img src={asset('hero')} alt={brand.name} />
+              </div>
+            ) : (
+              <div className="hero__art">
+                <div className="blob blob--red"><ProductArt category="coleiras" color="#377DF8" pattern="dots" alt="Coleira" /></div>
+                <div className="blob blob--blue"><ProductArt category="bandanas" color="#E8432A" pattern="hearts" alt="Bandana" /></div>
+                <div className="blob blob--cream"><ProductArt category="presilhas" color="#F4A7D3" pattern="dots" alt="Presilha" /></div>
+              </div>
+            )}
+          </div>
+        </section>
+      )}
 
       {/* CATEGORIES */}
       <section className="section container">

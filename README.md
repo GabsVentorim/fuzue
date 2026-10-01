@@ -74,6 +74,16 @@ Shipping prices are real quotes from [SuperFrete](https://superfrete.readme.io):
 - **Locked after it's saved:** customers can't edit their CPF. To change it, they open a **chamado** (support ticket) in Meus dados. You approve or reject it in **Admin → Chamados**, and the dashboard shows a notice when tickets are waiting.
 - **At checkout:** logged-in customers always buy with the CPF on their account. If the account has no CPF yet, the CPF used in the first order is saved to it.
 
+## Home carousel
+
+The top of the home page is a carousel managed in **Admin → Carrossel**. Use it for new arrivals, brand collections and campaigns.
+
+- **Images:** a desktop image (recommended 1600×600) and an optional phone image (900×1100). They are uploaded to `backend/uploads/banners/`.
+- **Text, all optional:** title, subtitle, button and link (`/loja?categoria=coleiras`, a product page, or an `https://` address).
+- **Scheduling:** set start and end dates to plan collections ahead. You can also reorder banners and switch them on or off.
+- **Behaviour:** slides change every 5 s and pause on hover. There are arrows and dots, swipe on phones and keyboard arrows.
+- **No banners live:** the home shows the default hero instead.
+
 ## Coupons
 
 Create coupons under **Admin → Cupons**. Customers enter them in the **Pagamento** section of the checkout.

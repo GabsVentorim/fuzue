@@ -1,9 +1,10 @@
 import { Router } from 'express';
 import db, { toProduct, toOrder, toUser, toPet, toAddress, toTicket } from '../db.js';
 import { requireAdmin } from '../auth.js';
-import { imageUpload, publicPath } from '../uploads.js';
+import { imageUpload, publicPath, removeUpload } from '../uploads.js';
 import { CATEGORIES, ORDER_STATUSES, round2, slugify, normalize, isValidCpf, cleanCpf } from '../util.js';
 import { TYPES as COUPON_TYPES, toCoupon, normalizeCode, countUse } from '../coupons.js';
+import { allBanners, toBanner } from '../banners.js';
 
 const router = Router();
 router.use(requireAdmin);
@@ -257,6 +258,80 @@ router.patch('/orders/:id', (req, res) => {
     }
   })();
   res.json(toOrder(db.prepare('SELECT * FROM orders WHERE id = ?').get(order.id)));
+});
+
+// ---------- home carousel banners ----------
+const bannerUpload = imageUpload('banners');
+router.post('/banners/upload', (req, res) => {
+  bannerUpload(req, res, (err) => {
+    if (err) return res.status(400).json({ error: err.message });
+    if (!req.file) return res.status(400).json({ error: 'Nenhuma imagem enviada.' });
+    res.status(201).json({ url: publicPath('banners', req.file) });
+  });
+});
+
+const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+function readBanner(body) {
+  const txt = (v, max) => String(v ?? '').trim().slice(0, max) || null;
+  const b = {
+    title: txt(body?.title, 80),
+    subtitle: txt(body?.subtitle, 160),
+    image: txt(body?.image, 300),
+    image_mobile: txt(body?.imageMobile, 300),
+    link_url: txt(body?.linkUrl, 300),
+    button_label: txt(body?.buttonLabel, 30),
+    active: body?.active === false ? 0 : 1,
+    starts_at: body?.startsAt || null,
+    ends_at: body?.endsAt || null,
+  };
+  const errors = [];
+  if (!b.image) errors.push('Envie a imagem do banner.');
+  if (b.link_url && !/^(\/|https?:\/\/)/.test(b.link_url)) errors.push('O link deve começar com / (página do site) ou https://');
+  if ((b.starts_at && !DATE_RE.test(b.starts_at)) || (b.ends_at && !DATE_RE.test(b.ends_at))) errors.push('Data inválida.');
+  if (b.starts_at && b.ends_at && b.ends_at < b.starts_at) errors.push('A data final é antes da inicial.');
+  return { b, error: errors.join(' ') || null };
+}
+const getBanner = (id) => toBanner(db.prepare('SELECT * FROM banners WHERE id = ?').get(id));
+
+router.get('/banners', (_req, res) => res.json(allBanners()));
+
+router.post('/banners', (req, res) => {
+  const { b, error } = readBanner(req.body);
+  if (error) return res.status(400).json({ error });
+  const position = db.prepare('SELECT COALESCE(MAX(position), -1) + 1 AS p FROM banners').get().p;
+  const { lastInsertRowid } = db.prepare(`INSERT INTO banners (title, subtitle, image, image_mobile, link_url, button_label, active, starts_at, ends_at, position)
+    VALUES (@title, @subtitle, @image, @image_mobile, @link_url, @button_label, @active, @starts_at, @ends_at, @position)`).run({ ...b, position });
+  res.status(201).json(getBanner(lastInsertRowid));
+});
+
+router.put('/banners/:id', (req, res) => {
+  const current = db.prepare('SELECT * FROM banners WHERE id = ?').get(req.params.id);
+  if (!current) return res.status(404).json({ error: 'Banner não encontrado.' });
+  const { b, error } = readBanner(req.body);
+  if (error) return res.status(400).json({ error });
+  db.prepare(`UPDATE banners SET title=@title, subtitle=@subtitle, image=@image, image_mobile=@image_mobile, link_url=@link_url,
+    button_label=@button_label, active=@active, starts_at=@starts_at, ends_at=@ends_at WHERE id=@id`).run({ ...b, id: current.id });
+  // clean up replaced uploads
+  if (current.image !== b.image) removeUpload(current.image);
+  if (current.image_mobile && current.image_mobile !== b.image_mobile) removeUpload(current.image_mobile);
+  res.json(getBanner(current.id));
+});
+
+// body: { ids: [3, 1, 2] } — the new order
+router.put('/banners-order', (req, res) => {
+  const ids = Array.isArray(req.body?.ids) ? req.body.ids.map(Number) : [];
+  const set = db.prepare('UPDATE banners SET position = ? WHERE id = ?');
+  db.transaction(() => ids.forEach((id, i) => set.run(i, id)))();
+  res.json(allBanners());
+});
+
+router.delete('/banners/:id', (req, res) => {
+  const current = db.prepare('SELECT * FROM banners WHERE id = ?').get(req.params.id);
+  if (!current) return res.status(404).json({ error: 'Banner não encontrado.' });
+  db.prepare('DELETE FROM banners WHERE id = ?').run(current.id);
+  removeUpload(current.image);
+  removeUpload(current.image_mobile);
+  res.json({ ok: true });
 });
 
 // ---------- coupons ----------

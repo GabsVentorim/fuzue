@@ -704,6 +704,49 @@ p.tag { margin: 6px 0 0; }
   .celebrate__check { stroke-dashoffset: 0; }
 }
 
+/* ===== Home carousel ===== */
+.hero-carousel { background: var(--pink); padding: 28px 0 40px; }
+.carousel { position: relative; }
+.carousel--loading { aspect-ratio: 1180 / 440; border-radius: var(--radius); background: rgba(255, 255, 255, 0.35); }
+.carousel__viewport { position: relative; overflow: hidden; border-radius: var(--radius); box-shadow: var(--shadow-lg); touch-action: pan-y; }
+.carousel__track { display: flex; transition: transform 0.6s cubic-bezier(.4, .1, .2, 1); }
+.carousel__slide { flex: 0 0 100%; min-width: 0; }
+.carousel__link { position: relative; display: block; aspect-ratio: 1180 / 440; background: var(--pink-soft); }
+.carousel__img { width: 100%; height: 100%; object-fit: cover; user-select: none; }
+.carousel__text {
+  position: absolute; left: 4%; bottom: 10%; max-width: min(520px, 70%); display: grid; gap: 8px; justify-items: start;
+  padding: 20px 24px; border-radius: var(--radius-sm); background: rgba(255, 247, 251, 0.92); box-shadow: var(--shadow);
+}
+.carousel__text h2 { margin: 0; color: var(--red); font-size: clamp(1.4rem, 3vw, 2.4rem); }
+.carousel__text p { margin: 0; font-weight: 700; color: var(--ink); }
+.carousel__arrow {
+  position: absolute; top: 50%; transform: translateY(-50%); width: 44px; height: 44px; border-radius: 50%; border: 0;
+  display: grid; place-items: center; padding-bottom: 4px; background: rgba(255, 255, 255, 0.9); color: var(--red);
+  font-size: 2rem; line-height: 1; font-weight: 700; box-shadow: var(--shadow); opacity: 0; transition: opacity 0.2s, transform 0.2s;
+}
+.carousel:hover .carousel__arrow, .carousel__arrow:focus-visible { opacity: 1; }
+.carousel__arrow:hover { transform: translateY(-50%) scale(1.08); }
+.carousel__arrow--prev { left: 14px; }
+.carousel__arrow--next { right: 14px; }
+.carousel__dots { display: flex; justify-content: center; gap: 8px; margin-top: 14px; }
+.carousel__dot { width: 10px; height: 10px; border-radius: 999px; border: 0; padding: 0; background: rgba(232, 67, 42, 0.35); transition: width 0.25s, background 0.25s; }
+.carousel__dot--on { width: 28px; background: var(--red); }
+@media (hover: none) { .carousel__arrow { opacity: 1; width: 36px; height: 36px; font-size: 1.6rem; } }
+
+/* ===== Admin: carousel banners ===== */
+.banner-upload { display: grid; place-items: center; min-height: 120px; border: 2px dashed var(--line); border-radius: var(--radius-sm); background: var(--cream); overflow: hidden; }
+.banner-upload img { width: 100%; max-height: 220px; object-fit: contain; }
+.banners { display: grid; gap: 10px; }
+.banner-row { display: grid; grid-template-columns: auto 200px 1fr auto; align-items: center; gap: 16px; padding: 12px 16px; }
+.banner-row--off .banner-row__img { opacity: 0.5; }
+.banner-row__order { display: grid; justify-items: center; }
+.banner-row__order .icon-btn { width: 30px; height: 26px; font-size: 0.75rem; }
+.banner-row__order .icon-btn:disabled { opacity: 0.25; cursor: default; }
+.banner-row__img { width: 200px; aspect-ratio: 1180 / 440; object-fit: cover; border-radius: 10px; background: var(--pink-soft); }
+.banner-row__info { display: grid; gap: 4px; min-width: 0; }
+.banner-row__info .small { overflow: hidden; text-overflow: ellipsis; }
+.banner-row__actions { display: grid; gap: 4px; justify-items: end; }
+
 /* ===== Animations ===== */
 @keyframes bob { 0%, 100% { translate: 0 0; } 50% { translate: 0 -12px; } }
 @keyframes pop { 0% { transform: scale(0.4); } 70% { transform: scale(1.15); } 100% { transform: scale(1); } }
@@ -748,6 +791,13 @@ p.tag { margin: 6px 0 0; }
   .toolbar__right, .toolbar .input { width: 100%; }
   .grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
   .modal { padding: 0; place-items: end stretch; }
+  .hero-carousel { padding: 16px 0 28px; }
+  .carousel__link:has(source) { aspect-ratio: 900 / 1100; }
+  .carousel__link { aspect-ratio: 16 / 9; }
+  .carousel__text { left: 12px; right: 12px; bottom: 12px; max-width: none; padding: 12px 14px; }
+  .banner-row { grid-template-columns: auto 1fr; }
+  .banner-row__img { width: 100%; grid-column: 2; }
+  .banner-row__info, .banner-row__actions { grid-column: 2; justify-items: start; }
   .modal__dialog { max-height: 94vh; border-radius: var(--radius) var(--radius) 0 0; }
   .qb__main { padding: 14px; }
   .qb__grid { grid-template-columns: 1fr; }

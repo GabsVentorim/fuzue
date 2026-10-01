@@ -5,12 +5,15 @@ import { CATEGORIES, readBrand, round2, normalize, cleanCpf, isValidCpf } from '
 import rateLimit from 'express-rate-limit';
 import { quoteShipping, shippingEnabled, ShippingError } from '../shipping.js';
 import { evaluateCoupon, countUse } from '../coupons.js';
+import { liveBanners } from '../banners.js';
 
 const router = Router();
 
 router.get('/store', (_req, res) => res.json(readBrand()));
 
 router.get('/categories', (_req, res) => res.json(CATEGORIES));
+
+router.get('/banners', (_req, res) => res.json(liveBanners()));
 
 // ---------- shipping ----------
 router.get('/shipping/status', (_req, res) => res.json({ enabled: shippingEnabled() }));

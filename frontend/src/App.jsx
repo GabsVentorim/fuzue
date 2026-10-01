@@ -28,6 +28,7 @@ import Stock from './pages/admin/Stock';
 import Customers from './pages/admin/Customers';
 import Coupons from './pages/admin/Coupons';
 import Tickets from './pages/admin/Tickets';
+import Banners from './pages/admin/Banners';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -68,6 +69,7 @@ export default function App() {
             <Route path="estoque" element={<Stock />} />
             <Route path="cupons" element={<Coupons />} />
             <Route path="chamados" element={<Tickets />} />
+            <Route path="carrossel" element={<Banners />} />
             <Route path="clientes" element={<Customers />} />
             <Route path="clientes/:id" element={<Customers />} />
           </Route>
