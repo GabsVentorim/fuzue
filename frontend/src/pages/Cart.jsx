@@ -2,9 +2,8 @@ import { Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import brand, { formatPrice } from '../brand';
 import ProductArt from '../components/ProductArt';
-import { Trash } from '../components/Icons';
+import { Paw, Trash } from '../components/Icons';
 import ShippingCalculator from '../components/ShippingCalculator';
-import Mascot from '../components/Mascot';
 
 export default function Cart() {
   const { items, setQty, remove, subtotal, shipping, missingForFree, shippingEnabled, ship, setShipCep, chooseShipping } = useCart();
@@ -12,7 +11,7 @@ export default function Cart() {
   if (items.length === 0) {
     return (
       <section className="section container empty">
-        <Mascot className="mascot--empty" />
+        <Paw width={64} height={64} />
         <h1>Seu carrinho está vazio</h1>
         <p className="muted">Bora encher de fuzuê?</p>
         <Link to="/loja" className="btn btn--primary">Ir para a loja</Link>

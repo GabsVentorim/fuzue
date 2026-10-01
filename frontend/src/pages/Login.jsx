@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import GoogleButton, { googleEnabled } from '../components/GoogleButton';
-import Mascot from '../components/Mascot';
 
 export default function Login() {
   const { user, login, register, loginWithGoogle } = useAuth();
@@ -45,7 +44,6 @@ export default function Login() {
   return (
     <section className="section container auth">
       <div className="auth__card">
-        <Mascot className="auth__mascot" />
         <h1 className="page-title center">Entrar ou criar conta</h1>
         <p className="muted center">
           Acompanhe pedidos, cadastre seus pets e compre mais rápido.

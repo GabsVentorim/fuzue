@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom';
 import Logo from './Logo';
-import Mascot from './Mascot';
 import { Paw } from './Icons';
 import brand, { instagramLink, whatsappLink } from '../brand';
 
@@ -8,7 +7,6 @@ export default function Footer() {
   return (
     <footer className="footer">
       <div className="footer__wave" aria-hidden />
-      <Mascot className="footer__mascot" />
       <div className="container footer__grid">
         <div>
           <Logo variant="light" />

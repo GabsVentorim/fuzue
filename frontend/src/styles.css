@@ -631,20 +631,6 @@ p.tag { margin: 6px 0 0; }
   .tape__tag { color: #000; }
 }
 
-/* ===== Brand mascot ===== */
-.mascot { display: block; height: auto; pointer-events: none; user-select: none; filter: drop-shadow(0 8px 10px rgba(43, 33, 64, 0.18)); }
-.hero__mascot { position: absolute; z-index: 2; width: 165px; left: 21%; bottom: -34px; transform: rotate(-4deg); animation: bob 5s ease-in-out infinite; animation-delay: -2.4s; }
-.footer__mascot { position: absolute; z-index: 1; width: 104px; right: 7%; top: -88px; transform: scaleX(-1); }
-.mascot--empty { width: 170px; margin-bottom: 4px; }
-.mascot--tilt { transform: rotate(-8deg); }
-.auth { padding-top: 88px; }
-.auth__card { position: relative; }
-.auth__mascot { position: absolute; width: 92px; top: -64px; right: 18px; transform: rotate(6deg); }
-.sg__intro { position: relative; }
-/* one mascot per screen: hide the footer one when the page already shows a big one */
-body:has(.mascot--empty, .auth__mascot) .footer__mascot { display: none; }
-.sg__mascot { width: 92px; margin-bottom: 6px; transform: rotate(-6deg); filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.22)); }
-
 /* ===== Animations ===== */
 @keyframes bob { 0%, 100% { translate: 0 0; } 50% { translate: 0 -12px; } }
 @keyframes pop { 0% { transform: scale(0.4); } 70% { transform: scale(1.15); } 100% { transform: scale(1); } }
@@ -661,7 +647,6 @@ body:has(.mascot--empty, .auth__mascot) .footer__mascot { display: none; }
   .perks { grid-template-columns: 1fr 1fr; }
   .summary { position: static; }
   .pdp__media { position: relative; top: auto; }
-  .hero__mascot { width: 120px; left: 24%; bottom: -26px; }
   .admin, .split, .account-grid, .admin-grid, .sg__top, .sg__body { grid-template-columns: 1fr; }
   .sg__steps { grid-template-columns: 1fr 1fr; }
   .sg__steps li::after { display: none; }
@@ -686,8 +671,6 @@ body:has(.mascot--empty, .auth__mascot) .footer__mascot { display: none; }
   .box, .pay { grid-template-columns: 1fr; }
   .toolbar__right, .toolbar .input { width: 100%; }
   .grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
-  .footer__mascot { width: 80px; top: -70px; right: 5%; }
-  .auth__mascot { width: 76px; top: -52px; }
   .sg__top, .sg__finder, .sg__table { padding: 22px 18px; }
   .sg__steps { grid-template-columns: 1fr; }
   .sg__steps li { grid-template-columns: 30px 1fr; column-gap: 12px; padding: 12px; }

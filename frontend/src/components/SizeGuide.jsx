@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import Mascot from './Mascot';
 import { SIZES, BREED_NECKS, PORTE_NECKS, sizeForNeck, sizesForRange, sizeRange } from '../sizes';
 
 const MODES = [
@@ -51,7 +50,6 @@ export default function SizeGuide() {
       {/* 1 — how to measure */}
       <div className="sg__top">
         <div className="sg__intro">
-          <Mascot className="sg__mascot" />
           <h2>Qual tamanho escolher?</h2>
           <p>Meça o pescoço do seu pet em 4 passos — ou descubra pela raça logo abaixo.</p>
           <Link to="/fita-metrica" className="btn btn--light btn--sm">📏 Imprimir fita métrica</Link>
