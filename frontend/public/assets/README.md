@@ -7,7 +7,7 @@ diretamente — eles leem daquele arquivo via `frontend/src/assets.js`.
 ```
 assets/
   logo/           logo.png (original) e logo-transparente.png (sem fundo, usada no header)
-  brand/          favicon.svg, og-image.png
+  brand/          favicon.png (aba), favicon-192.png, apple-touch-icon.png (tela inicial do celular), og-image.png
   site/           hero.jpg, banners
   site/categorias coleiras.jpg, bandanas.jpg, presilhas.jpg
   placeholders/   pet.svg (foto padrão de pet)

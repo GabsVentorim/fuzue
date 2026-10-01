@@ -12,7 +12,7 @@
   "assets": {
     "logo": "/assets/logo/logo-transparente.png",
     "logoLight": "/assets/logo/logo.png",
-    "favicon": "/assets/brand/favicon.svg",
+    "favicon": "/assets/brand/favicon.png",
     "ogImage": "",
     "hero": "",
     "categories": {
@@ -20,6 +20,7 @@
       "bandanas": "",
       "presilhas": ""
     },
-    "petPlaceholder": "/assets/placeholders/pet.svg"
+    "petPlaceholder": "/assets/placeholders/pet.svg",
+    "appleTouchIcon": "/assets/brand/apple-touch-icon.png"
   }
 }

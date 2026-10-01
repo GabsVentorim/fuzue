@@ -8,10 +8,19 @@ import brand from './brand';
 import { asset } from './assets';
 import './styles.css';
 
-document.title = `${brand.name} · ${brand.subtitle.toLowerCase()}`;
+// Tab title: the pet emoji alternates 🐶 / 🐱 every 2 seconds.
+const baseTitle = `${brand.name} · ${brand.subtitle.toLowerCase()}`;
+const pets = ['🐶', '🐱'];
+let pet = 0;
+document.title = `${pets[pet]} ${baseTitle}`;
+setInterval(() => {
+  pet = (pet + 1) % pets.length;
+  document.title = `${pets[pet]} ${baseTitle}`;
+}, 2000);
 
-// Favicon and social-share image come from brand.config.json → assets.
+// Favicon, home-screen icon and social-share image come from brand.config.json → assets.
 if (asset('favicon')) document.getElementById('favicon').href = asset('favicon');
+if (asset('appleTouchIcon')) document.getElementById('apple-touch-icon').href = asset('appleTouchIcon');
 if (asset('ogImage')) {
   const og = document.createElement('meta');
   og.setAttribute('property', 'og:image');
