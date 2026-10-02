@@ -2,10 +2,11 @@ import { Link } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { spring, softSpring } from '../motion';
 import { useCart } from '../context/CartContext';
-import brand, { formatPrice } from '../brand';
+import { formatPrice } from '../brand';
 import ProductArt from '../components/ProductArt';
 import { Paw, Trash } from '../components/Icons';
 import ShippingCalculator from '../components/ShippingCalculator';
+import FreeShippingBar from '../components/FreeShippingBar';
 
 export default function Cart() {
   const { items, setQty, remove, subtotal, shipping, missingForFree, shippingEnabled, ship, setShipCep, chooseShipping } = useCart();
@@ -23,22 +24,11 @@ export default function Cart() {
     );
   }
 
-  const progress = Math.min(100, (subtotal / brand.shipping.freeFrom) * 100);
-
   return (
     <section className="section container">
       <h1 className="page-title">Seu carrinho</h1>
 
-      <div className="free-ship">
-        <p>
-          {missingForFree > 0 ? (
-            <>Faltam <b>{formatPrice(missingForFree)}</b> para o frete grátis</>
-          ) : (
-            <>Oba! Você ganhou <b>frete grátis</b></>
-          )}
-        </p>
-        <div className="bar"><motion.span className="bar__fill" initial={false} animate={{ scaleX: progress / 100 }} transition={softSpring} /></div>
-      </div>
+      <FreeShippingBar subtotal={subtotal} missing={missingForFree} />
 
       <div className="cart">
         <ul className="cart__list">

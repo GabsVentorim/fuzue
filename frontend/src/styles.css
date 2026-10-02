@@ -360,6 +360,30 @@ input, textarea { caret-color: var(--red); }
 .pdp__perks svg { color: var(--blue); }
 
 /* ===== Cart ===== */
+/* free-shipping progress (cart): pill track, striped fill, truck riding the tip */
+.fship { position: relative; margin-bottom: 24px; padding: 18px 22px 14px; border-radius: 22px; background: #fff; border: 2px solid var(--line); overflow: hidden; }
+.fship__msg { margin: 0 0 14px; font-size: 1.02rem; }
+.fship__msg b { color: var(--red); }
+.fship__track { position: relative; height: 14px; border-radius: 999px; background: var(--pink-soft); }
+.fship__fill {
+  position: relative; height: 100%; min-width: 14px; border-radius: 999px;
+  background: repeating-linear-gradient(-45deg, rgba(255, 255, 255, 0.22) 0 8px, transparent 8px 16px), var(--blue);
+  background-size: 22.6px 22.6px, auto; animation: fship-stripes 0.9s linear infinite;
+}
+@keyframes fship-stripes { to { background-position: 22.6px 0, 0 0; } }
+.fship__truck {
+  position: absolute; right: -16px; top: 50%; translate: 0 -50%; display: grid; place-items: center; width: 34px; height: 34px;
+  border-radius: 50%; background: #fff; color: var(--blue); box-shadow: 0 4px 12px rgba(43, 33, 64, 0.18), 0 0 0 3px var(--blue);
+}
+.fship__check {
+  position: absolute; top: -6px; right: -6px; display: grid; place-items: center; width: 17px; height: 17px; border-radius: 50%;
+  background: #17a34a; color: #fff; font-size: 0.7rem; font-weight: 800;
+}
+.fship__scale { display: flex; justify-content: space-between; margin-top: 10px; font-size: 0.78rem; font-weight: 700; color: var(--muted); }
+.fship--done .fship__fill { background: #17a34a; animation: none; }
+.fship--done .fship__truck { color: #17a34a; box-shadow: 0 4px 12px rgba(43, 33, 64, 0.18), 0 0 0 3px #17a34a; right: 6px; }
+.fship--done .fship__msg b { color: #138a3e; }
+@media (prefers-reduced-motion: reduce) { .fship__fill { animation: none; } }
 .free-ship { background: #fff; border-radius: var(--radius-sm); padding: 16px 20px; margin-bottom: 24px; border: 2px solid var(--line); }
 .free-ship p { margin: 0 0 8px; }
 .bar { height: 12px; border-radius: 999px; background: var(--pink-soft); overflow: hidden; }
