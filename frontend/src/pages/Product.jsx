@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { spring } from '../motion';
 import { api } from '../api';
@@ -21,6 +21,8 @@ const catName = { coleiras: 'Coleiras', bandanas: 'Bandanas', presilhas: 'Presil
 
 export default function Product() {
   const { slug } = useParams();
+  const [params] = useSearchParams();
+  const wantedColor = params.get('cor'); // colour picked on a product card
   const { add, shippingEnabled, ship, setShipCep } = useCart();
   const [product, setProduct] = useState(null);
   const [related, setRelated] = useState([]);
@@ -38,7 +40,7 @@ export default function Product() {
       .product(slug)
       .then((p) => {
         setProduct(p);
-        setColor(p.colors[0]);
+        setColor(p.colors.find((c) => c.name === wantedColor) || p.colors[0]);
         setSize(defaultSize(p.sizes));
         setQty(1);
         return api.products({ category: p.category });

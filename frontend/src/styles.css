@@ -276,6 +276,11 @@ input, textarea { caret-color: var(--red); }
   box-shadow: 0 0 0 2px var(--line); padding: 0;
 }
 .swatch--sm { width: 16px; height: 16px; border-width: 2px; box-shadow: 0 0 0 1px var(--line); }
+/* colour picker on product cards: small dots, comfortable tap area */
+.card__swatches { gap: 4px; margin: 6px 0 0 2px; }
+.card__swatches .swatch--sm { width: 26px; height: 26px; padding: 0; border: 7px solid #fff0; background-clip: padding-box !important; box-shadow: inset 0 0 0 1px rgba(43, 33, 64, 0.12); cursor: pointer; transition: transform 0.15s; }
+.card__swatches .swatch--sm:hover { transform: scale(1.15); }
+.card__swatches .swatch--on { box-shadow: 0 0 0 2px var(--ink), inset 0 0 0 1px rgba(43, 33, 64, 0.12); border-width: 5px; }
 .swatch--on { box-shadow: 0 0 0 3px var(--ink); }
 
 /* ===== Perks & size help ===== */

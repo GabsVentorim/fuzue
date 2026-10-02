@@ -14,10 +14,10 @@ const sizeHelp = Object.fromEntries(SIZES.map((s) => [s.id, sizeRange(s)]));
 // The "+" on a product card: a sheet that slides up from the bottom to pick colour, size and
 // quantity, then drops the item in the bag without leaving the page. Rendered in <body> (portal): the card
 // it opens from has transforms, which would otherwise trap a position: fixed sheet inside the card.
-export default function AddToBag({ product, onClose }) {
+export default function AddToBag({ product, initialColor, onClose }) {
   const { add } = useCart();
   const dialogRef = useRef(null);
-  const [color, setColor] = useState(product.colors[0]);
+  const [color, setColor] = useState(initialColor || product.colors[0]);
   const [size, setSize] = useState(() => defaultSize(product.sizes));
   const [qty, setQty] = useState(1);
   const soldOut = product.stock <= 0;
