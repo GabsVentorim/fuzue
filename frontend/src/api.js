@@ -46,6 +46,8 @@ export const api = {
   categories: () => request('/categories'),
   createOrder: (body) => request('/orders', { method: 'POST', body }),
   order: (id) => request(`/orders/${id}`),
+  orderPayment: (id) => request(`/orders/${id}/payment`),
+  payOrder: (id, body) => request(`/orders/${id}/pay`, { method: 'POST', body }),
 
   // auth
   me: () => request('/auth/me'),

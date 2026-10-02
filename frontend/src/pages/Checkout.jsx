@@ -6,6 +6,9 @@ import { formatPrice } from '../brand';
 import { useAuth } from '../context/AuthContext';
 import { lookupCep } from '../cep';
 
+// With Mercado Pago configured, the customer pays on /pagamento/:id right after confirming.
+const PAY_ONLINE = !!import.meta.env.VITE_MP_PUBLIC_KEY;
+
 const empty = { name: '', email: '', phone: '', cep: '', address: '', number: '', complement: '', city: '', state: '' };
 
 const payments = [
@@ -63,7 +66,8 @@ export default function Checkout() {
     if (r) setForm((f) => ({ ...f, address: r.address || f.address, city: r.city, state: r.state }));
   };
 
-  const submit = async (e) => {
+  // Creates the order (priced and stock-checked on the server), then hands its id to `next`.
+  const submit = async (e, next) => {
     e.preventDefault();
     setSending(true);
     setError('');
@@ -78,7 +82,7 @@ export default function Checkout() {
         await api.addAddress({ cep, address, number, complement, city, state }).catch(() => {});
       }
       clear();
-      navigate(`/pedido/${order.id}`);
+      next(order.id);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -94,7 +98,7 @@ export default function Checkout() {
           Já tem conta? <Link to="/entrar" state={{ from: '/checkout' }} className="link">Entre</Link> para preencher seus dados automaticamente.
         </p>
       )}
-      <form className="checkout" onSubmit={submit}>
+      <form className="checkout" onSubmit={(e) => submit(e, (id) => navigate(PAY_ONLINE ? `/pagamento/${id}` : `/pedido/${id}`))}>
         <div className="checkout__form">
           <fieldset className="box">
             <legend>Seus dados</legend>
@@ -158,8 +162,8 @@ export default function Checkout() {
           {discount > 0 && <div className="summary__row good"><span>Desconto Pix</span><span>−{formatPrice(discount)}</span></div>}
           <div className="summary__row summary__total"><span>Total</span><span>{formatPrice(subtotal + shipping - discount)}</span></div>
           {error && <p className="alert">{error}</p>}
-          <button className="btn btn--primary btn--block" disabled={sending}>
-            {sending ? 'Enviando…' : 'Confirmar pedido'}
+          <button className="btn btn--primary btn--block" data-mp-checkout-cta="checkout-api" disabled={sending}>
+            {sending ? 'Enviando…' : PAY_ONLINE ? 'Continuar para o pagamento' : 'Confirmar pedido'}
           </button>
         </aside>
       </form>

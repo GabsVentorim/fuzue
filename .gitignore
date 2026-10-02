@@ -21,3 +21,6 @@ npm-debug.log*
 
 # config local do Claude Code
 .claude/settings.local.json
+
+# Mercado Pago wizard checkpoint
+.mp-integrate-progress.md

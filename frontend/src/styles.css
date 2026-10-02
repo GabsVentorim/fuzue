@@ -325,6 +325,22 @@ img { max-width: 100%; display: block; }
 }
 .success__box { position: static; max-width: 460px; margin: 24px auto; text-align: left; }
 
+/* Mercado Pago payment page */
+.pay-page { max-width: 560px; }
+.checkout-total { font-size: 1.2rem; margin: 16px 0; }
+.pay-form { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.pay-form .field--full { grid-column: 1 / -1; }
+.secure-input {
+  position: relative; height: 46px; border: 2px solid var(--line, #e5d5cf);
+  border-radius: var(--radius-sm); background: #fff; overflow: hidden;
+}
+.secure-input:focus-within { border-color: var(--red); }
+.secure-input iframe { display: block; width: 100%; height: 100%; border: 0; }
+.pix { display: grid; justify-items: center; gap: 12px; text-align: center; }
+.pix img { border-radius: var(--radius-sm); background: #fff; }
+.pix .input { width: 100%; font-size: 0.8rem; text-overflow: ellipsis; }
+@media (max-width: 560px) { .pay-form { grid-template-columns: 1fr; } }
+
 .toast {
   position: fixed; left: 50%; bottom: 24px; z-index: 50; transform: translate(-50%, 140%);
   display: flex; align-items: center; gap: 10px; padding: 12px 14px 12px 18px;

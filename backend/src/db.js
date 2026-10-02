@@ -110,6 +110,11 @@ CREATE INDEX IF NOT EXISTS idx_addresses_user ON addresses(user_id);
 CREATE INDEX IF NOT EXISTS idx_moves_product ON stock_movements(product_id);
 `);
 
+// ---------- migrations for databases created before a column existed ----------
+const orderColumns = db.prepare('PRAGMA table_info(orders)').all().map((c) => c.name);
+if (!orderColumns.includes('mp_order_id')) db.exec('ALTER TABLE orders ADD COLUMN mp_order_id TEXT');
+if (!orderColumns.includes('mp_status')) db.exec('ALTER TABLE orders ADD COLUMN mp_status TEXT');
+
 // ---------- first boot: import the old JSON data ----------
 const readSeed = (file) => {
   const p = path.join(SEED_DIR, file);
@@ -193,6 +198,8 @@ export const toOrder = (r) =>
     shipping: r.shipping,
     discount: r.discount,
     total: r.total,
+    mpOrderId: r.mp_order_id || null,
+    mpStatus: r.mp_status || null,
   };
 
 export const toUser = (r) =>

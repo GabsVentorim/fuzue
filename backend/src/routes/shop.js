@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { randomBytes } from 'node:crypto';
 import db, { toProduct, toOrder } from '../db.js';
 import { CATEGORIES, readBrand, round2, normalize } from '../util.js';
+import { mpEnabled, createPayment, syncOrder, PaymentInputError } from '../mercadopago.js';
 
 const router = Router();
 
@@ -125,12 +126,58 @@ router.post('/orders', (req, res) => {
   }
 });
 
+// Orders placed while logged in are only visible to their owner (and admins).
+const findVisibleOrder = (id, user) => {
+  const order = toOrder(db.prepare('SELECT * FROM orders WHERE id = ?').get(id));
+  const allowed = order && (!order.userId || order.userId === user?.id || user?.role === 'admin');
+  return allowed ? order : null;
+};
+
 router.get('/orders/:id', (req, res) => {
-  const order = toOrder(db.prepare('SELECT * FROM orders WHERE id = ?').get(req.params.id));
-  // Orders placed while logged in are only visible to their owner (and admins).
-  const allowed = order && (!order.userId || order.userId === req.user?.id || req.user?.role === 'admin');
-  if (!allowed) return res.status(404).json({ error: 'Pedido não encontrado' });
+  const order = findVisibleOrder(req.params.id, req.user);
+  if (!order) return res.status(404).json({ error: 'Pedido não encontrado' });
   res.json(order);
+});
+
+// ---------- Mercado Pago (Checkout Transparente / Orders API) ----------
+
+// Mercado Pago statuses where the customer still has something to pay (Pix QR code, boleto).
+const PENDING = ['action_required', 'processing'];
+
+// Current payment of an order, refreshed from Mercado Pago. The payment page polls this while
+// a Pix or boleto is pending — it also keeps local development working without a webhook.
+router.get('/orders/:id/payment', async (req, res) => {
+  const order = findVisibleOrder(req.params.id, req.user);
+  if (!order) return res.status(404).json({ error: 'Pedido não encontrado' });
+  let payment = null;
+  if (mpEnabled() && order.mpOrderId) {
+    try {
+      payment = await syncOrder(order.mpOrderId);
+    } catch (err) {
+      console.error('Mercado Pago:', err);
+    }
+  }
+  res.json({ order: findVisibleOrder(order.id, req.user), payment });
+});
+
+// Pays an order. Body: { card: { token, paymentMethodId, paymentTypeId, installments }, cpf, neighborhood }.
+router.post('/orders/:id/pay', async (req, res) => {
+  const order = findVisibleOrder(req.params.id, req.user);
+  if (!order) return res.status(404).json({ error: 'Pedido não encontrado' });
+  if (!mpEnabled()) return res.status(503).json({ error: 'Pagamento online não está disponível.' });
+  if (order.status !== 'aguardando_pagamento') return res.status(409).json({ error: 'Este pedido não está aguardando pagamento.' });
+  // A Pix or boleto already issued stays valid: show it again instead of charging twice.
+  if (order.mpOrderId && PENDING.includes(order.mpStatus)) {
+    return res.status(409).json({ error: 'Já existe um pagamento em andamento para este pedido.' });
+  }
+  try {
+    const payment = await createPayment(order, req.body);
+    res.json({ order: findVisibleOrder(order.id, req.user), payment });
+  } catch (err) {
+    if (err instanceof PaymentInputError) return res.status(400).json({ error: err.message });
+    console.error(`Mercado Pago: pagamento do pedido ${order.id} falhou.`, err);
+    res.status(502).json({ error: 'Não foi possível processar o pagamento. Confira os dados e tente de novo.' });
+  }
 });
 
 export default router;
