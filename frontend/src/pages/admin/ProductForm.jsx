@@ -4,6 +4,7 @@ import { api } from '../../api';
 import ProductArt from '../../components/ProductArt';
 import { imageUrl, productImage } from '../../assets';
 import { SIZES } from '../../sizes';
+import MaterialIcon, { MATERIAL_ICONS } from '../../components/MaterialIcon';
 
 const PATTERNS = { plain: 'Lisa', dots: 'Bolinhas', stripes: 'Listras', hearts: 'Corações' };
 const DEFAULT_SIZES = [...SIZES.map((s) => s.id), 'Único'];
@@ -11,7 +12,7 @@ const DEFAULT_SIZES = [...SIZES.map((s) => s.id), 'Único'];
 const empty = {
   name: '', category: 'coleiras', price: '', description: '', colors: [{ name: '', hex: '#E8432A' }],
   sizes: ['P', 'M', 'G'], pattern: 'plain', badge: '', featured: false, active: true, image: '',
-  stock: 0, lowStockThreshold: 5,
+  stock: 0, lowStockThreshold: 5, details: [],
 };
 
 export default function ProductForm() {
@@ -33,6 +34,7 @@ export default function ProductForm() {
 
   const set = (k) => (e) => setForm({ ...form, [k]: e.target.type === 'checkbox' ? e.target.checked : e.target.value });
   const setColor = (i, k, v) => setForm({ ...form, colors: form.colors.map((c, idx) => (idx === i ? { ...c, [k]: v } : c)) });
+  const setDetail = (i, k, v) => setForm({ ...form, details: form.details.map((d, idx) => (idx === i ? { ...d, [k]: v } : d)) });
   const toggleSize = (s) =>
     setForm({ ...form, sizes: form.sizes.includes(s) ? form.sizes.filter((x) => x !== s) : [...form.sizes, s] });
 
@@ -113,6 +115,28 @@ export default function ProductForm() {
             <label className="check"><input type="checkbox" checked={form.active} onChange={set('active')} /> Ativo na loja</label>
             <label className="check"><input type="checkbox" checked={form.featured} onChange={set('featured')} /> Destaque na home</label>
           </div>
+        </fieldset>
+
+        <fieldset className="box">
+          <legend>Materiais e detalhes</legend>
+          <p className="muted small field--full">Aparecem na página do produto, em “Do que é feito”, com animação. Use para destacar os materiais (ex.: paracord, argola de metal, fivela).</p>
+          {form.details.map((d, i) => (
+            <div key={i} className="detail-row field--full">
+              <span className="detail-row__icon"><MaterialIcon name={d.icon} width={28} height={28} /></span>
+              <select className="input" value={d.icon} onChange={(e) => setDetail(i, 'icon', e.target.value)} aria-label="Ícone">
+                {MATERIAL_ICONS.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
+              </select>
+              <input className="input" maxLength={60} placeholder="Título (ex.: Paracord trançado à mão)" value={d.title} onChange={(e) => setDetail(i, 'title', e.target.value)} />
+              <input className="input detail-row__text" maxLength={240} placeholder="Descrição curta" value={d.text} onChange={(e) => setDetail(i, 'text', e.target.value)} />
+              <button type="button" className="link link--danger small" onClick={() => setForm({ ...form, details: form.details.filter((_, idx) => idx !== i) })}>remover</button>
+            </div>
+          ))}
+          {form.details.length < 8 && (
+            <button type="button" className="btn btn--ghost btn--sm field--full" style={{ justifySelf: 'start' }}
+              onClick={() => setForm({ ...form, details: [...form.details, { icon: 'cord', title: '', text: '' }] })}>
+              + Adicionar material ou detalhe
+            </button>
+          )}
         </fieldset>
 
         <fieldset className="box">

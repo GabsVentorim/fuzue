@@ -113,6 +113,8 @@ CREATE INDEX IF NOT EXISTS idx_moves_product ON stock_movements(product_id);
 // ---------- migrations for databases created by older versions ----------
 const hasColumn = (table, col) => db.prepare(`PRAGMA table_info(${table})`).all().some((c) => c.name === col);
 if (!hasColumn('orders', 'shipping_info')) db.exec('ALTER TABLE orders ADD COLUMN shipping_info TEXT');
+// "Materiais e detalhes" shown on the product page: JSON [{ icon, title, text }]
+if (!hasColumn('products', 'details')) db.exec("ALTER TABLE products ADD COLUMN details TEXT NOT NULL DEFAULT '[]'");
 // CPF: a unique attribute of the user — never the primary key (that stays the serial id).
 if (!hasColumn('users', 'cpf')) db.exec('ALTER TABLE users ADD COLUMN cpf TEXT');
 db.exec('CREATE UNIQUE INDEX IF NOT EXISTS idx_users_cpf ON users(cpf) WHERE cpf IS NOT NULL');
@@ -203,6 +205,7 @@ export const toProduct = (r) =>
     stock: r.stock,
     lowStockThreshold: r.low_stock_threshold,
     image: r.image || undefined,
+    details: JSON.parse(r.details || '[]'),
     active: !!r.active,
     createdAt: r.created_at,
   };

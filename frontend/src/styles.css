@@ -969,6 +969,48 @@ html.motion-ok .signs:not(.is-in) .sign { opacity: 0; transform: translateY(70px
 .grid--stagger > * { transition: transform 0.7s var(--ease-out), opacity 0.5s; transition-delay: calc(min(var(--i, 0), 8) * 70ms); }
 html.motion-ok .grid--stagger:not(.is-in) > * { opacity: 0; transform: translateY(36px); }
 
+/* ===== Product page: "Do que é feito" (materials) ===== */
+.materials { margin-top: clamp(48px, 7vw, 88px); }
+.materials__head { display: grid; gap: 10px; margin-bottom: 26px; }
+.materials__title { margin: 0; color: var(--red); font-size: clamp(2.2rem, 5.4vw, 3.8rem); line-height: 0.95; letter-spacing: -0.02em; }
+/* the braid: two strands sliding past each other forever, like cord being woven */
+.braid { display: block; width: min(420px, 100%); height: 34px; overflow: hidden; }
+.braid__strand { fill: none; stroke-width: 9; stroke-linecap: round; }
+.braid__strand--b { stroke: var(--red); }
+.braid__track { animation: braid-slide 3.2s linear infinite; }
+.braid__track--b { animation-direction: reverse; mix-blend-mode: multiply; }
+@keyframes braid-slide { from { transform: translateX(0); } to { transform: translateX(-100px); } }
+.materials__list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; }
+.mat { position: relative; display: grid; gap: 6px; align-content: start; padding: 22px 22px 24px; }
+.mat::before { /* soft mound behind each material, like the product spots */
+  content: ''; position: absolute; inset: 0; z-index: -1; background: var(--pink-soft);
+  border-radius: 46% 54% 42% 58% / 38% 40% 60% 62%; transition: border-radius 0.7s var(--ease-out), transform 0.6s var(--ease-out);
+}
+.mat:nth-child(2n)::before { background: var(--blue-soft); border-radius: 56% 44% 58% 42% / 42% 58% 42% 58%; }
+.mat:nth-child(3n)::before { background: #ffe9dc; }
+.mat { isolation: isolate; }
+.mat:hover::before { border-radius: 52% 48% 50% 50% / 50% 46% 54% 50%; transform: scale(1.03) rotate(-1deg); }
+.mat__icon { display: grid; place-items: center; width: 64px; height: 64px; margin-bottom: 6px; border-radius: 50%; background: #fff; color: var(--red); box-shadow: var(--shadow); }
+.mat:nth-child(2n) .mat__icon { color: var(--blue); }
+.mat__icon path { stroke-dasharray: 1; stroke-dashoffset: 0; }
+.mat__title { font-family: var(--font-display); font-size: 1.3rem; line-height: 1.15; }
+.mat__text { margin: 0; color: var(--ink); opacity: 0.8; font-size: 0.95rem; }
+.mat:hover .mat__icon { animation: mat-wiggle 0.6s var(--ease-out); }
+@keyframes mat-wiggle { 30% { transform: rotate(-10deg) scale(1.08); } 60% { transform: rotate(6deg); } }
+/* entrance: cards rise one after another, then each icon draws itself */
+.mat { transition: transform 0.7s var(--ease-out), opacity 0.5s; transition-delay: calc(var(--i, 0) * 110ms); }
+html.motion-ok .materials:not(.is-in) .mat { opacity: 0; transform: translateY(40px); }
+html.motion-ok .materials:not(.is-in) .mat__icon path { stroke-dashoffset: 1; }
+.mat__icon path { transition: stroke-dashoffset 1.1s var(--ease-out); transition-delay: calc(var(--i, 0) * 110ms + 250ms); }
+html.motion-ok .materials:not(.is-in) .materials__title { opacity: 0; transform: translateY(20px); }
+.materials__title { transition: transform 0.6s var(--ease-out), opacity 0.5s; }
+
+/* admin: materials editor */
+.detail-row { display: grid; grid-template-columns: 36px 170px 1fr auto; gap: 8px; align-items: center; }
+.detail-row__icon { display: grid; place-items: center; color: var(--red); }
+.detail-row__text { grid-column: 2 / 4; }
+@media (max-width: 760px) { .detail-row { grid-template-columns: 36px 1fr auto; } .detail-row > input:first-of-type, .detail-row__text { grid-column: 1 / -1; } }
+
 /* ===== Animations ===== */
 @keyframes bob { 0%, 100% { translate: 0 0; } 50% { translate: 0 -12px; } }
 @keyframes pop { 0% { transform: scale(0.4); } 70% { transform: scale(1.15); } 100% { transform: scale(1); } }

@@ -9,6 +9,7 @@ import { productImage } from '../assets';
 import ShippingCalculator from '../components/ShippingCalculator';
 import ProductCard from '../components/ProductCard';
 import QuickBuy from '../components/QuickBuy';
+import ProductMaterials from '../components/ProductMaterials';
 import { Truck, Shield } from '../components/Icons';
 
 const sizeHelp = Object.fromEntries(SIZES.map((s) => [s.id, sizeRange(s)]));
@@ -147,6 +148,8 @@ export default function Product() {
           </ul>
         </div>
       </div>
+
+      <ProductMaterials details={product.details} color={color?.hex} />
 
       {quickBuy && (
         <QuickBuy product={product} initial={{ color, size, qty }} onClose={() => setQuickBuy(false)} />

@@ -20,9 +20,9 @@ const categories = [
 
 // Park signposts: one per category, planted along the trail.
 function Signposts() {
-  const ref = useReveal();
+  const [ref, shown] = useReveal();
   return (
-    <div className="signs" ref={ref}>
+    <div className={`signs ${shown ? 'is-in' : ''}`} ref={ref}>
       {categories.map((c, i) => (
         <Link key={c.slug} to={`/loja?categoria=${c.slug}`} className={`sign sign--${c.tone}`} style={{ '--i': i }}>
           <span className="sign__board">
@@ -50,12 +50,12 @@ function Signposts() {
 // gather around it. A last "see everything" spot fills exactly the cells left over, so the grid never
 // ends with a hole.
 function Favourites({ products }) {
-  const ref = useReveal({ threshold: 0.05 });
+  const [ref, shown] = useReveal({ threshold: 0.05 });
   const n = products.length;
   const desktopFree = n ? (4 - ((Math.max(0, n - 5)) % 4)) % 4 || (n < 5 ? 4 - (n - 1) : 0) : 0;
   const phoneFree = n ? (n - 1) % 2 && 1 : 0;
   return (
-    <div className="grid grid--stagger" ref={ref}>
+    <div className={`grid grid--stagger ${shown ? 'is-in' : ''}`} ref={ref}>
       {products.map((p, i) => (
         <div key={p.id} style={{ '--i': i }}>
           <ProductCard product={p} index={i} />

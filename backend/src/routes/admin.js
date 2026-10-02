@@ -68,6 +68,8 @@ router.get('/dashboard', (_req, res) => {
 });
 
 // ---------- products ----------
+// icons the product page knows how to draw (frontend/src/components/MaterialIcon.jsx)
+const DETAIL_ICONS = ['cord', 'ring', 'buckle', 'hand', 'fabric', 'sparkle'];
 function readProduct(body) {
   const p = {
     name: String(body?.name || '').trim(),
@@ -89,6 +91,16 @@ function readProduct(body) {
     featured: body?.featured ? 1 : 0,
     active: body?.active === false ? 0 : 1,
     image: String(body?.image || '').trim() || null,
+    details: Array.isArray(body?.details)
+      ? body.details
+          .map((d) => ({
+            icon: DETAIL_ICONS.includes(d?.icon) ? d.icon : 'sparkle',
+            title: String(d?.title || '').trim().slice(0, 60),
+            text: String(d?.text || '').trim().slice(0, 240),
+          }))
+          .filter((d) => d.title)
+          .slice(0, 8)
+      : [],
     low_stock_threshold: Math.max(0, Math.floor(Number(body?.lowStockThreshold ?? 5)) || 0),
   };
 
@@ -111,7 +123,7 @@ const uniqueSlug = (name, exceptId = 0) => {
 };
 
 const getProduct = (id) => toProduct(db.prepare('SELECT * FROM products WHERE id = ?').get(id));
-const serialize = (p) => ({ ...p, colors: JSON.stringify(p.colors), sizes: JSON.stringify(p.sizes) });
+const serialize = (p) => ({ ...p, colors: JSON.stringify(p.colors), sizes: JSON.stringify(p.sizes), details: JSON.stringify(p.details) });
 
 router.get('/products', (req, res) => {
   let products = db.prepare('SELECT * FROM products ORDER BY active DESC, name').all().map(toProduct);
@@ -136,9 +148,9 @@ router.post('/products', (req, res) => {
   const id = db.transaction(() => {
     const { lastInsertRowid } = db.prepare(`
       INSERT INTO products (slug, name, category, price, description, colors, sizes, pattern, badge, featured,
-        stock, low_stock_threshold, image, active)
+        stock, low_stock_threshold, image, active, details)
       VALUES (@slug, @name, @category, @price, @description, @colors, @sizes, @pattern, @badge, @featured,
-        @stock, @low_stock_threshold, @image, @active)`).run({ ...serialize(p), slug: uniqueSlug(p.name), stock });
+        @stock, @low_stock_threshold, @image, @active, @details)`).run({ ...serialize(p), slug: uniqueSlug(p.name), stock });
     if (stock)
       db.prepare(
         "INSERT INTO stock_movements (product_id, delta, reason, note, user_id) VALUES (?, ?, 'entrada', 'Estoque inicial', ?)"
@@ -160,7 +172,7 @@ router.put('/products/:id', (req, res) => {
   db.prepare(`
     UPDATE products SET slug=@slug, name=@name, category=@category, price=@price, description=@description,
       colors=@colors, sizes=@sizes, pattern=@pattern, badge=@badge, featured=@featured,
-      low_stock_threshold=@low_stock_threshold, image=@image, active=@active
+      low_stock_threshold=@low_stock_threshold, image=@image, active=@active, details=@details
     WHERE id=@id`).run({ ...serialize(p), slug, id: current.id });
   res.json(getProduct(current.id));
 });

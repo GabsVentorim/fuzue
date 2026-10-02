@@ -110,7 +110,7 @@ The **Admin** link then shows up in the header (`/admin`):
 |---|---|
 | Visão geral | Sales today and this month, average order value, orders by status, low stock, best sellers, **pet birthdays this month** (with a WhatsApp link to the owner), latest orders |
 | Pedidos | Filter by status, search, order details, change status. Cancelling an order puts the items back in stock |
-| Produtos | Create and edit products: photo upload, colours, sizes, badge, featured, active/inactive |
+| Produtos | Create and edit products: photo upload, colours, sizes, badge, featured, active/inactive, and **Materiais e detalhes** (icon + title + text), shown with animation on the product page under "Do que é feito" |
 | Estoque | Add stock or take it out (with a note), low-stock alert, full history of movements |
 | Clientes | Customer list, customer details with pets, orders and addresses, give or remove admin access |
 
