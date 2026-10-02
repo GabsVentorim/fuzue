@@ -124,6 +124,7 @@ The **Admin** link then shows up in the header (`/admin`):
 - **Company logo:** the files live in `frontend/public/assets/logo/`. `logo.png` is the original; the footer shows it as a rounded sticker. `logo-transparente.png` is a copy with the background removed, used in the header. To change the logo, replace the files and keep the paths in `assets.logo` / `assets.logoLight`.
 - **Animated header logo:** in the header, the blue ball bounces, the dog blinks and now and then barks at it. It uses `logo-base.png` (the logo without the ball and the eyes) plus `logo-bola.png` and `logo-olho-1/2.png`, cut from the same image, set in `assets.logoAnimated` with positions as percentages of the image. Remove `logoAnimated` to go back to the static logo. People with reduced motion turned on see it still.
 - **Product and pet photos** are uploaded through the site and saved in `backend/uploads/`.
+- **Stickers:** `frontend/public/assets/stickers/` holds the name tag "Olá, sou Fuzo" and "Funcionário do mês", cut out (transparent background) from the brand's sticker sheet (`Adesivos.zip`). The other stickers (stars, bursts, smiley flowers, heart, triangle, squiggle, rainbow, halftone) are drawn in `frontend/src/components/Sticker.jsx`. Place them with `<Stickers items={[…]} />`. Visitors can drag them, and they spin when clicked.
 - In the code, every image URL comes from `frontend/src/assets.js` (`asset('logo')`, `imageUrl(path)`). Components never have image paths written into them.
 
 Change the colours in the `:root` block at the top of `frontend/src/styles.css`.

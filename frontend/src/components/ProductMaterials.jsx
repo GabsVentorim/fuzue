@@ -1,5 +1,6 @@
 import useReveal from '../hooks/useReveal';
 import MaterialIcon from './MaterialIcon';
+import Stickers from './Stickers';
 
 // A braided strand in the product's chosen colour, endlessly being woven (shown for corded products).
 function Braid({ color }) {
@@ -27,6 +28,10 @@ export default function ProductMaterials({ details, color }) {
   const braided = details.some((d) => d.icon === 'cord');
   return (
     <section className={`materials ${shown ? 'is-in' : ''}`} ref={ref} aria-labelledby="materials-title">
+      <Stickers items={[
+        { kind: 'flower', color: '#f7b6d9', faced: true, wink: true, size: 'clamp(54px, 7vw, 76px)', top: '-6px', right: '2%', rot: 10 },
+        { kind: 'sparkle', color: '#ff2a0a', size: 38, top: '8px', left: 'clamp(250px, 46%, 560px)', hideMobile: true },
+      ]} />
       <div className="materials__head">
         <h2 id="materials-title" className="materials__title">Do que é feito</h2>
         {braided && <Braid color={color || 'var(--blue)'} />}

@@ -970,7 +970,7 @@ html.motion-ok .signs:not(.is-in) .sign { opacity: 0; transform: translateY(70px
 html.motion-ok .grid--stagger:not(.is-in) > * { opacity: 0; transform: translateY(36px); }
 
 /* ===== Product page: "Do que é feito" (materials) ===== */
-.materials { margin-top: clamp(48px, 7vw, 88px); }
+.materials { position: relative; margin-top: clamp(48px, 7vw, 88px); }
 .materials__head { display: grid; gap: 10px; margin-bottom: 26px; }
 .materials__title { margin: 0; color: var(--red); font-size: clamp(2.2rem, 5.4vw, 3.8rem); line-height: 0.95; letter-spacing: -0.02em; }
 /* the braid: two strands sliding past each other forever, like cord being woven */
@@ -1010,6 +1010,47 @@ html.motion-ok .materials:not(.is-in) .materials__title { opacity: 0; transform:
 .detail-row__icon { display: grid; place-items: center; color: var(--red); }
 .detail-row__text { grid-column: 2 / 4; }
 @media (max-width: 760px) { .detail-row { grid-template-columns: 36px 1fr auto; } .detail-row > input:first-of-type, .detail-row__text { grid-column: 1 / -1; } }
+
+/* ===== Stickers (decorative, draggable) ===== */
+.stickers { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
+.sticker {
+  position: absolute; display: block; pointer-events: auto; cursor: grab; user-select: none; -webkit-user-select: none;
+  rotate: var(--rot, 0deg);
+  transition: opacity 0.25s, scale 0.45s cubic-bezier(0.2, 0.9, 0.25, 1);
+  transition-delay: calc(var(--i, 0) * 120ms + 150ms);
+}
+.sticker:active { cursor: grabbing; }
+.sticker.is-dragging { z-index: 5; }
+/* slapped onto the page when it scrolls into view */
+html.motion-ok .sticker:not(.is-in) { opacity: 0; scale: 1.7; }
+.sticker__float { display: block; animation: sticker-float var(--float, 5s) ease-in-out infinite; animation-delay: calc(var(--i, 0) * -0.8s); }
+@keyframes sticker-float { 50% { translate: 0 -6px; rotate: 2deg; } }
+.sticker--burst .sticker__float, .sticker--sparkle .sticker__float { animation: sticker-turn 24s linear infinite; }
+@keyframes sticker-turn { to { rotate: 360deg; } }
+.sticker__body {
+  display: block; transform-origin: 30% 80%;
+  filter: drop-shadow(0 6px 6px rgba(43, 33, 64, 0.2));
+  transition: transform 0.35s var(--ease-out), filter 0.35s var(--ease-out);
+}
+/* peels up under the pointer */
+.sticker:hover .sticker__body { transform: rotate(-7deg) scale(1.08) translateY(-4px); filter: drop-shadow(0 16px 12px rgba(43, 33, 64, 0.26)); }
+.sticker__body[data-spin] { animation: sticker-spin 0.7s var(--ease-out); }
+@keyframes sticker-spin { from { transform: rotate(0) scale(1.18); } to { transform: rotate(360deg) scale(1); } }
+.sticker__svg, .sticker__img { display: block; width: 100%; height: auto; pointer-events: none; }
+.sticker__edge path, .sticker__edge circle { fill: #fff; stroke: #fff; stroke-width: 12; stroke-linejoin: round; }
+.sticker--line .sticker__edge path { fill: none; stroke-width: 24; }
+.sticker__eye { transform-box: fill-box; transform-origin: center; }
+.sticker:hover .sticker__eye { animation: sticker-blink 0.5s var(--ease-out); }
+@keyframes sticker-blink { 40% { transform: scaleY(0.1); } }
+@media (max-width: 760px) {
+  .sticker--desk { display: none; }
+  /* phones: the big stickers move up into the space above the headings instead of covering them */
+  .sticker--ola { top: -40px !important; width: 88px !important; }
+  .sticker--fdm { top: -52px !important; right: 4px !important; width: 66px !important; }
+}
+
+/* bag confetti: little stars pop out when the bag catches the ball */
+.pop-star { position: fixed; z-index: 81; width: 16px; height: 16px; pointer-events: none; }
 
 /* ===== Animations ===== */
 @keyframes bob { 0%, 100% { translate: 0 0; } 50% { translate: 0 -12px; } }

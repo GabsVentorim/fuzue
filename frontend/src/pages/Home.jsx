@@ -10,6 +10,7 @@ import HeroCarousel from '../components/HeroCarousel';
 import Horizon from '../components/Horizon';
 import ParkTrail from '../components/ParkTrail';
 import useReveal from '../hooks/useReveal';
+import Stickers from '../components/Stickers';
 import { Paw, Sparkle, Arrow } from '../components/Icons';
 
 const categories = [
@@ -133,11 +134,22 @@ export default function Home() {
       {/* the walk: one trail from the hills down to the footer, with the ball rolling along it */}
       <ParkTrail>
         <section className="park__stop container">
+          <Stickers items={[
+            { kind: 'ola', size: 'clamp(104px, 15vw, 210px)', top: 'clamp(-34px, -2vw, 0px)', right: '0', rot: -9 },
+            { kind: 'burst', color: '#ff2a0a', size: 58, top: '30px', left: '54%', rot: 10, hideMobile: true },
+            { kind: 'star', color: '#9ecfd3', size: 56, bottom: '22px', left: '31%', rot: 14, hideMobile: true },
+            { kind: 'sparkle', color: '#f7b6d9', size: 40, bottom: '30px', left: '64%', hideMobile: true },
+          ]} />
           <h2 className="park__title">Escolha o mimo</h2>
           <Signposts />
         </section>
 
         <section className="park__stop container">
+          <Stickers items={[
+            { kind: 'fdm', size: 'clamp(96px, 11vw, 150px)', top: 'clamp(-44px, -3vw, -20px)', right: 'clamp(90px, 16%, 210px)', rot: 7 },
+            { kind: 'flower', color: '#1e9bea', faced: true, size: 72, top: '46%', left: '-4.5%', rot: -10, hideMobile: true },
+            { kind: 'heart', color: '#f2232a', faced: true, wink: true, size: 62, bottom: '16%', right: '-4.5%', rot: 12, hideMobile: true },
+          ]} />
           <div className="section__head">
             <h2 className="park__title">Os queridinhos</h2>
             <Link to="/loja" className="link link--trail">Ver tudo <Arrow width={18} height={18} aria-hidden /></Link>
@@ -148,6 +160,11 @@ export default function Home() {
 
 
         <section className="park__stop container">
+          <Stickers items={[
+            { kind: 'rainbow', size: 'clamp(70px, 8vw, 110px)', top: 'clamp(4px, 1vw, 10px)', right: '5%', rot: -8 },
+            { kind: 'triangle', color: '#f2b33d', faced: true, size: 58, top: '14px', left: '2%', rot: -14, hideMobile: true },
+            { kind: 'squiggle', color: '#5b6cf0', size: 110, bottom: '4px', left: '38%', rot: -4, hideMobile: true },
+          ]} />
           <SizeGuide />
         </section>
       </ParkTrail>

@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import Logo from './Logo';
 import Horizon from './Horizon';
+import Stickers from './Stickers';
 import { Paw } from './Icons';
 import brand, { instagramLink, whatsappLink } from '../brand';
 
@@ -8,6 +9,10 @@ export default function Footer() {
   return (
     <footer className="footer">
       <Horizon tone="footer" />
+      <Stickers items={[
+        { kind: 'halftone', color: '#9cc3ff', size: 'clamp(90px, 10vw, 140px)', top: 'clamp(-70px, -5vw, -40px)', right: '4%' },
+        { kind: 'star', color: '#f7b6d9', size: 48, top: 'clamp(-62px, -4vw, -40px)', left: '38%', rot: -12, hideMobile: true },
+      ]} />
       <div className="container footer__grid">
         <div>
           <Logo variant="light" />
