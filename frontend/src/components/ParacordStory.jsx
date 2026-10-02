@@ -26,11 +26,11 @@ export default function ParacordStory({ product, color }) {
         </div>
       </section>
 
-      {/* 2. strength: the words land one by one while the photo pushes in */}
+      {/* 2. strength: the collar itself (in the chosen colour) turns and stretches while the words land */}
       <section className="story__scene story__pull" ref={pull}>
         <div className="story__stick">
-          <div className="story__pull-photo">
-            <img src={IMG('maos-puxando.webp')} alt="Mãos puxando uma corda com força" />
+          <div className="story__pull-photo story__pull-photo--product">
+            <img src={productImage(product, color)} alt={`${product.name}${color ? ` — ${color.name}` : ''}`} />
           </div>
           <div className="story__words" aria-label="Puxa. Estica. Aguenta.">
             <span style={{ '--k': 0 }}>Puxa.</span>
@@ -82,8 +82,7 @@ export default function ParacordStory({ product, color }) {
       )}
 
       <p className="story__credits container">
-        Fotos ilustrativas de paracord: “Hands pulling on a rope” por whiteafrican (CC BY 2.0, Flickr);
-        “MIL-C-5040 Type III 550 Paracord” por Rawkhopper, “Paracord cobra” por Akinnawid (CC BY-SA 3.0)
+        Fotos ilustrativas de paracord: “MIL-C-5040 Type III 550 Paracord” por Rawkhopper, “Paracord cobra” por Akinnawid (CC BY-SA 3.0)
         e “Paracord Commercial Type III Coil” por David J. Fred (CC BY-SA 2.5), via Wikimedia Commons.
       </p>
     </div>
