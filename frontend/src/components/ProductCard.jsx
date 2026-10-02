@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { AnimatePresence } from 'framer-motion';
 import ProductArt from './ProductArt';
 import AddToBag from './AddToBag';
 import { productImage } from '../assets';
@@ -40,7 +41,7 @@ export default function ProductCard({ product, index = 0 }) {
           +
         </button>
       )}
-      {adding && <AddToBag product={product} onClose={() => setAdding(false)} />}
+      <AnimatePresence>{adding && <AddToBag product={product} onClose={() => setAdding(false)} />}</AnimatePresence>
     </div>
   );
 }

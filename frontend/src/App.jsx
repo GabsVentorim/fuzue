@@ -1,5 +1,7 @@
 import { Routes, Route, useLocation } from 'react-router-dom';
-import { useEffect } from 'react';
+import { AnimatePresence, MotionConfig, motion } from 'framer-motion';
+import ScrollProgress from './components/ScrollProgress';
+import { page } from './motion';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import Toast from './components/Toast';
@@ -32,34 +34,31 @@ import Coupons from './pages/admin/Coupons';
 import Tickets from './pages/admin/Tickets';
 import Banners from './pages/admin/Banners';
 
-function ScrollToTop() {
-  const { pathname } = useLocation();
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [pathname]);
-  return null;
-}
-
-// Each new page slides in softly (keyed by path, so query changes like ?categoria= don't replay it).
-function PageIn({ children }) {
-  const { pathname } = useLocation();
+// Pages leave and arrive (Framer Motion): the old page fades up and out, then the new one rises in.
+// Keyed by path, so query changes like ?categoria= don't replay it. The scroll goes back to the top
+// once the old page has left, so it never jumps mid-animation.
+function AnimatedPage({ children }) {
+  const location = useLocation();
   return (
-    <div className="page-in" key={pathname}>
-      <PageStickers />
-      {children}
-    </div>
+    <AnimatePresence mode="wait" initial={false} onExitComplete={() => window.scrollTo(0, 0)}>
+      <motion.div key={location.pathname} className="page-in" {...page}>
+        <PageStickers />
+        {children(location)}
+      </motion.div>
+    </AnimatePresence>
   );
 }
 
 export default function App() {
   return (
-    <>
-      <ScrollToTop />
+    <MotionConfig reducedMotion="user">
+      <ScrollProgress />
       <Header />
       <BallThrow />
       <main>
-        <PageIn>
-        <Routes>
+        <AnimatedPage>
+        {(location) => (
+        <Routes location={location}>
           <Route path="/" element={<Home />} />
           <Route path="/loja" element={<Shop />} />
           <Route path="/produto/:slug" element={<Product />} />
@@ -90,10 +89,11 @@ export default function App() {
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
-        </PageIn>
+        )}
+        </AnimatedPage>
       </main>
       <Footer />
       <Toast />
-    </>
+    </MotionConfig>
   );
 }

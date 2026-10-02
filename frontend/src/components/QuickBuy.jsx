@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { api } from '../api';
 import brand, { formatPrice } from '../brand';
 import { useAuth } from '../context/AuthContext';
@@ -138,8 +139,15 @@ export default function QuickBuy({ product, initial, onClose }) {
   };
 
   return (
-    <div className="modal" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
-      <form className="modal__dialog qb" role="dialog" aria-modal="true" aria-labelledby="qb-title" tabIndex={-1} ref={dialogRef} onSubmit={submit}>
+    <motion.div
+      className="modal" onMouseDown={(e) => e.target === e.currentTarget && onClose()}
+      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: { duration: 0.2 } }}
+    >
+      <motion.form
+        className="modal__dialog qb" role="dialog" aria-modal="true" aria-labelledby="qb-title" tabIndex={-1} ref={dialogRef} onSubmit={submit}
+        initial={{ opacity: 0, y: 40, scale: 0.96 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 30, scale: 0.97, transition: { duration: 0.18 } }}
+        transition={{ type: 'spring', stiffness: 360, damping: 32 }}
+      >
         <header className="modal__head">
           <h2 id="qb-title">Comprar agora</h2>
           <button type="button" className="icon-btn" onClick={onClose} aria-label="Fechar"><Close /></button>
@@ -283,7 +291,7 @@ export default function QuickBuy({ product, initial, onClose }) {
             <p className="muted small center">Você pode editar qualquer coisa aqui antes de finalizar.</p>
           </aside>
         </div>
-      </form>
-    </div>
+      </motion.form>
+    </motion.div>
   );
 }

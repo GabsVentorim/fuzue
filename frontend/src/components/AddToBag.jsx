@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { motion, useDragControls } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { formatPrice } from '../brand';
 import { useCart } from '../context/CartContext';
@@ -20,6 +21,7 @@ export default function AddToBag({ product, onClose }) {
   const [size, setSize] = useState(() => defaultSize(product.sizes));
   const [qty, setQty] = useState(1);
   const soldOut = product.stock <= 0;
+  const drag = useDragControls();
 
   // close on Esc, lock page scroll, focus the sheet (once — onClose may be a new function every render)
   const closeRef = useRef(onClose);
@@ -42,9 +44,21 @@ export default function AddToBag({ product, onClose }) {
   };
 
   return createPortal(
-    <div className="sheet" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
-      <div className="sheet__panel" role="dialog" aria-modal="true" aria-labelledby="atb-title" tabIndex={-1} ref={dialogRef}>
-        <div className="sheet__head">
+    <motion.div
+      className="sheet"
+      onMouseDown={(e) => e.target === e.currentTarget && onClose()}
+      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: { duration: 0.2 } }}
+    >
+      <motion.div
+        className="sheet__panel" role="dialog" aria-modal="true" aria-labelledby="atb-title" tabIndex={-1} ref={dialogRef}
+        initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }}
+        transition={{ type: 'spring', stiffness: 380, damping: 36 }}
+        drag="y" dragListener={false} dragControls={drag} dragConstraints={{ top: 0, bottom: 0 }} dragElastic={{ top: 0, bottom: 0.7 }}
+        onDragEnd={(_, info) => (info.offset.y > 110 || info.velocity.y > 600) && onClose()}
+      >
+        {/* grab here and pull down to close */}
+        <div className="sheet__grip" onPointerDown={(e) => drag.start(e)} aria-hidden><span /></div>
+        <div className="sheet__head" onPointerDown={(e) => drag.start(e)}>
           <h2 id="atb-title">Adicionar produto</h2>
           <button type="button" className="icon-btn" onClick={onClose} aria-label="Fechar"><Close /></button>
         </div>
@@ -104,8 +118,8 @@ export default function AddToBag({ product, onClose }) {
             {soldOut ? 'Esgotado' : 'Adicionar à sacola'}
           </button>
         </div>
-      </div>
-    </div>,
+      </motion.div>
+    </motion.div>,
     document.body,
   );
 }

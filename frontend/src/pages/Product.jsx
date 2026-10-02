@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import { AnimatePresence, motion } from 'framer-motion';
+import { spring } from '../motion';
 import { api } from '../api';
 import { formatPrice } from '../brand';
 import { useCart } from '../context/CartContext';
@@ -68,13 +70,25 @@ export default function Product() {
       <div className="pdp">
         <div className="pdp__media tint-pink">
           {product.badge && <span className="badge">{product.badge}</span>}
-          <ProductArt
-            category={product.category}
-            color={color?.hex}
-            pattern={product.pattern}
-            image={productImage(product, color)}
-            alt={`${product.name}${color ? ` — ${color.name}` : ''}`}
-          />
+          {/* changing the colour swaps the photo with a little twirl */}
+          <AnimatePresence mode="popLayout" initial={false}>
+            <motion.div
+              key={color?.hex || 'default'}
+              className="pdp__art"
+              initial={{ opacity: 0, scale: 0.9, rotate: -6 }}
+              animate={{ opacity: 1, scale: 1, rotate: 0 }}
+              exit={{ opacity: 0, scale: 1.05, rotate: 4, transition: { duration: 0.18 } }}
+              transition={{ type: 'spring', stiffness: 260, damping: 22 }}
+            >
+              <ProductArt
+                category={product.category}
+                color={color?.hex}
+                pattern={product.pattern}
+                image={productImage(product, color)}
+                alt={`${product.name}${color ? ` — ${color.name}` : ''}`}
+              />
+            </motion.div>
+          </AnimatePresence>
         </div>
 
         <div className="pdp__info">
@@ -116,7 +130,9 @@ export default function Product() {
                       setWarn('');
                     }}
                   >
-                    {s}
+                    {/* the selected-size highlight slides between sizes */}
+                    {size === s && <motion.span layoutId="size-pill" className="size__pill" transition={spring} />}
+                    <span className="size__label">{s}</span>
                   </button>
                 ))}
               </div>
@@ -152,9 +168,11 @@ export default function Product() {
         </div>
       </div>
 
-      {quickBuy && (
-        <QuickBuy product={product} initial={{ color, size, qty }} onClose={() => setQuickBuy(false)} />
-      )}
+      <AnimatePresence>
+        {quickBuy && (
+          <QuickBuy product={product} initial={{ color, size, qty }} onClose={() => setQuickBuy(false)} />
+        )}
+      </AnimatePresence>
     </section>
 
     {/* every collar is paracord: tell its story, full width */}

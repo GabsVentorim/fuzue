@@ -2,7 +2,9 @@ import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { api } from '../api';
 import ProductCard from '../components/ProductCard';
-import RevealGrid from '../components/RevealGrid';
+import { motion } from 'framer-motion';
+import MotionGrid from '../components/MotionGrid';
+import { spring } from '../motion';
 import { Paw } from '../components/Icons';
 
 const filters = [
@@ -33,7 +35,9 @@ export default function Shop() {
 
   return (
     <section className="section container">
-      <h1 className="page-title">{category ? title : 'A lojinha'}</h1>
+      <motion.h1 key={category} className="page-title" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={spring}>
+        {category ? title : 'A lojinha'}
+      </motion.h1>
 
       <div className="toolbar">
         <div className="chips" role="tablist">
@@ -43,7 +47,9 @@ export default function Shop() {
               className={`chip ${category === f.slug ? 'chip--on' : ''}`}
               onClick={() => setCategory(f.slug)}
             >
-              {f.label}
+              {/* the highlight slides from the old filter to the new one */}
+              {category === f.slug && <motion.span layoutId="chip-pill" className="chip__pill" transition={spring} />}
+              <span className="chip__label">{f.label}</span>
             </button>
           ))}
         </div>
@@ -73,11 +79,7 @@ export default function Shop() {
         </div>
       )}
       {products?.length > 0 && (
-        <RevealGrid>
-          {products.map((p, i) => (
-            <ProductCard key={p.id} product={p} index={i} />
-          ))}
-        </RevealGrid>
+        <MotionGrid items={products} render={(p, i) => <ProductCard product={p} index={i} />} />
       )}
     </section>
   );

@@ -1,4 +1,6 @@
 import { Link } from 'react-router-dom';
+import { AnimatePresence, motion } from 'framer-motion';
+import { spring, softSpring } from '../motion';
 import { useCart } from '../context/CartContext';
 import brand, { formatPrice } from '../brand';
 import ProductArt from '../components/ProductArt';
@@ -11,7 +13,9 @@ export default function Cart() {
   if (items.length === 0) {
     return (
       <section className="section container empty">
-        <Paw width={64} height={64} />
+        <motion.span initial={{ scale: 0, rotate: -40 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: 'spring', stiffness: 300, damping: 14 }}>
+          <Paw width={64} height={64} />
+        </motion.span>
         <h1>Seu carrinho está vazio</h1>
         <p className="muted">Bora encher de fuzuê?</p>
         <Link to="/loja" className="btn btn--primary">Ir para a loja</Link>
@@ -33,13 +37,22 @@ export default function Cart() {
             <>Oba! Você ganhou <b>frete grátis</b></>
           )}
         </p>
-        <div className="bar"><span style={{ width: `${progress}%` }} /></div>
+        <div className="bar"><motion.span className="bar__fill" initial={false} animate={{ scaleX: progress / 100 }} transition={softSpring} /></div>
       </div>
 
       <div className="cart">
         <ul className="cart__list">
+          <AnimatePresence initial={false} mode="popLayout">
           {items.map((item) => (
-            <li key={`${item.productId}-${item.size}-${item.color}`} className="line">
+            <motion.li
+              key={`${item.productId}-${item.size}-${item.color}`}
+              className="line"
+              layout
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, x: -80, transition: { duration: 0.22 } }}
+              transition={softSpring}
+            >
               <Link to={`/produto/${item.slug}`} className="line__media tint-pink">
                 <ProductArt category={item.category} color={item.colorHex} pattern={item.pattern} image={item.image} alt={item.name} />
               </Link>
@@ -50,7 +63,13 @@ export default function Cart() {
                 </span>
                 <div className="qty qty--sm">
                   <button onClick={() => setQty(item, item.qty - 1)} aria-label="Menos">−</button>
-                  <span>{item.qty}</span>
+                  <span className="flip">
+                    <AnimatePresence mode="popLayout" initial={false}>
+                      <motion.span key={item.qty} initial={{ y: -14, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 14, opacity: 0 }} transition={spring}>
+                        {item.qty}
+                      </motion.span>
+                    </AnimatePresence>
+                  </span>
                   <button onClick={() => setQty(item, item.qty + 1)} aria-label="Mais">+</button>
                 </div>
               </div>
@@ -60,8 +79,9 @@ export default function Cart() {
                   <Trash width={20} height={20} />
                 </button>
               </div>
-            </li>
+            </motion.li>
           ))}
+          </AnimatePresence>
         </ul>
 
         <aside className="summary">
@@ -88,7 +108,12 @@ export default function Cart() {
             <span>Frete{ship.option && shippingEnabled ? ` (${ship.option.name})` : ''}</span>
             <span>{shipping == null ? <span className="muted">calcule acima</span> : shipping ? formatPrice(shipping) : 'Grátis'}</span>
           </div>
-          <div className="summary__row summary__total"><span>Total</span><span>{formatPrice(subtotal + (shipping || 0))}</span></div>
+          <div className="summary__row summary__total">
+            <span>Total</span>
+            <motion.span key={subtotal + (shipping || 0)} initial={{ scale: 1.18, color: '#377df8' }} animate={{ scale: 1, color: '#e8432a' }} transition={spring}>
+              {formatPrice(subtotal + (shipping || 0))}
+            </motion.span>
+          </div>
           <p className="muted small">5% de desconto pagando com Pix no próximo passo.</p>
           <Link to="/checkout" className="btn btn--primary btn--block">Finalizar compra</Link>
           <Link to="/loja" className="link center-block">Continuar comprando</Link>
