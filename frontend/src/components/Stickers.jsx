@@ -3,6 +3,7 @@ import Sticker from './Sticker';
 import useReveal from '../hooks/useReveal';
 
 const LINE_KINDS = ['sparkle', 'squiggle', 'rainbow'];
+const DOODLE_KINDS = ['dogHead', 'dogSit', 'dachshund', 'bone', 'paw', 'ballZoom'];
 
 // One sticker: slapped on when it scrolls into view, floats a little, peels up under the pointer,
 // spins when clicked — and can be dragged anywhere (it stays where you drop it while you're on the page).
@@ -47,7 +48,7 @@ function Peel({ s, i, shown }) {
   };
   return (
     <span
-      className={`sticker sticker--${s.kind} ${LINE_KINDS.includes(s.kind) ? 'sticker--line' : ''} ${s.hideMobile ? 'sticker--desk' : ''} ${s.hideNarrow ? 'sticker--wide' : ''} ${shown ? 'is-in' : ''} ${drag.current?.moved ? 'is-dragging' : ''}`}
+      className={`sticker sticker--${s.kind} ${LINE_KINDS.includes(s.kind) ? 'sticker--line' : ''} ${s.hideMobile ? 'sticker--desk' : ''} ${DOODLE_KINDS.includes(s.kind) ? 'sticker--doodle' : ''} ${s.walk ? 'sticker--walk' : ''} ${s.hideNarrow ? 'sticker--wide' : ''} ${shown ? 'is-in' : ''} ${drag.current?.moved ? 'is-dragging' : ''}`}
       style={place}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}

@@ -1147,6 +1147,17 @@ html.motion-ok .sticker:not(.is-in) { opacity: 0; scale: 1.7; }
 /* bag confetti: little stars pop out when the bag catches the ball */
 .pop-star { position: fixed; z-index: 81; width: 16px; height: 16px; pointer-events: none; }
 
+/* dog doodles: plain line drawings that draw themselves in (instead of slapping on like stickers) */
+.sticker--doodle .sticker__body { filter: none; }
+.sticker--doodle path { stroke-dasharray: 1; stroke-dashoffset: 0; transition: stroke-dashoffset 1.6s var(--ease-out); transition-delay: calc(var(--i, 0) * 140ms + 200ms); }
+html.motion-ok .sticker--doodle:not(.is-in) { opacity: 1; scale: 1; }
+html.motion-ok .sticker--doodle:not(.is-in) path { stroke-dashoffset: 1; }
+/* the dachshund that takes a walk along the footer hills */
+.sticker--walk { animation: doodle-walk 38s linear infinite; }
+.sticker--walk .sticker__float { animation: doodle-trot 0.42s ease-in-out infinite alternate; }
+@keyframes doodle-walk { from { left: -12%; } to { left: 104%; } }
+@keyframes doodle-trot { from { translate: 0 0; rotate: -2deg; } to { translate: 0 -3px; rotate: 2deg; } }
+
 /* ===== Collar story (product page, all collars are paracord) — scroll-scrubbed scenes ===== */
 .story { overflow-x: clip; --top: 114px; }
 .story__scene { position: relative; }
