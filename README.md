@@ -143,6 +143,7 @@ Change the colours in the `:root` block at the top of `frontend/src/styles.css`.
 | GET | `/api/categories` · `/api/store` | Categories · brand info |
 | POST | `/api/orders` | Create an order (priced on the server; linked to the user when logged in) |
 | GET | `/api/orders/:id` | Order details |
+| POST · GET | `/api/orders/:id/pay` · `/api/orders/:id/payment` | Pay an order with Mercado Pago · current payment status |
 | POST | `/api/auth/register` · `login` · `google` · `logout` | Auth |
 | GET | `/api/auth/me` | Current user (or `null`) |
 | GET/PUT | `/api/me` · `PUT /api/me/password` | Profile |
@@ -150,17 +151,41 @@ Change the colours in the `:root` block at the top of `frontend/src/styles.css`.
 | GET | `/api/me/orders` | My orders |
 | — | `/api/admin/*` | Dashboard, products, stock, uploads, orders, customers (admin only) |
 
+## Payments (Mercado Pago)
+
+Payments use **Mercado Pago Checkout Transparente** through the **Orders API** (`POST /v1/orders`, official `mercadopago` SDK). The customer pays inside the store, with no redirect and no Mercado Pago login. The money goes to your Mercado Pago account.
+
+- After **Continuar para o pagamento** in the checkout, the order is created (priced on the server, stock reserved). The customer then goes to `/pagamento/:id` (`frontend/src/pages/Payment.jsx`).
+- **Cartão:** the card fields are Mercado Pago's secure iframes (MercadoPago.js). Only the card token reaches the server. Up to 3 installments; debit is always 1x.
+- **Pix:** the page shows the QR code and the copy-and-paste code, then updates on its own when the payment is approved.
+- **Boleto:** asks for CPF and neighborhood, then shows the boleto link and the digitable line.
+- The server always charges the order total it computed. When Mercado Pago reports the order as `processed`, the store order changes to **Pago**.
+
+Setup:
+
+1. Open the Fuzue Petstore application in the [developer panel](https://www.mercadopago.com.br/developers/panel/app) and go to **Credenciais**.
+2. Put the **Access Token** in `MP_ACCESS_TOKEN` (backend) and the **Public Key** in `VITE_MP_PUBLIC_KEY` (frontend). Both must come from the same tab: **Teste** while testing, **Produção** when selling for real.
+3. Restart both `npm run dev` processes.
+
+Testing:
+
+- Use `test_user_br@testuser.com` as the e-mail in the checkout. That is the buyer e-mail Mercado Pago accepts for tests.
+- To have a test Pix approved automatically, start the customer name with `APRO` (e.g. "APRO Teste").
+- Test card: Visa `4235 6477 2802 5682`, CVV `123`, expiry `11/30`, cardholder name `APRO`, CPF `12345678909`.
+- Boleto tests only check that the boleto is created. It stays pending.
+
+If `MP_ACCESS_TOKEN` or `VITE_MP_PUBLIC_KEY` is empty, the store works as before: payment is arranged over WhatsApp. Stock is reserved when the order is created. If a customer never pays, cancel the order in the admin.
+
 ## Deploying
 
 - **Backend:** Render, Railway, or Fly.io.
-  - Set `JWT_SECRET`, `GOOGLE_CLIENT_ID`, `ADMIN_EMAILS` and `FRONTEND_ORIGIN=https://yoursite.com`.
+  - Set `JWT_SECRET`, `GOOGLE_CLIENT_ID`, `ADMIN_EMAILS`, `FRONTEND_ORIGIN=https://yoursite.com` and `MP_ACCESS_TOKEN`.
   - Use a **persistent disk** for `backend/data/` and `backend/uploads/`.
 - **Frontend:** Vercel or Netlify.
-  - Set `VITE_API_URL=https://your-api.com/api` and `VITE_GOOGLE_CLIENT_ID`.
+  - Set `VITE_API_URL=https://your-api.com/api`, `VITE_GOOGLE_CLIENT_ID` and `VITE_MP_PUBLIC_KEY`.
   - Add an SPA rewrite so every route serves `index.html`.
   - Login uses a cookie. The simplest setup is the API on a subdomain of the same site (`api.yoursite.com`). If the frontend and API are on unrelated domains, browsers may block the cookie.
 
 ## Next steps before selling for real
 
-- Real payments: Mercado Pago or Stripe, with Pix support.
 - E-mail confirmations and password reset.

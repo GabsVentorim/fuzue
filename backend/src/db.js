@@ -139,6 +139,10 @@ CREATE INDEX IF NOT EXISTS idx_tickets_user ON tickets(user_id);
 if (!hasColumn('orders', 'coupon_code')) db.exec('ALTER TABLE orders ADD COLUMN coupon_code TEXT');
 if (!hasColumn('orders', 'coupon_discount')) db.exec('ALTER TABLE orders ADD COLUMN coupon_discount REAL NOT NULL DEFAULT 0');
 
+// Mercado Pago (Checkout Transparente / Orders API): the order created there and its status.
+if (!hasColumn('orders', 'mp_order_id')) db.exec('ALTER TABLE orders ADD COLUMN mp_order_id TEXT');
+if (!hasColumn('orders', 'mp_status')) db.exec('ALTER TABLE orders ADD COLUMN mp_status TEXT');
+
 // ---------- first boot: import the old JSON data ----------
 const readSeed = (file) => {
   const p = path.join(SEED_DIR, file);
@@ -226,6 +230,8 @@ export const toOrder = (r) =>
     couponDiscount: r.coupon_discount || 0,
     discount: r.discount,
     total: r.total,
+    mpOrderId: r.mp_order_id || null,
+    mpStatus: r.mp_status || null,
   };
 
 export const toUser = (r) =>

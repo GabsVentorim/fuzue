@@ -24,3 +24,6 @@ npm-debug.log*
 
 # design workflow scratch (screenshots, briefs)
 .impeccable/
+
+# Mercado Pago wizard checkpoint
+.mp-integrate-progress.md

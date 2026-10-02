@@ -13,6 +13,7 @@ import Product from './pages/Product';
 import Cart from './pages/Cart';
 import Checkout from './pages/Checkout';
 import OrderSuccess from './pages/OrderSuccess';
+import Payment from './pages/Payment';
 import NotFound from './pages/NotFound';
 import Login from './pages/Login';
 import SizeGuidePage from './pages/SizeGuidePage';
@@ -65,6 +66,7 @@ export default function App() {
           <Route path="/carrinho" element={<Cart />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/pedido/:id" element={<OrderSuccess />} />
+          <Route path="/pagamento/:id" element={<Payment />} />
           <Route path="/entrar" element={<Login />} />
           <Route path="/guia-de-tamanhos" element={<SizeGuidePage />} />
           <Route path="/fita-metrica" element={<TapeMeasure />} />

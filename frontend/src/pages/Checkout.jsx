@@ -10,6 +10,9 @@ import { isValidCpf } from '../cpf';
 import ShippingCalculator, { maskCep } from '../components/ShippingCalculator';
 import { Ticket } from '../components/Icons';
 
+// With Mercado Pago configured, the customer pays on /pagamento/:id right after confirming.
+const PAY_ONLINE = !!import.meta.env.VITE_MP_PUBLIC_KEY;
+
 const empty = { name: '', email: '', phone: '', cpf: '', cep: '', address: '', number: '', complement: '', city: '', state: '' };
 
 const payments = [
@@ -100,7 +103,8 @@ export default function Checkout() {
     if (r) setForm((f) => ({ ...f, address: r.address || f.address, city: r.city, state: r.state }));
   };
 
-  const submit = async (e) => {
+  // Creates the order (priced and stock-checked on the server), then hands its id to `next`.
+  const submit = async (e, next) => {
     e.preventDefault();
     if (!isValidCpf(user?.cpf || form.cpf)) return setError('Confira o CPF — ele está inválido.');
     if (shippingEnabled && !ship.option) return setError('Escolha uma opção de entrega.');
@@ -120,7 +124,7 @@ export default function Checkout() {
       }
       if (user && !user.cpf) setUser({ ...user, cpf: form.cpf }); // the order saved it on the account
       clear();
-      navigate(`/pedido/${order.id}`, { state: { celebrate: true } });
+      next(order.id);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -136,7 +140,7 @@ export default function Checkout() {
           Já tem conta? <Link to="/entrar" state={{ from: '/checkout' }} className="link">Entre</Link> para preencher seus dados automaticamente.
         </p>
       )}
-      <form className="checkout" onSubmit={submit}>
+      <form className="checkout" onSubmit={(e) => submit(e, (id) => (PAY_ONLINE ? navigate(`/pagamento/${id}`) : navigate(`/pedido/${id}`, { state: { celebrate: true } })))}>
         <div className="checkout__form">
           <fieldset className="box">
             <legend>Seus dados</legend>
@@ -269,8 +273,8 @@ export default function Checkout() {
           {discount > 0 && <div className="summary__row good"><span>Desconto Pix</span><span>−{formatPrice(discount)}</span></div>}
           <div className="summary__row summary__total"><span>Total</span><span>{formatPrice(total)}</span></div>
           {error && <p className="alert">{error}</p>}
-          <button className="btn btn--primary btn--block" disabled={sending}>
-            {sending ? 'Enviando…' : 'Confirmar pedido'}
+          <button className="btn btn--primary btn--block" data-mp-checkout-cta="checkout-api" disabled={sending}>
+            {sending ? 'Enviando…' : PAY_ONLINE ? 'Continuar para o pagamento' : 'Confirmar pedido'}
           </button>
         </aside>
       </form>
