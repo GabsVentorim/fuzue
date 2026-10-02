@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { formatPrice } from '../brand';
 import { useCart } from '../context/CartContext';
 import { productImage } from '../assets';
-import { defaultSize, SIZES, sizeRange } from '../sizes';
+import { defaultSize, hasSizeGuide, SIZES, sizeRange } from '../sizes';
 import ProductArt from './ProductArt';
 import { Close } from './Icons';
 
@@ -87,7 +87,7 @@ export default function AddToBag({ product, onClose }) {
             <div className="opt">
               <span className="opt__label">
                 Tamanho {sizeHelp[size] && <small className="muted">({sizeHelp[size]} de pescoço)</small>}
-                {product.category !== 'presilhas' && (
+                {hasSizeGuide(product.sizes) && (
                   <Link to="/guia-de-tamanhos" className="link small opt__help" onClick={onClose}>Qual é o meu tamanho?</Link>
                 )}
               </span>

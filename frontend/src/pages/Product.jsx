@@ -5,7 +5,7 @@ import { spring } from '../motion';
 import { api } from '../api';
 import { formatPrice } from '../brand';
 import { useCart } from '../context/CartContext';
-import { SIZES, sizeRange, defaultSize } from '../sizes';
+import { SIZES, sizeRange, defaultSize, hasSizeGuide } from '../sizes';
 import ProductArt from '../components/ProductArt';
 import { productImage } from '../assets';
 import ShippingCalculator from '../components/ShippingCalculator';
@@ -118,7 +118,7 @@ export default function Product() {
             <div className="opt">
               <span className="opt__label">
                 Tamanho {size && sizeHelp[size] && <small className="muted">({sizeHelp[size]} de pescoço)</small>}
-                <Link to="/guia-de-tamanhos" className="link small opt__help">Qual é o meu tamanho?</Link>
+                {hasSizeGuide(product.sizes) && <Link to="/guia-de-tamanhos" className="link small opt__help">Qual é o meu tamanho?</Link>}
               </span>
               <div className="sizes">
                 {product.sizes.map((s) => (

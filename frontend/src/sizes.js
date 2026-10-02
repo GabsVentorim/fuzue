@@ -62,3 +62,6 @@ export function collarSize(neckCm) {
 // A size is always pre-selected: "M" when the product has it, otherwise the middle one (or the only one).
 export const defaultSize = (sizes = []) =>
   !sizes.length ? '' : sizes.includes('M') ? 'M' : sizes[Math.floor((sizes.length - 1) / 2)];
+
+// The size guide only helps when the product comes in neck sizes (XPP…XXG) — not for "Único" & co.
+export const hasSizeGuide = (sizes = []) => sizes.some((s) => SIZES.some((z) => z.id === s));
