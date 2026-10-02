@@ -139,7 +139,6 @@ export default function Home() {
             { kind: 'burst', color: '#ff2a0a', size: 58, top: '30px', left: '54%', rot: 10, hideMobile: true },
             { kind: 'star', color: '#9ecfd3', size: 56, bottom: '22px', left: '31%', rot: 14, hideMobile: true },
             { kind: 'sparkle', color: '#f7b6d9', size: 40, bottom: '30px', left: '64%', hideMobile: true },
-            { kind: 'dogSit', color: '#fe2a0a', size: 88, bottom: '-10px', right: '6%', rot: 4, hideMobile: true },
           ]} />
           <h2 className="park__title">Escolha o mimo</h2>
           <Signposts />
@@ -150,8 +149,6 @@ export default function Home() {
             { kind: 'fdm', size: 'clamp(96px, 11vw, 150px)', top: 'clamp(-44px, -3vw, -20px)', right: 'clamp(90px, 16%, 210px)', rot: 7, m: { top: '-56px', right: '6px', size: 66 } },
             { kind: 'flower', color: '#1e9bea', faced: true, size: 72, top: '46%', left: '-4.5%', rot: -10, hideMobile: true },
             { kind: 'heart', color: '#f2232a', faced: true, wink: true, size: 62, bottom: '16%', right: '-4.5%', rot: 12, hideMobile: true },
-            { kind: 'bone', color: '#377df8', size: 70, top: '22%', right: '-5%', rot: -18, hideMobile: true },
-            { kind: 'paw', color: '#fe2a0a', size: 46, bottom: '4%', left: '-4%', rot: 14, hideMobile: true },
           ]} />
           <div className="section__head">
             <h2 className="park__title">Os queridinhos</h2>
@@ -167,7 +164,6 @@ export default function Home() {
             { kind: 'rainbow', size: 'clamp(70px, 8vw, 110px)', top: 'clamp(4px, 1vw, 10px)', right: '5%', rot: -8 },
             { kind: 'triangle', color: '#f2b33d', faced: true, size: 58, top: '14px', left: '2%', rot: -14, hideMobile: true },
             { kind: 'squiggle', color: '#5b6cf0', size: 110, bottom: '4px', left: '38%', rot: -4, hideMobile: true },
-            { kind: 'dogHead', color: '#fe2a0a', size: 'clamp(56px, 7vw, 84px)', top: '-30px', left: '30%', rot: -8 },
           ]} />
           <SizeGuide />
         </section>

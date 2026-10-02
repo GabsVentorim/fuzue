@@ -1,6 +1,6 @@
 import { imageUrl } from '../assets';
 
-// Die-cut stickers (and dog line doodles) in the look of the brand's sticker sheet (organic stars, bursts, smiley shapes,
+// Die-cut stickers in the look of the brand's sticker sheet (organic stars, bursts, smiley shapes,
 // squiggles, rainbow, halftone) plus the two illustrated ones cut from it (name tag, employee of the month).
 // Vector ones get a white die-cut edge (a white stroke painted under the fill).
 const face = (cx, cy, s = 1, wink = false) => (
@@ -66,75 +66,12 @@ const SHAPES = {
   },
 };
 
-// Line doodles of dogs, drawn like the logo: one colour, round strokes, no fill. Every path has
-// pathLength=1 so the CSS can draw them in when they appear (see .sticker--doodle).
-const D = (d, extra) => <path d={d} pathLength="1" {...extra} />;
-const DOODLES = {
-  dogHead: (
-    <>
-      {D('M30 40 C30 22 70 22 70 40 C74 62 62 76 50 76 C38 76 26 62 30 40 Z')}
-      {D('M32 34 C18 30 14 52 22 60 C28 64 31 52 31 46')}
-      {D('M68 34 C82 30 86 52 78 60 C72 64 69 52 69 46')}
-      {D('M42 46 h0.01 M58 46 h0.01', { strokeWidth: 7 })}
-      {D('M46 56 C46 53 54 53 54 56 C54 59 46 59 46 56 Z', { fill: 'currentColor' })}
-      {D('M50 59 V63 M44 64 C47 67 50 65 50 63 C50 65 53 67 56 64')}
-    </>
-  ),
-  dogSit: (
-    <>
-      {D('M36 30 C36 18 60 18 60 30 C60 40 54 44 48 44 C42 44 36 40 36 30 Z')}
-      {D('M38 24 C30 24 27 36 33 41')}
-      {D('M58 24 C66 24 69 36 63 41')}
-      {D('M43 44 C35 52 32 70 36 84 H64 C68 70 64 52 55 44')}
-      {D('M45 66 V84 M53 66 V84')}
-      {D('M64 78 C74 78 81 70 77 61')}
-      {D('M44 30 h0.01 M52 30 h0.01', { strokeWidth: 6 })}
-      {D('M48 36 h0.01', { strokeWidth: 7 })}
-    </>
-  ),
-  dachshund: (
-    <>
-      {D('M18 52 C18 44 26 42 34 42 H68 C76 42 80 46 80 52 C80 58 76 60 68 60 H34 C26 60 18 58 18 52 Z')}
-      {D('M70 43 C69 33 77 28 85 30 C93 32 94 40 87 43')}
-      {D('M80 31 C75 35 75 42 80 45')}
-      {D('M30 60 V70 M40 60 V70 M62 60 V70 M72 60 V70')}
-      {D('M18 50 C12 46 10 40 13 35')}
-      {D('M85 35 h0.01', { strokeWidth: 6 })}
-      {D('M93 38 h0.01', { strokeWidth: 7 })}
-    </>
-  ),
-  bone: D('M30 44 C24 37 15 44 22 50 C15 56 24 63 30 56 H70 C76 63 85 56 78 50 C85 44 76 37 70 44 Z'),
-  paw: (
-    <>
-      {D('M50 50 C40 50 35 63 41 70 C45 75 55 75 59 70 C65 63 60 50 50 50 Z')}
-      {D('M28 44 a6 7 0 1 0 12 0 a6 7 0 1 0 -12 0')}
-      {D('M38 33 a6 7 0 1 0 12 0 a6 7 0 1 0 -12 0')}
-      {D('M50 33 a6 7 0 1 0 12 0 a6 7 0 1 0 -12 0')}
-      {D('M60 44 a6 7 0 1 0 12 0 a6 7 0 1 0 -12 0')}
-    </>
-  ),
-  ballZoom: (
-    <>
-      {D('M44 50 a12 12 0 1 0 24 0 a12 12 0 1 0 -24 0')}
-      {D('M48 42 C54 46 58 54 56 61')}
-      {D('M22 44 H34 M18 52 H32 M24 60 H34')}
-    </>
-  ),
-};
-
 const IMAGES = {
   ola: '/assets/stickers/ola-sou-fuzo.png',
   fdm: '/assets/stickers/funcionario-do-mes.png',
 };
 
 export default function Sticker({ kind, color = '#f7b6d9', faced, wink, outline = true }) {
-  if (DOODLES[kind]) {
-    return (
-      <svg viewBox="0 0 100 100" className="sticker__svg sticker__doodle" style={{ color }} fill="none" stroke="currentColor" strokeWidth="3.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-        {DOODLES[kind]}
-      </svg>
-    );
-  }
   if (IMAGES[kind]) return <img src={imageUrl(IMAGES[kind])} alt="" draggable={false} className="sticker__img" />;
   const draw = SHAPES[kind] || SHAPES.star;
   const plain = kind === 'halftone';
