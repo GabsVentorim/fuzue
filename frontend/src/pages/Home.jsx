@@ -47,14 +47,9 @@ function Signposts() {
   );
 }
 
-// The favourites: the first one gets the big spot (2x2 on desktop, full width on phones) and the rest
-// gather around it. A last "see everything" spot fills exactly the cells left over, so the grid never
-// ends with a hole.
+// The favourites: a plain product grid; cards arrive one after another.
 function Favourites({ products }) {
   const [ref, shown] = useReveal({ threshold: 0.05 });
-  const n = products.length;
-  const desktopFree = n ? (4 - ((Math.max(0, n - 5)) % 4)) % 4 || (n < 5 ? 4 - (n - 1) : 0) : 0;
-  const phoneFree = n ? (n - 1) % 2 && 1 : 0;
   return (
     <div className={`grid grid--stagger ${shown ? 'is-in' : ''}`} ref={ref}>
       {products.map((p, i) => (
@@ -62,18 +57,6 @@ function Favourites({ products }) {
           <ProductCard product={p} index={i} />
         </div>
       ))}
-      {n > 0 && (desktopFree > 0 || phoneFree > 0) && (
-        <Link
-          to="/loja"
-          className="more-spot"
-          style={{ '--i': n, '--span-d': desktopFree, '--span-m': phoneFree }}
-          data-d={desktopFree || undefined}
-          data-m={phoneFree || undefined}
-        >
-          <span className="more-spot__text">Ver todos os mimos</span>
-          <Arrow width={30} height={30} aria-hidden />
-        </Link>
-      )}
     </div>
   );
 }
@@ -147,7 +130,7 @@ export default function Home() {
         <section className="park__stop container">
           <Stickers items={[
             { kind: 'fdm', size: 'clamp(96px, 11vw, 150px)', top: 'clamp(-44px, -3vw, -20px)', right: 'clamp(90px, 16%, 210px)', rot: 7, m: { top: '-56px', right: '6px', size: 66 } },
-            { kind: 'flower', color: '#1e9bea', faced: true, size: 72, top: '46%', left: '-4.5%', rot: -10, hideMobile: true },
+            { kind: 'flower', color: '#1e9bea', faced: true, size: 64, top: '46%', left: '-7.5%', rot: -10, hideMobile: true },
             { kind: 'heart', color: '#f2232a', faced: true, wink: true, size: 62, bottom: '16%', right: '-4.5%', rot: 12, hideMobile: true },
           ]} />
           <div className="section__head">
