@@ -11,6 +11,7 @@ import ProductCard from '../components/ProductCard';
 import RevealGrid from '../components/RevealGrid';
 import QuickBuy from '../components/QuickBuy';
 import ProductMaterials from '../components/ProductMaterials';
+import ParacordStory from '../components/ParacordStory';
 import { Truck, Shield } from '../components/Icons';
 
 const sizeHelp = Object.fromEntries(SIZES.map((s) => [s.id, sizeRange(s)]));
@@ -57,6 +58,7 @@ export default function Product() {
   };
 
   return (
+    <>
     <section className="section container">
       <nav className="crumbs">
         <Link to="/loja">Loja</Link> / <Link to={`/loja?categoria=${product.category}`}>{catName[product.category]}</Link> /{' '}
@@ -150,11 +152,16 @@ export default function Product() {
         </div>
       </div>
 
-      <ProductMaterials details={product.details} color={color?.hex} />
-
       {quickBuy && (
         <QuickBuy product={product} initial={{ color, size, qty }} onClose={() => setQuickBuy(false)} />
       )}
+    </section>
+
+    {/* every collar is paracord: tell its story, full width */}
+    {product.category === 'coleiras' && <ParacordStory product={product} color={color} />}
+
+    <section className="section container">
+      <ProductMaterials details={product.details} color={color?.hex} />
 
       {related.length > 0 && (
         <>
@@ -167,5 +174,6 @@ export default function Product() {
         </>
       )}
     </section>
+    </>
   );
 }
