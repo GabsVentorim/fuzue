@@ -40,8 +40,6 @@ const SETS = {
     { kind: 'triangle', color: '#f2b33d', faced: true, size: 56, top: 360, left: gutterL, rot: -14, hideMobile: true, hideNarrow: true },
   ],
   '/minha-conta': [
-    // kept off the top-right corner, where the account header has the "Sair" button
-    { kind: 'ola', size: 130, top: 260, left: gutterL, rot: -8, hideMobile: true, hideNarrow: true },
     { kind: 'star', color: '#f7b6d9', size: 54, top: 120, right: gutterR, rot: 14, hideMobile: true, hideNarrow: true },
   ],
   '*': [
