@@ -135,7 +135,7 @@ export default function Home() {
       <ParkTrail>
         <section className="park__stop container">
           <Stickers items={[
-            { kind: 'ola', size: 'clamp(104px, 15vw, 210px)', top: 'clamp(-34px, -2vw, 0px)', right: '0', rot: -9 },
+            { kind: 'ola', size: 'clamp(104px, 15vw, 210px)', top: 'clamp(-34px, -2vw, 0px)', right: '0', rot: -9, m: { top: '-52px', right: '4px', size: 84 } },
             { kind: 'burst', color: '#ff2a0a', size: 58, top: '30px', left: '54%', rot: 10, hideMobile: true },
             { kind: 'star', color: '#9ecfd3', size: 56, bottom: '22px', left: '31%', rot: 14, hideMobile: true },
             { kind: 'sparkle', color: '#f7b6d9', size: 40, bottom: '30px', left: '64%', hideMobile: true },
@@ -146,7 +146,7 @@ export default function Home() {
 
         <section className="park__stop container">
           <Stickers items={[
-            { kind: 'fdm', size: 'clamp(96px, 11vw, 150px)', top: 'clamp(-44px, -3vw, -20px)', right: 'clamp(90px, 16%, 210px)', rot: 7 },
+            { kind: 'fdm', size: 'clamp(96px, 11vw, 150px)', top: 'clamp(-44px, -3vw, -20px)', right: 'clamp(90px, 16%, 210px)', rot: 7, m: { top: '-56px', right: '6px', size: 66 } },
             { kind: 'flower', color: '#1e9bea', faced: true, size: 72, top: '46%', left: '-4.5%', rot: -10, hideMobile: true },
             { kind: 'heart', color: '#f2232a', faced: true, wink: true, size: 62, bottom: '16%', right: '-4.5%', rot: 12, hideMobile: true },
           ]} />

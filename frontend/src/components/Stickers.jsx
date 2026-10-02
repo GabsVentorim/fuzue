@@ -33,14 +33,21 @@ function Peel({ s, i, shown }) {
     if (d && !d.moved) setSpin((n) => n + 1); // a click (not a drag) spins it
   };
 
+  // position via CSS variables so phones can use their own spot (s.m = { top, left, right, bottom, size })
+  const px = (v) => (typeof v === 'number' ? `${v}px` : v);
+  const vars = {};
+  for (const k of ['top', 'left', 'right', 'bottom']) {
+    if (s[k] !== undefined) vars[`--${k}`] = px(s[k]);
+    if (s.m?.[k] !== undefined) vars[`--m-${k}`] = px(s.m[k]);
+  }
+  if (s.m?.size !== undefined) vars['--m-w'] = px(s.m.size);
   const place = {
-    top: s.top, left: s.left, right: s.right, bottom: s.bottom,
-    width: s.size, '--rot': `${s.rot || 0}deg`, '--i': i, '--float': `${4 + (i % 3)}s`,
+    ...vars, '--w': px(s.size), '--rot': `${s.rot || 0}deg`, '--i': i, '--float': `${4 + (i % 3)}s`,
     translate: `${pos.x}px ${pos.y}px`,
   };
   return (
     <span
-      className={`sticker sticker--${s.kind} ${LINE_KINDS.includes(s.kind) ? 'sticker--line' : ''} ${s.hideMobile ? 'sticker--desk' : ''} ${shown ? 'is-in' : ''} ${drag.current?.moved ? 'is-dragging' : ''}`}
+      className={`sticker sticker--${s.kind} ${LINE_KINDS.includes(s.kind) ? 'sticker--line' : ''} ${s.hideMobile ? 'sticker--desk' : ''} ${s.hideNarrow ? 'sticker--wide' : ''} ${shown ? 'is-in' : ''} ${drag.current?.moved ? 'is-dragging' : ''}`}
       style={place}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}

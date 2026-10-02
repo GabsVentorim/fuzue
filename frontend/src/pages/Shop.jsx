@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { api } from '../api';
 import ProductCard from '../components/ProductCard';
+import RevealGrid from '../components/RevealGrid';
 import { Paw } from '../components/Icons';
 
 const filters = [
@@ -71,11 +72,13 @@ export default function Shop() {
           <p>Nenhum produto encontrado. Que tal outra busca?</p>
         </div>
       )}
-      <div className="grid">
-        {products?.map((p, i) => (
-          <ProductCard key={p.id} product={p} index={i} />
-        ))}
-      </div>
+      {products?.length > 0 && (
+        <RevealGrid>
+          {products.map((p, i) => (
+            <ProductCard key={p.id} product={p} index={i} />
+          ))}
+        </RevealGrid>
+      )}
     </section>
   );
 }

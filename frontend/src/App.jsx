@@ -4,6 +4,7 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import Toast from './components/Toast';
 import BallThrow from './components/BallThrow';
+import PageStickers from './components/PageStickers';
 import Home from './pages/Home';
 import Shop from './pages/Shop';
 import Product from './pages/Product';
@@ -42,7 +43,12 @@ function ScrollToTop() {
 // Each new page slides in softly (keyed by path, so query changes like ?categoria= don't replay it).
 function PageIn({ children }) {
   const { pathname } = useLocation();
-  return <div className="page-in" key={pathname}>{children}</div>;
+  return (
+    <div className="page-in" key={pathname}>
+      <PageStickers />
+      {children}
+    </div>
+  );
 }
 
 export default function App() {

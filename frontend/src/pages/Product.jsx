@@ -8,6 +8,7 @@ import ProductArt from '../components/ProductArt';
 import { productImage } from '../assets';
 import ShippingCalculator from '../components/ShippingCalculator';
 import ProductCard from '../components/ProductCard';
+import RevealGrid from '../components/RevealGrid';
 import QuickBuy from '../components/QuickBuy';
 import ProductMaterials from '../components/ProductMaterials';
 import { Truck, Shield } from '../components/Icons';
@@ -157,12 +158,12 @@ export default function Product() {
 
       {related.length > 0 && (
         <>
-          <h2 className="section__title" style={{ marginTop: 64 }}>Combina com</h2>
-          <div className="grid">
+          <h2 className="park__title" style={{ marginTop: 64 }}>Combina com</h2>
+          <RevealGrid>
             {related.map((p, i) => (
               <ProductCard key={p.id} product={p} index={i + 1} />
             ))}
-          </div>
+          </RevealGrid>
         </>
       )}
     </section>
