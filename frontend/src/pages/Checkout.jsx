@@ -8,6 +8,7 @@ import { lookupCep } from '../cep';
 import CpfInput from '../components/CpfInput';
 import { isValidCpf } from '../cpf';
 import ShippingCalculator, { maskCep } from '../components/ShippingCalculator';
+import { Ticket } from '../components/Icons';
 
 const empty = { name: '', email: '', phone: '', cpf: '', cep: '', address: '', number: '', complement: '', city: '', state: '' };
 
@@ -215,7 +216,7 @@ export default function Checkout() {
             </div>
 
             <div className="coupon field--full">
-              <span className="coupon__title">🎟️ Cupom de desconto</span>
+              <span className="coupon__title"><Ticket width={18} height={18} /> Cupom de desconto</span>
               {coupon ? (
                 <div className="coupon__applied">
                   <span>

@@ -21,3 +21,6 @@ npm-debug.log*
 
 # config local do Claude Code
 .claude/settings.local.json
+
+# design workflow scratch (screenshots, briefs)
+.impeccable/

@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import Toast from './components/Toast';
+import BallThrow from './components/BallThrow';
 import Home from './pages/Home';
 import Shop from './pages/Shop';
 import Product from './pages/Product';
@@ -38,12 +39,20 @@ function ScrollToTop() {
   return null;
 }
 
+// Each new page slides in softly (keyed by path, so query changes like ?categoria= don't replay it).
+function PageIn({ children }) {
+  const { pathname } = useLocation();
+  return <div className="page-in" key={pathname}>{children}</div>;
+}
+
 export default function App() {
   return (
     <>
       <ScrollToTop />
       <Header />
+      <BallThrow />
       <main>
+        <PageIn>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/loja" element={<Shop />} />
@@ -75,6 +84,7 @@ export default function App() {
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
+        </PageIn>
       </main>
       <Footer />
       <Toast />

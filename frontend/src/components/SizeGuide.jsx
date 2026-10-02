@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Ruler } from './Icons';
 import { SIZES, BREED_NECKS, PORTE_NECKS, sizeForNeck, sizesForRange, sizeRange } from '../sizes';
 
 const MODES = [
@@ -52,7 +53,7 @@ export default function SizeGuide() {
         <div className="sg__intro">
           <h2>Qual tamanho escolher?</h2>
           <p>Meça o pescoço do seu pet em 4 passos — ou descubra pela raça logo abaixo.</p>
-          <Link to="/fita-metrica" className="btn btn--light btn--sm">📏 Imprimir fita métrica</Link>
+          <Link to="/fita-metrica" className="btn btn--light btn--sm"><Ruler width={18} height={18} /> Imprimir fita métrica</Link>
         </div>
         <ol className="sg__steps">
           {STEPS.map(([title, text], i) => (
@@ -116,7 +117,7 @@ export default function SizeGuide() {
           )}
 
           <div className={`sg__result ${f.result ? 'sg__result--on' : ''}`} aria-live="polite">
-            {!f.result && <p className="muted small">Escolha uma opção acima e o tamanho indicado acende na tabela. 👉</p>}
+            {!f.result && <p className="muted small">Escolha uma opção acima e o tamanho indicado acende na tabela.</p>}
             {f.result && picked.length > 0 && (
               <>
                 <span className="sg__label">Tamanho indicado</span>

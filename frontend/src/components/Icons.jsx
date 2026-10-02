@@ -68,3 +68,23 @@ export const Trash = (p) => (
     <path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13" />
   </svg>
 );
+
+export const Arrow = (p) => (
+  <svg {...base} {...p} fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M4 12h15M13 6l6 6-6 6" />
+  </svg>
+);
+
+export const Ruler = (p) => (
+  <svg {...base} {...p} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="2.5" y="8" width="19" height="8" rx="2" />
+    <path d="M6.5 8v3M10 8v4.5M13.5 8v3M17 8v4.5" />
+  </svg>
+);
+
+export const Ticket = (p) => (
+  <svg {...base} {...p} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M3 8a2 2 0 0 0 2-2h14a2 2 0 0 0 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 0-2 2H5a2 2 0 0 0-2-2v-2a2 2 0 0 0 0-4z" />
+    <path d="M14 6v12" strokeDasharray="2 2.5" />
+  </svg>
+);

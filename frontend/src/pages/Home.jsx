@@ -7,13 +7,75 @@ import ProductCard from '../components/ProductCard';
 import ProductArt from '../components/ProductArt';
 import SizeGuide from '../components/SizeGuide';
 import HeroCarousel from '../components/HeroCarousel';
-import { Paw, Truck, Heart, Shield, Sparkle } from '../components/Icons';
+import Horizon from '../components/Horizon';
+import ParkTrail from '../components/ParkTrail';
+import useReveal from '../hooks/useReveal';
+import { Paw, Sparkle, Arrow } from '../components/Icons';
 
 const categories = [
-  { slug: 'coleiras', name: 'Coleiras', text: 'Para passear com estilo', tone: 'pink', art: { color: '#E8432A', pattern: 'dots' } },
-  { slug: 'bandanas', name: 'Bandanas', text: 'Charme no pescoço', tone: 'red', art: { color: '#F4A7D3', pattern: 'hearts' } },
-  { slug: 'presilhas', name: 'Presilhas', text: 'Lacinhos que não puxam o pelo', tone: 'blue', art: { color: '#E8432A', pattern: 'dots' } },
+  { slug: 'coleiras', name: 'Coleiras', text: 'Para passear com estilo', tone: 'red', art: { color: '#F4A7D3', pattern: 'dots' } },
+  { slug: 'bandanas', name: 'Bandanas', text: 'Charme no pescoço', tone: 'blue', art: { color: '#E8432A', pattern: 'hearts' } },
+  { slug: 'presilhas', name: 'Presilhas', text: 'Lacinhos que não puxam o pelo', tone: 'pink', art: { color: '#377DF8', pattern: 'dots' } },
 ];
+
+// Park signposts: one per category, planted along the trail.
+function Signposts() {
+  const ref = useReveal();
+  return (
+    <div className="signs" ref={ref}>
+      {categories.map((c, i) => (
+        <Link key={c.slug} to={`/loja?categoria=${c.slug}`} className={`sign sign--${c.tone}`} style={{ '--i': i }}>
+          <span className="sign__board">
+            <span className="sign__art">
+              {asset(`categories.${c.slug}`) ? (
+                <img src={asset(`categories.${c.slug}`)} alt="" className="cat__img" />
+              ) : (
+                <ProductArt category={c.slug} {...c.art} alt="" />
+              )}
+            </span>
+            <span className="sign__text">
+              <b>{c.name}</b>
+              <span>{c.text}</span>
+            </span>
+            <Arrow className="sign__go" width={26} height={26} aria-hidden />
+          </span>
+          <span className="sign__post" aria-hidden />
+        </Link>
+      ))}
+    </div>
+  );
+}
+
+// The favourites: the first one gets the big spot (2x2 on desktop, full width on phones) and the rest
+// gather around it. A last "see everything" spot fills exactly the cells left over, so the grid never
+// ends with a hole.
+function Favourites({ products }) {
+  const ref = useReveal({ threshold: 0.05 });
+  const n = products.length;
+  const desktopFree = n ? (4 - ((Math.max(0, n - 5)) % 4)) % 4 || (n < 5 ? 4 - (n - 1) : 0) : 0;
+  const phoneFree = n ? (n - 1) % 2 && 1 : 0;
+  return (
+    <div className="grid grid--stagger" ref={ref}>
+      {products.map((p, i) => (
+        <div key={p.id} style={{ '--i': i }}>
+          <ProductCard product={p} index={i} />
+        </div>
+      ))}
+      {n > 0 && (desktopFree > 0 || phoneFree > 0) && (
+        <Link
+          to="/loja"
+          className="more-spot"
+          style={{ '--i': n, '--span-d': desktopFree, '--span-m': phoneFree }}
+          data-d={desktopFree || undefined}
+          data-m={phoneFree || undefined}
+        >
+          <span className="more-spot__text">Ver todos os mimos</span>
+          <Arrow width={30} height={30} aria-hidden />
+        </Link>
+      )}
+    </div>
+  );
+}
 
 export default function Home() {
   const [featured, setFeatured] = useState([]);
@@ -27,12 +89,14 @@ export default function Home() {
 
   return (
     <>
-      {/* HERO — the carousel from Admin → Carrossel (full width, edge to edge); the original hero shows while there are no banners */}
+      {/* HERO — the carousel from Admin → Carrossel (full width, edge to edge), sinking into the park's hills;
+          the original hero shows while there are no banners */}
       {banners === null ? (
-        <section className="hero-carousel"><div className="carousel carousel--loading" aria-hidden /></section>
+        <section className="hero-carousel"><div className="carousel carousel--loading" aria-hidden /><Horizon /></section>
       ) : banners.length > 0 ? (
         <section className="hero-carousel">
           <HeroCarousel banners={banners} />
+          <Horizon />
         </section>
       ) : (
         <section className="hero">
@@ -41,9 +105,6 @@ export default function Home() {
           <Sparkle className="float float--3" />
           <div className="container hero__grid">
             <div className="hero__text">
-              <span className="pill">
-                <Heart width={16} height={16} /> novidades fresquinhas
-              </span>
               <h1>
                 Mimos <span className="hl">coloridos</span> para o seu melhor amigo
               </h1>
@@ -65,82 +126,31 @@ export default function Home() {
               </div>
             )}
           </div>
+          <Horizon />
         </section>
       )}
 
-      {/* CATEGORIES */}
-      <section className="section container">
-        <h2 className="section__title">Escolha o mimo</h2>
-        <div className="cats">
-          {categories.map((c) => (
-            <Link key={c.slug} to={`/loja?categoria=${c.slug}`} className={`cat cat--${c.tone}`}>
-              <div className="cat__art">
-                {asset(`categories.${c.slug}`) ? (
-                  <img src={asset(`categories.${c.slug}`)} alt={c.name} className="cat__img" />
-                ) : (
-                  <ProductArt category={c.slug} {...c.art} alt={c.name} />
-                )}
-              </div>
-              <h3>{c.name}</h3>
-              <p>{c.text}</p>
-              <span className="cat__go">Explorar →</span>
-            </Link>
-          ))}
-        </div>
-      </section>
+      {/* the walk: one trail from the hills down to the footer, with the ball rolling along it */}
+      <ParkTrail>
+        <section className="park__stop container">
+          <h2 className="park__title">Escolha o mimo</h2>
+          <Signposts />
+        </section>
 
-      {/* FEATURED */}
-      <section className="section container">
-        <div className="section__head">
-          <h2 className="section__title">Os queridinhos</h2>
-          <Link to="/loja" className="link">Ver tudo →</Link>
-        </div>
-        {error && <p className="alert">Não conseguimos carregar os produtos. A API está rodando?</p>}
-        <div className="grid">
-          {featured.map((p, i) => (
-            <ProductCard key={p.id} product={p} index={i} />
-          ))}
-        </div>
-      </section>
+        <section className="park__stop container">
+          <div className="section__head">
+            <h2 className="park__title">Os queridinhos</h2>
+            <Link to="/loja" className="link link--trail">Ver tudo <Arrow width={18} height={18} aria-hidden /></Link>
+          </div>
+          {error && <p className="alert">Ops, os mimos se esconderam! Recarregue a página para chamá-los de volta.</p>}
+          <Favourites products={featured} />
+        </section>
 
-      {/* PERKS */}
-      <section className="section container">
-        <div className="perks">
-          <div className="perk">
-            <Truck />
-            <div>
-              <strong>Frete grátis</strong>
-              <span>acima de R$ {brand.shipping.freeFrom}</span>
-            </div>
-          </div>
-          <div className="perk">
-            <Sparkle />
-            <div>
-              <strong>5% off no Pix</strong>
-              <span>desconto na hora</span>
-            </div>
-          </div>
-          <div className="perk">
-            <Shield />
-            <div>
-              <strong>Troca fácil</strong>
-              <span>tamanho não serviu? a gente troca</span>
-            </div>
-          </div>
-          <div className="perk">
-            <Heart />
-            <div>
-              <strong>Feito com amor</strong>
-              <span>testado por pets de verdade</span>
-            </div>
-          </div>
-        </div>
-      </section>
 
-      {/* SIZE HELP */}
-      <section className="section container">
-        <SizeGuide />
-      </section>
+        <section className="park__stop container">
+          <SizeGuide />
+        </section>
+      </ParkTrail>
     </>
   );
 }

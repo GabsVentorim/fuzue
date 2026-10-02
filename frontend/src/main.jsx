@@ -39,3 +39,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     </BrowserRouter>
   </React.StrictMode>
 );
+
+// Entrance animations only hide content under this class, so without JS or with reduced motion
+// everything is simply visible.
+if (!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) document.documentElement.classList.add('motion-ok');

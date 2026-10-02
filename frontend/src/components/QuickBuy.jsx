@@ -11,7 +11,7 @@ import { defaultSize } from '../sizes';
 import ProductArt from './ProductArt';
 import CpfInput from './CpfInput';
 import ShippingCalculator, { maskCep } from './ShippingCalculator';
-import { Close } from './Icons';
+import { Close, Ticket } from './Icons';
 
 const PAYMENTS = [
   { id: 'pix', label: 'Pix', hint: '5% de desconto' },
@@ -242,7 +242,7 @@ export default function QuickBuy({ product, initial, onClose }) {
                 ))}
               </div>
               <div className="coupon">
-                <span className="coupon__title">🎟️ Cupom de desconto</span>
+                <span className="coupon__title"><Ticket width={18} height={18} /> Cupom de desconto</span>
                 {coupon ? (
                   <div className="coupon__applied">
                     <span><b>{coupon.code}</b><small>{coupon.label}{couponDiscount > 0 && ` · −${formatPrice(couponDiscount)}`}</small></span>

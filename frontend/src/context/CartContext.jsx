@@ -74,6 +74,7 @@ export function CartProvider({ children }) {
       if (existing) return prev.map((i) => (i === existing ? { ...i, qty: i.qty + qty } : i));
       return [...prev, entry];
     });
+    window.dispatchEvent(new CustomEvent('fuzue:add')); // the ball flies into the bag (BallThrow)
     setToast(`${product.name} foi pro carrinho!`);
     setTimeout(() => setToast(null), 2200);
   };
