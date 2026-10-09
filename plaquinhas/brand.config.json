@@ -1,0 +1,34 @@
+{
+  "name": "Fuzuê",
+  "subtitle": "PETSTORE",
+  "slogan": "Plaquinhas inteligentes que levam quem encontrou seu pet direto até você",
+  "email": "fuzue.petstore@gmail.com",
+  "instagram": "@fuzue_petstore",
+  "whatsapp": "5511999999999",
+  "siteUrl": "",
+  "shopUrl": "",
+  "shopTagsCategory": "tags",
+  "tag": {
+    "prefix": "FZ-",
+    "codeLength": 5
+  },
+  "assets": {
+    "logo": "/assets/logo/logo-transparente.png",
+    "logoLight": "/assets/logo/logo-transparente.png",
+    "favicon": "/assets/brand/favicon.png",
+    "appleTouchIcon": "/assets/brand/apple-touch-icon.png",
+    "ogImage": "",
+    "hero": "",
+    "petPlaceholder": "/assets/placeholders/pet.svg",
+    "logoAnimated": {
+      "base": "/assets/logo/logo-base.png",
+      "ball": "/assets/logo/logo-bola.png",
+      "ballBox": [95.4, 76.54, 4.6, 20.16],
+      "barkBox": [92.8, 44, 5, 28],
+      "eyes": [
+        { "src": "/assets/logo/logo-olho-1.png", "box": [81.5, 67.08, 1.9, 10.7] },
+        { "src": "/assets/logo/logo-olho-2.png", "box": [85.1, 61.73, 1.9, 12.76] }
+      ]
+    }
+  }
+}

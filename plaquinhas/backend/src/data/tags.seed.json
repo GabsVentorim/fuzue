@@ -1,0 +1,53 @@
+[
+  {
+    "code": "FZ-1001",
+    "petName": "Thor",
+    "species": "cachorro",
+    "sex": "macho",
+    "breed": "Golden Retriever",
+    "isMixed": false,
+    "size": "grande",
+    "photoUrl": "https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&q=80&w=600",
+    "notes": "Dócil, adora crianças. Toma medicação para alergia.",
+    "tutorName": "Gustavo Ventorim",
+    "tutorNeighborhood": "Jardim da Penha - Vitória/ES",
+    "tutorPhone": "27999887766",
+    "tutorWhatsapp": "5527999887766",
+    "status": "ativo",
+    "createdAt": "2026-08-01T10:00:00.000Z"
+  },
+  {
+    "code": "FZ-1002",
+    "petName": "Mel",
+    "species": "cachorro",
+    "sex": "femea",
+    "breed": "Shih Tzu",
+    "isMixed": false,
+    "size": "pequeno",
+    "photoUrl": "https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&q=80&w=600",
+    "notes": "Pet idosa, visão um pouco reduzida. Por favor avisar com carinho.",
+    "tutorName": "Mariana Santos",
+    "tutorNeighborhood": "Praia do Canto - Vitória/ES",
+    "tutorPhone": "27998765432",
+    "tutorWhatsapp": "5527998765432",
+    "status": "perdido",
+    "createdAt": "2026-08-05T14:30:00.000Z"
+  },
+  {
+    "code": "FZ-1003",
+    "petName": "Bob",
+    "species": "cachorro",
+    "sex": "macho",
+    "breed": "",
+    "isMixed": true,
+    "size": "medio",
+    "photoUrl": "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&q=80&w=600",
+    "notes": "Muito brincalhão e assustado com barulhos fortes.",
+    "tutorName": "Carlos Eduardo",
+    "tutorNeighborhood": "Mata da Praia - Vitória/ES",
+    "tutorPhone": "27981112233",
+    "tutorWhatsapp": "5527981112233",
+    "status": "ativo",
+    "createdAt": "2026-08-10T09:15:00.000Z"
+  }
+]

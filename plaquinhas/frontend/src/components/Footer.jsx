@@ -1,0 +1,37 @@
+import { Link } from 'react-router-dom';
+import Logo from './Logo';
+import Horizon from './Horizon';
+import { Paw } from './Icons';
+import brand, { instagramLink, whatsappLink, shopTagsUrl } from '../brand';
+
+export default function Footer() {
+  return (
+    <footer className="footer">
+      <Horizon tone="footer" />
+      <div className="container footer__grid">
+        <div>
+          <Logo variant="light" />
+          <p className="footer__slogan">{brand.slogan}</p>
+        </div>
+        <div>
+          <h4>A plaquinha</h4>
+          <Link to="/">Como funciona</Link>
+          <a href={shopTagsUrl()} target="_blank" rel="noreferrer">
+            Quero uma plaquinha
+          </a>
+          <Link to="/entrar">Área do lojista</Link>
+        </div>
+        <div>
+          <h4>Fale com a gente</h4>
+          <a href={whatsappLink(`Oi, ${brand.name}!`)} target="_blank" rel="noreferrer">WhatsApp</a>
+          <a href={`mailto:${brand.email}`}>{brand.email}</a>
+          <a href={instagramLink()} target="_blank" rel="noreferrer">Instagram {brand.instagram}</a>
+        </div>
+      </div>
+      <p className="footer__copy container">
+        <Paw width={16} height={16} /> © {new Date().getFullYear()} {brand.name} {brand.subtitle.toLowerCase()} — feito
+        com muito amor (e petiscos)
+      </p>
+    </footer>
+  );
+}

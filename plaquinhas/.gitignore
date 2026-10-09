@@ -1,0 +1,21 @@
+node_modules/
+dist/
+build/
+coverage/
+.DS_Store
+*.log
+
+# segredos
+.env*
+!.env.example
+
+# banco e uploads são dados locais, não código
+backend/data/
+backend/uploads/
+
+# ferramentas de IA
+.agents/
+.claude/
+.codex/
+.impeccable/
+skills-lock.json
